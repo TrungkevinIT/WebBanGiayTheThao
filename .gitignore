@@ -1,0 +1,22 @@
+﻿# --- Visual Studio & .NET Core (QUAN TRỌNG NHẤT) ---
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# --- Database (Chặn file gốc, giữ lại file script .sql) ---
+*.mdf
+*.ldf
+# --- Windows System ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- MAC OS (Phòng trường hợp nhóm có bạn dùng Macbook) ---
+.DS_Store
+
+# --- Logs ---
+*.log
