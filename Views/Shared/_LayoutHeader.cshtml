@@ -1,0 +1,19 @@
+﻿<nav class="fixed top-0 w-full z-50 liquid-glass transition-all duration-300">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold tracking-tighter">
+            SHOES<span class="text-gray-400">STORE</span>
+        </a>
+        <div class="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-wide">
+            <a asp-controller="Home" asp-action="Index" class="hover:text-gray-500 transition">Trang chủ</a>
+            <a asp-controller="SanPham" asp-action="Index" class="hover:text-gray-500 transition">Sản Phẩm</a>
+        </div>
+        <div class="flex items-center space-x-4">
+            <a asp-controller="GioHang" asp-action="Index" class="relative p-2 hover:bg-gray-200 rounded-full transition">
+                <i class="ph ph-shopping-cart text-xl"></i>
+                <span class="absolute top-0 right-0 h-4 w-4 bg-black text-white text-[10px] flex items-center justify-center rounded-full">0</span>
+            </a>
+            <a href="#" class="hidden md:block px-5 py-2 text-sm font-semibold rounded-full border border-gray-300 hover:bg-black hover:text-white transition">Đăng nhập</a>
+            <a href="#" class="hidden md:block px-5 py-2 text-sm font-semibold rounded-full border border-gray-300 hover:bg-black hover:text-white transition">Đăng ký</a>
+        </div>
+    </div>
+</nav>

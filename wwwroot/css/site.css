@@ -1,22 +1,135 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+﻿/* =========================================
+   1. GLOBAL SETTINGS & FONTS
+   ========================================= */
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
+    /* Giữ màu nền mặc định của Tailwind hoặc set cứng ở đây */
+    background-color: #f9fafb; /* bg-gray-50 */
+    color: #111827; /* text-gray-900 */
+}
+
+/* Hiệu ứng chuyển động mượt mà cho toàn bộ web */
+* {
+    transition: all 0.3s ease;
+}
+
+/* =========================================
+   2. LIQUID GLASS EFFECT (Hiệu ứng kính)
+   ========================================= */
+.liquid-glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.input-glass {
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(209, 213, 219, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+    .input-glass:focus {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: black;
+        outline: none;
+    }
+
+/* =========================================
+   3. ANIMATIONS (Hiệu ứng động)
+   ========================================= */
+/* Fade In (Dùng cho Products, Detail) */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scale In (Dùng cho Modal Checkout) */
+.modal-animate {
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* =========================================
+   4. UTILITIES (Tiện ích bổ sung)
+   ========================================= */
+
+/* Tùy chỉnh thanh cuộn (Scrollbar) - Dùng cho Cart, Detail */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(0,0,0,0.4);
+    }
+
+/* Ẩn thanh cuộn nhưng vẫn cuộn được */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Active State cho Thumbnail ảnh (Detail Page) */
+.thumb-active {
+    border-color: black !important;
+    opacity: 1 !important;
+}
+
+/* Tùy chỉnh icon mũi tên cho thẻ Select (Products Page) */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+}
+
+/* Modal Overlay (Cart Page) */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+}
+
+/* Class ẩn dùng cho phân trang JS */
+.hidden-item {
+    display: none !important;
 }

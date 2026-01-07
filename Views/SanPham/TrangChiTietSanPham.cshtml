@@ -1,0 +1,276 @@
+﻿@section Scripts{
+<script>
+    // --- DATA ---
+    const productData = {
+        white: [
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80"
+        ],
+        black: [
+            "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?auto=format&fit=crop&w=800&q=80"
+        ]
+    };
+
+    const reviewsData = [
+        { username: "Nguyễn Văn Tuấn", avatarColor: "bg-blue-100 text-blue-600", rating: 5, date: "20/10/2025", content: "Giày đi rất êm, đúng size. Giao hàng nhanh đóng gói cẩn thận." },
+        { username: "Trần Thị Mai", avatarColor: "bg-pink-100 text-pink-600", rating: 4, date: "18/10/2025", content: "Màu trắng ở ngoài đẹp hơn trong ảnh. Tuy nhiên hộp hơi móp." },
+        { username: "Lê Hoàng Nam", avatarColor: "bg-green-100 text-green-600", rating: 5, date: "15/10/2025", content: "Chất lượng tuyệt vời so với giá tiền." },
+        { username: "Phạm Đức Thắng", avatarColor: "bg-gray-100 text-gray-600", rating: 3, date: "10/10/2025", content: "Giao hàng hơi lâu." },
+        { username: "Võ Ngọc Anh", avatarColor: "bg-purple-100 text-purple-600", rating: 5, date: "05/10/2025", content: "Rất hài lòng về cách phục vụ." }
+    ];
+
+    // Cập nhật: Thêm trường 'brand' để giống với cấu trúc trang Products
+    const relatedProducts = [
+        { name: "Nike Air Zoom Alphafly", price: 4500000, category: "Running", brand: "Nike", image: "https://images.unsplash.com/photo-1556906781-9a412961d28c?auto=format&fit=crop&w=600&q=80" },
+        { name: "Adidas Ultraboost 22", price: 4100000, category: "Running", brand: "Adidas", image: "https://images.unsplash.com/photo-1587563871167-1ee9c731aef4?auto=format&fit=crop&w=600&q=80" },
+        { name: "Puma Nitro Deviate", price: 3200000, category: "Training", brand: "Puma", image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80" },
+        { name: "New Balance FuelCell", price: 3800000, category: "Running", brand: "NB", image: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80" }
+    ];
+
+    // --- DOM ELEMENTS ---
+    const mainImage = document.getElementById('main-image');
+    const galleryThumbs = document.getElementById('gallery-thumbs');
+    const colorBtnWhite = document.getElementById('color-white');
+    const colorBtnBlack = document.getElementById('color-black');
+    const reviewContainer = document.getElementById('review-container');
+    const sizeBtns = document.querySelectorAll('.size-btn');
+    const relatedContainer = document.getElementById('related-products-grid');
+
+    function init() {
+        switchColor('white');
+        renderReviews();
+        initSizeSelection();
+        renderRelatedProducts();
+    }
+
+    // --- LOGIC RENDER SẢN PHẨM LIÊN QUAN (GIỐNG TRANG PRODUCT) ---
+    function renderRelatedProducts() {
+        let html = '';
+        relatedProducts.forEach(product => {
+            html += `
+            <div class="group flex flex-col fade-in cursor-pointer">
+                <div class="w-full aspect-[4/5] bg-gray-100 rounded-2xl overflow-hidden relative liquid-glass">
+                    <img src="${product.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+
+                    <div class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                        ${product.brand}
+                    </div>
+
+                    <div class="absolute bottom-4 right-4 translate-y-full group-hover:translate-y-0 transition duration-300">
+                        <button class="bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-black hover:text-white transition">
+                            <i class="ph ph-shopping-bag text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 px-2">
+                    <a href="detail.html" class="block">
+                        <h3 class="text-base font-bold text-gray-900 group-hover:text-gray-600 transition cursor-pointer line-clamp-1">${product.name}</h3>
+                    </a>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mt-1">${product.category}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="font-bold text-black">${product.price.toLocaleString('vi-VN')} ₫</span>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+        relatedContainer.innerHTML = html;
+    }
+
+    // --- CÁC HÀM CŨ ---
+    function initSizeSelection() {
+        sizeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.hasAttribute('disabled')) return;
+                sizeBtns.forEach(b => {
+                    if (!b.hasAttribute('disabled')) {
+                        b.className = "size-btn border border-gray-300 rounded-xl h-12 flex items-center justify-center font-bold text-sm hover:border-black hover:bg-black hover:text-white transition cursor-pointer";
+                    }
+                });
+                this.className = "size-btn border border-black bg-black text-white rounded-xl h-12 flex items-center justify-center font-bold text-sm transform scale-105 transition shadow-lg cursor-pointer";
+                document.getElementById('selected-size-display').innerText = `(Size ${this.innerText})`;
+            });
+        });
+    }
+
+    function switchColor(color) {
+        const images = productData[color];
+        updateMainImage(images[0]);
+        galleryThumbs.innerHTML = '';
+        images.forEach((imgSrc, index) => {
+            const thumbDiv = document.createElement('div');
+            thumbDiv.className = `aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition ${index === 0 ? 'border-black' : 'border-transparent hover:border-gray-300'}`;
+            thumbDiv.onclick = function() {
+                updateMainImage(imgSrc);
+                Array.from(galleryThumbs.children).forEach(child => {
+                    child.classList.remove('border-black');
+                    child.classList.add('border-transparent');
+                });
+                this.classList.remove('border-transparent');
+                this.classList.add('border-black');
+            };
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.className = "w-full h-full object-cover";
+            thumbDiv.appendChild(img);
+            galleryThumbs.appendChild(thumbDiv);
+        });
+        if (color === 'white') {
+            colorBtnWhite.classList.add('border-black');
+            colorBtnWhite.classList.remove('border-transparent');
+            colorBtnBlack.classList.remove('border-black');
+            colorBtnBlack.classList.add('border-transparent');
+        } else {
+            colorBtnBlack.classList.add('border-black');
+            colorBtnBlack.classList.remove('border-transparent');
+            colorBtnWhite.classList.remove('border-black');
+            colorBtnWhite.classList.add('border-transparent');
+        }
+    }
+
+    function updateMainImage(src) {
+        mainImage.style.opacity = '0';
+        setTimeout(() => {
+            mainImage.src = src;
+            mainImage.style.opacity = '1';
+        }, 150);
+    }
+
+    function renderReviews() {
+        let html = '';
+        reviewsData.forEach(review => {
+            let starsHtml = '';
+            for(let i=1; i<=5; i++) {
+                starsHtml += i <= review.rating ? '<i class="ph-fill ph-star text-yellow-400 text-sm"></i>' : '<i class="ph ph-star text-gray-300 text-sm"></i>';
+            }
+            const initials = review.username.split(' ').pop().charAt(0);
+            html += `
+            <div class="flex gap-4 p-4 border-b border-gray-100 last:border-0 hover:bg-white/40 rounded-2xl transition">
+                <div class="w-12 h-12 rounded-full ${review.avatarColor} flex items-center justify-center font-bold text-lg flex-shrink-0">${initials}</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-900">${review.username}</h4>
+                            <div class="flex items-center gap-2 mt-1 mb-2"><div class="flex gap-0.5">${starsHtml}</div></div>
+                        </div>
+                        <span class="text-xs text-gray-400">${review.date}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed bg-white/50 p-3 rounded-xl rounded-tl-none inline-block">${review.content}</p>
+                </div>
+            </div>`;
+        });
+        reviewContainer.innerHTML = html;
+    }
+
+    init();
+</script>
+}
+
+<main class="container mx-auto px-6 py-12 mt-20">
+    <div class="text-sm text-gray-500 mb-8">
+        <a href="index.html" class="hover:text-black">Trang chủ</a> /
+        <a href="products.html" class="hover:text-black">Sản phẩm</a> /
+        <span class="text-black font-medium">Nike Air Zoom Pegasus 39</span>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-12 items-start mb-16">
+
+        <div class="w-full lg:w-3/5 flex gap-4 h-[500px] md:h-[600px]">
+            <div id="gallery-thumbs" class="hidden lg:flex flex-col gap-4 w-24 overflow-y-auto no-scrollbar py-1"></div>
+            <div class="flex-1 liquid-glass p-4 rounded-3xl overflow-hidden relative h-full flex items-center justify-center bg-white/40">
+                <img id="main-image" src="" alt="Main Product" class="w-full h-full object-cover rounded-2xl cursor-zoom-in transition-opacity duration-300">
+            </div>
+        </div>
+
+        <div class="w-full lg:w-2/5 space-y-8 liquid-glass p-8 rounded-3xl sticky top-24">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">Nike Air Zoom Pegasus 39</h1>
+                <p class="text-gray-500 text-lg mt-1">Giày Chạy Bộ Nam</p>
+                <p class="text-3xl font-bold text-black mt-6">3.527.199 ₫</p>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-base mb-3">Chọn Màu Sắc</h3>
+                <div class="flex gap-4">
+                    <div id="color-white" onclick="switchColor('white')" class="w-20 h-20 rounded-xl border-2 border-transparent p-1 cursor-pointer transition hover:border-gray-400">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-lg">
+                    </div>
+                    <div id="color-black" onclick="switchColor('black')" class="w-20 h-20 rounded-xl border-2 border-transparent p-1 cursor-pointer transition hover:border-gray-400">
+                        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-base">Chọn Size <span id="selected-size-display" class="font-normal text-gray-500 ml-2"></span></h3>
+                </div>
+                <div class="grid grid-cols-3 gap-3" id="size-container">
+                    <button class="size-btn border border-gray-300 rounded-xl h-12 flex items-center justify-center font-bold text-sm hover:border-black hover:bg-black hover:text-white transition">38</button>
+                    <button class="size-btn border border-gray-300 rounded-xl h-12 flex items-center justify-center font-bold text-sm hover:border-black hover:bg-black hover:text-white transition">39</button>
+                    <button class="size-btn border border-black bg-black text-white rounded-xl h-12 flex items-center justify-center font-bold text-sm">40</button>
+                    <button class="size-btn border border-gray-300 rounded-xl h-12 flex items-center justify-center font-bold text-sm hover:border-black hover:bg-black hover:text-white transition">41</button>
+                    <button class="size-btn border border-gray-300 rounded-xl h-12 flex items-center justify-center font-bold text-sm hover:border-black hover:bg-black hover:text-white transition">42</button>
+                    <button class="size-btn border border-gray-200 text-gray-400 bg-gray-50 rounded-xl h-12 flex items-center justify-center font-bold text-sm cursor-not-allowed" disabled>43</button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4 pt-4">
+                <button class="w-full py-4 border-2 border-black text-black font-bold rounded-full hover:bg-black hover:text-white transition flex items-center justify-center gap-2 transform active:scale-95">
+                    <i class="ph ph-shopping-bag text-xl"></i> Thêm vào giỏ hàng
+                </button>
+                <button class="w-full py-4 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition transform active:scale-95 shadow-lg">
+                    Mua ngay
+                </button>
+            </div>
+
+            <div class="pt-6 border-t border-gray-200 space-y-4">
+                <div class="group">
+                    <h3 class="font-bold text-base flex justify-between items-center cursor-pointer">
+                        Mô tả sản phẩm <i class="ph ph-caret-down"></i>
+                    </h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mt-2">
+                        Nike Air Zoom Pegasus 39 mang lại cảm giác tràn đầy năng lượng cho từng bước chạy. Thiết kế nhẹ ở phần trên giúp thoáng khí.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="liquid-glass p-8 rounded-3xl mt-12 w-full max-w-5xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold">Đánh giá sản phẩm</h2>
+                <div class="flex items-center gap-2 mt-2">
+                    <div class="flex text-yellow-400 text-xl">
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star-half"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600">(4.8/5 dựa trên 125 đánh giá)</span>
+                </div>
+            </div>
+            <button class="px-6 py-2 border border-black rounded-full hover:bg-black hover:text-white transition text-sm font-bold">Viết bình luận</button>
+        </div>
+        <div id="review-container" class="space-y-6 max-h-[500px] overflow-y-auto custom-scrollbar pr-2"></div>
+    </div>
+
+    <div class="mt-16 w-full max-w-6xl mx-auto pb-12">
+        <div class="flex justify-between items-end mb-8 px-2">
+            <h2 class="text-2xl font-bold">Sản phẩm liên quan</h2>
+            <a href="products.html" class="text-sm underline hover:text-gray-500">Xem tất cả</a>
+        </div>
+
+        <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        </div>
+    </div>
+
+</main>

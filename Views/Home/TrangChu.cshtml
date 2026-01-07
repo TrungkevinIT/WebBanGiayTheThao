@@ -1,0 +1,161 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+@section Scripts {
+    <script>
+        const slideData = [
+            { img: "https://images.unsplash.com/photo-1556906781-9a412961d28c?auto=format&fit=crop&w=1600&q=80", link: "#", alt: "Giày chạy bộ" },
+            { img: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1600&q=80", link: "#", alt: "Giày đá bóng" },
+            { img: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=1600&q=80", link: "#", alt: "Giày thời trang" }
+        ];
+
+        let currentSlide = 0;
+        const sliderContainer = document.getElementById('slider-container');
+        const heroBtn = document.getElementById('hero-btn');
+
+        function initSlider() {
+            if(!sliderContainer) return;
+            sliderContainer.innerHTML = '';
+            slideData.forEach((slide, index) => {
+                const imgEl = document.createElement('img');
+                imgEl.src = slide.img;
+                imgEl.alt = slide.alt;
+                imgEl.className = `absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
+                imgEl.id = `slide-${index}`;
+                sliderContainer.appendChild(imgEl);
+            });
+        }
+
+        function nextSlide() {
+            if(!sliderContainer) return;
+            const currentEl = document.getElementById(`slide-${currentSlide}`);
+            if(currentEl) {
+                currentEl.classList.remove('opacity-100');
+                currentEl.classList.add('opacity-0');
+            }
+
+            currentSlide = (currentSlide + 1) % slideData.length;
+
+            const nextEl = document.getElementById(`slide-${currentSlide}`);
+            if(nextEl) {
+                nextEl.classList.remove('opacity-0');
+                nextEl.classList.add('opacity-100');
+            }
+            if(heroBtn) heroBtn.href = slideData[currentSlide].link;
+        }
+
+        initSlider();
+        setInterval(nextSlide, 3000);
+    </script>
+}
+
+<header class="relative w-full h-[600px] overflow-hidden flex items-center justify-center -mt-6">
+    <div id="slider-container" class="absolute inset-0 w-full h-full">
+    </div>
+
+    <div class="relative z-10 text-center px-4">
+        <h1 class="text-5xl md:text-7xl font-bold mb-4 drop-shadow-lg text-white">
+            JUST DO IT.
+        </h1>
+        <p class="text-xl text-gray-200 mb-8 font-light">Bộ sưu tập mùa hè 2026</p>
+
+        <a id="hero-btn" href="#" class="px-8 py-3 bg-white/20 backdrop-blur-md border border-white text-white rounded-full font-bold hover:bg-white hover:text-black transition transform hover:scale-105">
+            XEM SẢN PHẨM
+        </a>
+    </div>
+    <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-gray-50 to-transparent z-0"></div>
+</header>
+
+<main class="container mx-auto px-6 py-12 space-y-20">
+
+    <section>
+        <h2 class="text-3xl font-bold mb-8 text-center">Danh Mục Nổi Bật</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="group relative h-64 rounded-3xl overflow-hidden cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Running">
+                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition flex items-center justify-center">
+                    <h3 class="text-2xl font-bold text-white tracking-wider border-b-2 border-transparent group-hover:border-white transition-all pb-1">RUNNING</h3>
+                </div>
+            </div>
+
+            <div class="group relative h-64 rounded-3xl overflow-hidden cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Training">
+                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition flex items-center justify-center">
+                    <h3 class="text-2xl font-bold text-white tracking-wider border-b-2 border-transparent group-hover:border-white transition-all pb-1">TRAINING</h3>
+                </div>
+            </div>
+
+            <div class="group relative h-64 rounded-3xl overflow-hidden cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Lifestyle">
+                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition flex items-center justify-center">
+                    <h3 class="text-2xl font-bold text-white tracking-wider border-b-2 border-transparent group-hover:border-white transition-all pb-1">LIFESTYLE</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="flex justify-between items-end mb-8">
+            <h2 class="text-3xl font-bold">Bán Chạy Nhất</h2>
+            <a href="#" class="text-sm underline hover:text-gray-500">Xem tất cả</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="group relative">
+                <div class="w-full h-80 bg-gray-200 rounded-3xl overflow-hidden relative liquid-glass">
+                    <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <button class="absolute bottom-4 right-4 bg-white text-black p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                        <i class="ph ph-plus font-bold"></i>
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold">Nike Air Green</h3>
+                    <p class="text-gray-500">Giày chạy bộ</p>
+                    <p class="mt-1 font-bold text-black">3.500.000 ₫</p>
+                </div>
+            </div>
+
+            <div class="group relative">
+                <div class="w-full h-80 bg-gray-200 rounded-3xl overflow-hidden relative liquid-glass">
+                    <img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?auto=format&fit=crop&w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <button class="absolute bottom-4 right-4 bg-white text-black p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                        <i class="ph ph-plus font-bold"></i>
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold">Nike Air Max</h3>
+                    <p class="text-gray-500">Thể thao hàng ngày</p>
+                    <p class="mt-1 font-bold text-black">4.200.000 ₫</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-10 border-t border-gray-200">
+        <h2 class="text-3xl font-bold mb-8 text-center">Sản Phẩm Mới</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div class="relative rounded-3xl overflow-hidden h-96 group liquid-glass">
+                <img src="https://images.unsplash.com/photo-1556906781-9a412961d28c?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                    <h3 class="text-2xl text-white font-bold">Urban Street V1</h3>
+                    <p class="text-gray-300 mb-4">Thiết kế đột phá cho đường phố.</p>
+                    <a href="#" class="inline-block w-max text-white border-b border-white pb-1">Mua ngay &rarr;</a>
+                </div>
+            </div>
+
+            <div class="relative rounded-3xl overflow-hidden h-96 group liquid-glass">
+                <img src="https://images.unsplash.com/photo-1512374382149-233c42b6a83b?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                    <h3 class="text-2xl text-white font-bold">Court Legacy</h3>
+                    <p class="text-gray-300 mb-4">Huyền thoại trở lại.</p>
+                    <a href="#" class="inline-block w-max text-white border-b border-white pb-1">Mua ngay &rarr;</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+
