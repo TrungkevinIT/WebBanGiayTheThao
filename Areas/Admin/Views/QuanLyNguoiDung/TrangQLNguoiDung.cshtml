@@ -1,3 +1,157 @@
 ﻿@{
 	Layout = "_LayoutAdmin";
 }
+<div class="container-fluid pt-4 px-4">
+
+    <h4 class="fw-bold mb-4">Quản lý tài khoản người dùng</h4>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Họ và tên</th>
+                        <th>SĐT</th>
+                        <th>Email</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td class="fw-semibold">nguyenvana</td>
+                        <td>******</td>
+                        <td>Nguyễn Văn A</td>
+                        <td>0912345678</td>
+                        <td>vana@gmail.com</td>
+                        <td>Hà Nội</td>
+                        <td><span class="badge bg-success">Hoạt động</span></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#changeStatusModal"
+                                    data-userid="1"
+                                    data-username="nguyenvana"
+                                    data-islocked="False">
+                                Khóa
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>2</td>
+                        <td class="fw-semibold">spam_user</td>
+                        <td>******</td>
+                        <td>Trần Spam</td>
+                        <td>0999888777</td>
+                        <td>spam@yahoo.com</td>
+                        <td>TP.HCM</td>
+                        <td><span class="badge bg-secondary">Bị khóa</span></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-success"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#changeStatusModal"
+                                    data-userid="2"
+                                    data-username="spam_user"
+                                    data-islocked="True">
+                                Mở khóa
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>3</td>
+                        <td class="fw-semibold">lethic</td>
+                        <td>******</td>
+                        <td>Lê Thị C</td>
+                        <td>0333444555</td>
+                        <td>lethic@outlook.com</td>
+                        <td>Đà Nẵng</td>
+                        <td><span class="badge bg-success">Hoạt động</span></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#changeStatusModal"
+                                    data-userid="3"
+                                    data-username="lethic"
+                                    data-islocked="False">
+                                Khóa
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="changeStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Xác nhận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form action="#" onsubmit="alert('Đây là giao diện tĩnh, chưa có xử lý!'); return false;">
+                <div class="modal-body">
+                    <input type="hidden" id="modalUserId" />
+                    <input type="hidden" id="modalIsLocked" />
+
+                    <p id="modalMessage">Nội dung xác nhận...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="modalConfirmBtn">Đồng ý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var modal = document.getElementById('changeStatusModal');
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            // Lấy nút vừa bấm
+            var button = event.relatedTarget;
+
+            // Lấy dữ liệu cứng từ nút đó
+            var userId = button.getAttribute('data-userid');
+            var username = button.getAttribute('data-username');
+            var isLocked = button.getAttribute('data-islocked') === "True";
+
+            // Gán vào input ẩn (để chơi thôi)
+            document.getElementById('modalUserId').value = userId;
+
+            // Logic đổi chữ trên Modal
+            if (isLocked) {
+                // Nếu đang khóa -> Hiện modal mở khóa
+                document.getElementById('modalTitle').innerText = "Xác nhận mở khóa";
+                document.getElementById('modalMessage').innerText = "Bạn muốn mở khóa cho: " + username + "?";
+
+                var btn = document.getElementById('modalConfirmBtn');
+                btn.className = "btn btn-success";
+                btn.innerText = "Mở khóa ngay";
+            } else {
+                // Nếu đang mở -> Hiện modal khóa
+                document.getElementById('modalTitle').innerText = "Xác nhận khóa";
+                document.getElementById('modalMessage').innerText = "Bạn muốn khóa tài khoản: " + username + "?";
+
+                var btn = document.getElementById('modalConfirmBtn');
+                btn.className = "btn btn-danger";
+                btn.innerText = "Khóa tài khoản";
+            }
+        });
+    </script>
+}

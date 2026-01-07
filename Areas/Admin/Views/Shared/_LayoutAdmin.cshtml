@@ -22,34 +22,37 @@
 
         <div class="sidebar pe-4 pb-3">
             <nav class="navbar bg-light navbar-light">
-                <a href="/Admin/Home" class="navbar-brand mx-4 mb-3">
+                <a asp-controller="QuanLySanPham" asp-action="TrangQLSanPham" class="navbar-brand mx-4 mb-3">
                     <h3 class="text-primary">DASHMIN</h3>
                 </a>
 
                 <div class="navbar-nav w-100">
 
                     <a asp-area="Admin" asp-controller="QuanLySanPham" asp-action="TrangQLSanPham" class="nav-item nav-link">
-                        <i class="fa fa-laptop me-2"></i>Sản Phẩm
+                        <i class="fa fa-laptop me-2"></i>QL Sản Phẩm
                     </a>
 
-                    <a asp-area="Admin" asp-controller="LoaiSanPham" asp-action="Index" class="nav-item nav-link">
-                        <i class="fa fa-th me-2"></i>Loại SP
+                    <a asp-area="Admin" asp-controller="QuanLyLoaiSanPham" asp-action="TrangQLLoaiSanPham" class="nav-item nav-link">
+                        <i class="fa fa-th me-2"></i>QL Loại SP
                     </a>
 
-                    <a asp-area="Admin" asp-controller="ThuongHieu" asp-action="Index" class="nav-item nav-link">
-                        <i class="fa fa-keyboard me-2"></i>Thương Hiệu
+                    <a asp-area="Admin" asp-controller="QuanLyThuongHieu" asp-action="TrangQLThuongHieu" class="nav-item nav-link">
+                        <i class="fa fa-keyboard me-2"></i>QL Thương Hiệu
                     </a>
 
-                    <a asp-area="Admin" asp-controller="User" asp-action="Index" class="nav-item nav-link">
-                        <i class="fa fa-user me-2"></i>Người dùng
+                    <a asp-area="Admin" asp-controller="QuanLyNguoiDung" asp-action="TrangQLNguoiDung" class="nav-item nav-link">
+                        <i class="fa fa-user me-2"></i>QL Người dùng
                     </a>
 
-                    <a asp-area="Admin" asp-controller="HoaDon" asp-action="Index" class="nav-item nav-link">
-                        <i class="fa fa-table me-2"></i>Hóa Đơn
+                    <a asp-area="Admin" asp-controller="QuanLyDonHang" asp-action="TrangQLDonHang" class="nav-item nav-link">
+                        <i class="fa fa-table me-2"></i>QL Đơn Hàng
                     </a>
-
-                    <a href="#" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Voucher</a>
-                    <a href="#" class="nav-item nav-link"><i class="fa fa-images me-2"></i>SlideShow</a>
+                    <a asp-area="Admin" asp-controller="QuanLyVoucher" asp-action="TrangQLVoucher" class="nav-item nav-link">
+                        <i class="fa fa-chart-bar me-2"></i>QL Voucher
+                    </a>
+                    <a asp-area="Admin" asp-controller="QuanLySlideShow" asp-action="TrangQLSlideShow" class="nav-item nav-link">
+                        <i class="fa fa-images me-2"></i>QL SlideShow
+                    </a>
                 </div>
             </nav>
         </div>
@@ -62,7 +65,7 @@
 
                 <div class="navbar-nav align-items-center ms-auto">
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <a asp-controller="QuanLySanPham" asp-action="TrangQLSanPham" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <span class="d-none d-lg-inline-flex">Admin User</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
@@ -79,7 +82,7 @@
                 <div class="bg-light rounded-top p-4">
                     <div class="row">
                         <div class="col-12 col-sm-6 text-center text-sm-start">
-                            &copy; <a href="#">Your Site Name</a>, All Right Reserved.
+                            &copy; Your Site Name, All Right Reserved.
                         </div>
                     </div>
                 </div>
