@@ -1,7 +1,11 @@
-﻿@{
-	Layout = "_LayoutAdmin";
+﻿@model IEnumerable<WebBanGiayTheThao.Models.User>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý tài khoản người dùng";
 }
-<div class="container-fluid pt-4 px-4">
+
+<div class="container-fluid">
 
     <h4 class="fw-bold mb-4">Quản lý tài khoản người dùng</h4>
 
@@ -24,68 +28,51 @@
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td class="fw-semibold">nguyenvana</td>
-                        <td>******</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>0912345678</td>
-                        <td>vana@gmail.com</td>
-                        <td>Hà Nội</td>
-                        <td><span class="badge bg-success">Hoạt động</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#changeStatusModal"
-                                    data-userid="1"
-                                    data-username="nguyenvana"
-                                    data-islocked="False">
-                                Khóa
-                            </button>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var u in Model)
+                        {
+                            <tr>
+                                <td>@u.Id</td>
+                                <td class="fw-semibold">@u.Username</td>
+                                <td>******</td>
+                                <td>@u.HoTen</td>
+                                <td>@u.Sdt</td>
+                                <td>@u.Email</td>
+                                <td>@u.DiaChi</td>
 
-                    <tr>
-                        <td>2</td>
-                        <td class="fw-semibold">spam_user</td>
-                        <td>******</td>
-                        <td>Trần Spam</td>
-                        <td>0999888777</td>
-                        <td>spam@yahoo.com</td>
-                        <td>TP.HCM</td>
-                        <td><span class="badge bg-secondary">Bị khóa</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-success"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#changeStatusModal"
-                                    data-userid="2"
-                                    data-username="spam_user"
-                                    data-islocked="True">
-                                Mở khóa
-                            </button>
-                        </td>
-                    </tr>
+                                <td>
+                                    @if (u.TrangThai == 0)
+                                    {
+                                        <span class="badge bg-secondary">Bị khóa</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                </td>
 
-                    <tr>
-                        <td>3</td>
-                        <td class="fw-semibold">lethic</td>
-                        <td>******</td>
-                        <td>Lê Thị C</td>
-                        <td>0333444555</td>
-                        <td>lethic@outlook.com</td>
-                        <td>Đà Nẵng</td>
-                        <td><span class="badge bg-success">Hoạt động</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#changeStatusModal"
-                                    data-userid="3"
-                                    data-username="lethic"
-                                    data-islocked="False">
-                                Khóa
-                            </button>
-                        </td>
-                    </tr>
+                                <td class="text-center">
+                                    <button class="btn btn-sm @(u.TrangThai == 0 ? "btn-success" : "btn-danger")"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#changeStatusModal"
+                                            data-userid="@u.Id"
+                                            data-username="@u.Username"
+                                            data-trangthai="@u.TrangThai">
+                                        @(u.TrangThai == 0 ? "Mở khóa" : "Khóa")
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted">
+                                Chưa có người dùng
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
 
@@ -94,64 +81,35 @@
 
 </div>
 
-<div class="modal fade" id="changeStatusModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Xác nhận</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+@Html.Partial("_ThayDoiTrangThaiNguoiDungModal")
 
-            <form action="#" onsubmit="alert('Đây là giao diện tĩnh, chưa có xử lý!'); return false;">
-                <div class="modal-body">
-                    <input type="hidden" id="modalUserId" />
-                    <input type="hidden" id="modalIsLocked" />
+<script>
+    var modal = document.getElementById('changeStatusModal');
 
-                    <p id="modalMessage">Nội dung xác nhận...</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary" id="modalConfirmBtn">Đồng ý</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    modal.addEventListener('show.bs.modal', function (event) {
 
-@section Scripts {
-    <script>
-        var modal = document.getElementById('changeStatusModal');
+        var button = event.relatedTarget;
 
-        modal.addEventListener('show.bs.modal', function (event) {
-            // Lấy nút vừa bấm
-            var button = event.relatedTarget;
+        var userId = button.getAttribute('data-userid');
+        var username = button.getAttribute('data-username');
+        var trangThai = button.getAttribute('data-trangthai');
 
-            // Lấy dữ liệu cứng từ nút đó
-            var userId = button.getAttribute('data-userid');
-            var username = button.getAttribute('data-username');
-            var isLocked = button.getAttribute('data-islocked') === "True";
+        document.getElementById('modalUserId').value = userId;
 
-            // Gán vào input ẩn (để chơi thôi)
-            document.getElementById('modalUserId').value = userId;
+        // Đang hoạt động (1) → khóa (0)
+        document.getElementById('modalTrangThai').value =
+            trangThai == "1" ? 0 : 1;
 
-            // Logic đổi chữ trên Modal
-            if (isLocked) {
-                // Nếu đang khóa -> Hiện modal mở khóa
-                document.getElementById('modalTitle').innerText = "Xác nhận mở khóa";
-                document.getElementById('modalMessage').innerText = "Bạn muốn mở khóa cho: " + username + "?";
-
-                var btn = document.getElementById('modalConfirmBtn');
-                btn.className = "btn btn-success";
-                btn.innerText = "Mở khóa ngay";
-            } else {
-                // Nếu đang mở -> Hiện modal khóa
-                document.getElementById('modalTitle').innerText = "Xác nhận khóa";
-                document.getElementById('modalMessage').innerText = "Bạn muốn khóa tài khoản: " + username + "?";
-
-                var btn = document.getElementById('modalConfirmBtn');
-                btn.className = "btn btn-danger";
-                btn.innerText = "Khóa tài khoản";
-            }
-        });
-    </script>
-}
+        if (trangThai == "0") {
+            document.getElementById('modalTitle').innerText = "Xác nhận mở khóa";
+            document.getElementById('modalMessage').innerText =
+                `Bạn có chắc muốn mở khóa tài khoản "${username}"?`;
+            document.getElementById('modalConfirmBtn').className = "btn btn-success";
+        } else {
+            document.getElementById('modalTitle').innerText = "Xác nhận khóa";
+            document.getElementById('modalMessage').innerText =
+                `Bạn có chắc muốn khóa tài khoản "${username}"?`;
+            document.getElementById('modalConfirmBtn').className = "btn btn-danger";
+        }
+    });
+</script>
