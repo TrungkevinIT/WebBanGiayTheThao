@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebBanGiayTheThao.Services.SanPham;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
@@ -12,10 +13,10 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             _sevice = sevice;
         }
 
-        public IActionResult TrangQLSanPham(string? search,int? thuongHieuId,int? loaiId,string? sortOrder,int page = 1)
+        public async Task<IActionResult> TrangQLSanPham(string? search,int? thuongHieuId,int? loaiId,string? sortOrder,int page = 1)
         {
             int pagesize = 10;
-            var sp = _sevice.LoadDSSanPham(search, thuongHieuId, loaiId, sortOrder, page, pagesize);
+            var sp = await _sevice.LoadDSSanPham(search, thuongHieuId, loaiId, sortOrder, page, pagesize);
             int totalPages = (int)Math.Ceiling((double)sp.totalCount / pagesize);
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;

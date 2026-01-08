@@ -3,7 +3,7 @@ namespace WebBanGiayTheThao.Services.SanPham
 {
     public interface ISanPhamSevice
     {
-        (IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount) LoadDSSanPham(
+        Task<(IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
          string? search,
          int? loaispid,
          int? thuonghieuid,

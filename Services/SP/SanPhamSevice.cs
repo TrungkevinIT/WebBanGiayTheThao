@@ -12,7 +12,7 @@ namespace WebBanGiayTheThao.Services.SanPham
             _context = context;
         }
 
-        public (IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount) LoadDSSanPham(
+        public async Task<(IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
          string? search,int? loaispid,int? thuonghieuid,string? gia,int page,int pagesize
          )
         {
@@ -39,11 +39,11 @@ namespace WebBanGiayTheThao.Services.SanPham
                 default: query = query.OrderByDescending(sp => sp.Id); break;
             }
 
-            int totalCount = query.Count();
+            int totalCount = await query.CountAsync();
 
-            var items = query.Skip((page - 1) * pagesize)
+            var items =await query.Skip((page - 1) * pagesize)
                              .Take(pagesize)
-                             .ToList();
+                             .ToListAsync();
             return (items, totalCount);
         }
     }
