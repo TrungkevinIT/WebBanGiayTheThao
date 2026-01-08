@@ -1,4 +1,5 @@
-﻿using WebBanGiayTheThao.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
 
 namespace WebBanGiayTheThao.Services
@@ -12,7 +13,11 @@ namespace WebBanGiayTheThao.Services
             _context = context;
         }
 
-        public List<User> GetUsers(string? sdt, int page, int pageSize, out int totalUsers)
+        public async Task<(List<User> Users, int TotalUsers)> GetUsersAsync(
+            string? sdt,
+            int page,
+            int pageSize
+        )
         {
             var query = _context.Users.AsQueryable();
 
@@ -22,33 +27,32 @@ namespace WebBanGiayTheThao.Services
                 query = query.Where(u => u.Sdt.Contains(sdt));
             }
 
-            totalUsers = query.Count();
+            var totalUsers = await query.CountAsync();
 
-            return query
+            var users = await query
                 .OrderByDescending(u => u.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .ToListAsync();
+
+            return (users, totalUsers);
         }
 
-        public bool ChangeUserStatus(int userId, int trangThai, out string message)
+        public async Task<string> ChangeUserStatusAsync(int userId, int trangThai)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
             {
-                message = "Không tìm thấy người dùng";
-                return false;
+                return "Không tìm thấy người dùng";
             }
 
             user.TrangThai = trangThai;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            message = trangThai == 1
+            return trangThai == 1
                 ? "Mở khóa tài khoản thành công"
                 : "Khóa tài khoản thành công";
-
-            return true;
         }
     }
 }

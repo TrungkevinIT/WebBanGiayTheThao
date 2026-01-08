@@ -15,21 +15,21 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             _userService = userService;
         }
 
-        public IActionResult TrangQLNguoiDung(string? sdt, int page = 1)
+        // GET: Admin/QuanLyNguoiDung
+        public async Task<IActionResult> TrangQLNguoiDung(string? sdt, int page = 1)
         {
-            var users = _userService.GetUsers(
+            var result = await _userService.GetUsersAsync(
                 sdt,
                 page,
-                PAGE_SIZE,
-                out int totalUsers
+                PAGE_SIZE
             );
 
             var vm = new UserIndexVM
             {
-                Users = users,
+                Users = result.Users,
                 Sdt = sdt,
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)totalUsers / PAGE_SIZE)
+                TotalPages = (int)Math.Ceiling((double)result.TotalUsers / PAGE_SIZE)
             };
 
             return View(vm);
@@ -37,10 +37,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ChangeStatus(int userId, int trangThai)
+        public async Task<IActionResult> ChangeStatus(int userId, int trangThai)
         {
-            _userService.ChangeUserStatus(userId, trangThai, out string message);
+            var message = await _userService.ChangeUserStatusAsync(userId, trangThai);
             TempData["Success"] = message;
+
             return RedirectToAction(nameof(TrangQLNguoiDung));
         }
     }
