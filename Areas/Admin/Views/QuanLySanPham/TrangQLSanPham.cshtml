@@ -3,7 +3,8 @@
 
 @{
     Layout = "_LayoutAdmin";
-    
+
+    // Lấy thông tin phân trang cơ bản
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
     int pageSize = ViewBag.PageSize ?? 10;
@@ -15,7 +16,6 @@
             <h6 class="mb-0">Bộ lọc & Tìm kiếm</h6>
             <a asp-action="ThemSanPham" class="btn btn-sm btn-success"><i class="fa fa-plus me-1"></i> Thêm mới</a>
         </div>
-
         <form action="" method="get">
             <div class="row g-2">
                 <div class="col-md-2">
@@ -25,7 +25,6 @@
                         <input type="text" name="search" value="@ViewBag.Search" class="form-control border-start-0" placeholder="Tìm kiếm...">
                     </div>
                 </div>
-
                 <div class="col-md-2">
                     <label class="form-label text-muted small">Thương hiệu</label>
                     <select name="thuongHieuId" class="form-select">
@@ -34,7 +33,6 @@
                         <option value="2">Adidas</option>
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <label class="form-label text-muted small">Loại SP</label>
                     <select name="loaiId" class="form-select">
@@ -42,7 +40,6 @@
                         <option value="1">Chạy bộ</option>
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <label class="form-label text-muted small">Sắp xếp giá</label>
                     <select name="sortOrder" class="form-select">
@@ -51,15 +48,13 @@
                         <option value="gia_giam">Cao xuống thấp</option>
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <label class="form-label text-muted small">Trạng Thái</label>
-                    <select name="trangThai" class="form-select">
-                        <option value="true">Hoạt động</option>
-                        <option value="false">Ngừng hoạt động</option>
+                    <select name="trangThai" class="form-select" onchange="this.form.submit()">
+                        <option value="1" selected="@(ViewBag.TrangThai == 1)">Hoạt động</option>
+                        <option value="0" selected="@(ViewBag.TrangThai == 0)">Ngừng hoạt động</option>
                     </select>
                 </div>
-
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fa fa-search me-1"></i> Tìm
@@ -69,6 +64,7 @@
         </form>
     </div>
 
+ 
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">Danh sách sản phẩm</h6>
@@ -123,8 +119,37 @@
                                     }
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-outline-primary rounded-circle me-1" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
-                                    <a class="btn btn-sm btn-outline-danger rounded-circle" asp-action="Delete" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
+                                    <a class="btn btn-sm btn-outline-primary rounded-circle me-1" asp-action="" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                                    @if (item.TrangThai == 1)
+                                    {
+                                        <a class="btn btn-sm btn-outline-danger rounded-circle"
+                                           asp-action="XoaSanPham" asp-route-id="@item.Id"
+                                           asp-route-search="@ViewBag.Search"
+                                           asp-route-thuongHieuId="@ViewBag.ThuongHieuId"
+                                           asp-route-loaiId="@ViewBag.LoaiId"
+                                           asp-route-sortOrder="@ViewBag.SortOrder"
+                                           asp-route-trangThai="@ViewBag.TrangThai"
+                                           asp-route-page="@ViewBag.CurrentPage"
+                                           onclick="return confirm('Bạn có chắc muốn ngừng kinh doanh sản phẩm này?');"
+                                           title="Ngừng hoạt động">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-sm btn-outline-success rounded-circle"
+                                           asp-action="XoaSanPham" asp-route-id="@item.Id"
+                                           asp-route-search="@ViewBag.Search"
+                                           asp-route-thuongHieuId="@ViewBag.ThuongHieuId"
+                                           asp-route-loaiId="@ViewBag.LoaiId"
+                                           asp-route-trangThai="@ViewBag.TrangThai"
+                                           asp-route-sortOrder="@ViewBag.SortOrder"
+                                           asp-route-page="@ViewBag.CurrentPage"
+                                           onclick="return confirm('Bạn có chắc muốn khôi phục kinh doanh sản phẩm này?');"
+                                           title="Khôi phục kinh doanh">
+                                            <i class="fa fa-undo"></i>
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -138,31 +163,22 @@
                 </tbody>
             </table>
         </div>
-
-        @if (totalPages > 1)
+        @* phan trang *@
+        @{
+            var boLocHienTai = new Dictionary<string, string>
         {
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, search = ViewBag.Search, thuongHieuId = ViewBag.ThuongHieuId, loaiId = ViewBag.LoaiId, sortOrder = ViewBag.SortOrder })">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-
-                    @for (int i = 1; i <= totalPages; i++)
-                    {
-                        <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("Index", new { page = i, search = ViewBag.Search, thuongHieuId = ViewBag.ThuongHieuId, loaiId = ViewBag.LoaiId, sortOrder = ViewBag.SortOrder })">@i</a>
-                        </li>
-                    }
-
-                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, search = ViewBag.Search, thuongHieuId = ViewBag.ThuongHieuId, loaiId = ViewBag.LoaiId, sortOrder = ViewBag.SortOrder })">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+        { "search", ViewBag.Search },
+        { "thuongHieuId", ViewBag.ThuongHieuId?.ToString() },
+        { "loaiId", ViewBag.LoaiId?.ToString() },
+        { "sortOrder", ViewBag.SortOrder },
+        { "trangThai", ViewBag.TrangThai?.ToString() }
+        };
         }
+
+        <partial name="_Pager" view-data='@new ViewDataDictionary(ViewData) {
+            { "ActionName", "TrangQLSanPham" },
+            { "Filters", boLocHienTai }
+        }' />
+
     </div>
 </div>

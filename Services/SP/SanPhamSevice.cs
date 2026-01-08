@@ -13,7 +13,7 @@ namespace WebBanGiayTheThao.Services.SanPham
         }
 
         public async Task<(IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
-         string? search,int? loaispid,int? thuonghieuid,string? gia,int page,int pagesize
+         string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize
          )
         {
             var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).AsQueryable();
@@ -32,6 +32,11 @@ namespace WebBanGiayTheThao.Services.SanPham
                 query = query.Where(sp => sp.LoaiSanPhamId == loaispid);
             }
 
+            if (trangthai.HasValue)
+            {
+                query=query.Where(sp=>sp.TrangThai == trangthai);
+            }
+
             switch (gia)
             {
                 case "gia_tang": query = query.OrderBy(sp => sp.DonGia); break;
@@ -45,6 +50,26 @@ namespace WebBanGiayTheThao.Services.SanPham
                              .Take(pagesize)
                              .ToListAsync();
             return (items, totalCount);
+        }
+        public async Task CapNhatTrangThaiSanPham(int id)
+        {
+            var sp =await _context.SanPhams.FindAsync(id);
+            if (sp != null)
+            {
+                //hoat dong
+                if (sp.TrangThai == 1)
+                {
+                    sp.TrangThai = 0;
+                    _context.SanPhams.Update(sp);
+                }
+                else
+                {
+                    sp.TrangThai = 1;
+                    _context.SanPhams.Update(sp);
+                }
+
+               await _context.SaveChangesAsync();
+            }
         }
     }
 }

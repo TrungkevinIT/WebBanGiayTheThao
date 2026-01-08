@@ -1,31 +1,54 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using WebBanGiayTheThao.Services.SanPham;
 
-namespace WebBanGiayTheThao.Areas.Admin.Controllers
+[Area("Admin")]
+public class QuanLySanPhamController : Controller
 {
-    [Area("Admin")]
-    public class QuanLySanPhamController : Controller
+    private readonly ISanPhamSevice _sevice;
+    public QuanLySanPhamController(ISanPhamSevice sevice)
     {
-        private readonly ISanPhamSevice _sevice;
-        public QuanLySanPhamController(ISanPhamSevice sevice)
-        {
-            _sevice = sevice;
-        }
+        _sevice = sevice;
+    }
 
-        public async Task<IActionResult> TrangQLSanPham(string? search,int? thuongHieuId,int? loaiId,string? sortOrder,int page = 1)
+    public async Task<IActionResult> TrangQLSanPham(
+        string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1)
+    {
+        if (!trangThai.HasValue)
         {
-            int pagesize = 10;
-            var sp = await _sevice.LoadDSSanPham(search, thuongHieuId, loaiId, sortOrder, page, pagesize);
-            int totalPages = (int)Math.Ceiling((double)sp.totalCount / pagesize);
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
-            ViewBag.PageSize = pagesize;
-            ViewBag.Search = search;
-            ViewBag.ThuongHieuId = thuongHieuId;
-            ViewBag.LoaiId = loaiId;
-            ViewBag.SortOrder = sortOrder;
-            return View(sp.products);
+            trangThai = 1;
         }
+        int pagesize = 2; 
+
+        var sp = await _sevice.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pagesize);
+
+        int totalPages = (int)Math.Ceiling((double)sp.totalCount / pagesize);
+
+        ViewBag.TotalPages = totalPages;
+        ViewBag.CurrentPage = page;
+        ViewBag.PageSize = pagesize;
+ 
+        ViewBag.Search = search;
+        ViewBag.ThuongHieuId = thuongHieuId;
+        ViewBag.LoaiId = loaiId;
+        ViewBag.SortOrder = sortOrder;
+        ViewBag.TrangThai = trangThai;
+
+        return View(sp.products);
+    }
+
+    public async Task<IActionResult> XoaSanPham(
+        int id, string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int? page)
+    {
+        await _sevice.CapNhatTrangThaiSanPham(id);
+
+        return RedirectToAction("TrangQLSanPham", new
+        {
+            search = search,
+            thuongHieuId = thuongHieuId,
+            loaiId = loaiId,
+            sortOrder = sortOrder,
+            trangThai = trangThai,
+            page = page
+        });
     }
 }

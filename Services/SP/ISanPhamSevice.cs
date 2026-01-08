@@ -8,8 +8,11 @@ namespace WebBanGiayTheThao.Services.SanPham
          int? loaispid,
          int? thuonghieuid,
          string? gia,
+         int? trangthai,
          int page,
          int pagesize
          );
+
+        Task CapNhatTrangThaiSanPham(int trangthai);  
     }
 }
