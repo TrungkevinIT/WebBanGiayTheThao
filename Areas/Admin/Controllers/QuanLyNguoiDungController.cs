@@ -1,54 +1,46 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebBanGiayTheThao.Data;
-using WebBanGiayTheThao.Models;
+using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.ViewModels;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class QuanLyNguoiDungController : Controller
     {
-        private readonly QuanLyWebBanGiayContext _context;
+        private readonly IUserService _userService;
+        private const int PAGE_SIZE = 20;
 
-        public QuanLyNguoiDungController(QuanLyWebBanGiayContext context)
+        public QuanLyNguoiDungController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
-        // =========================
-        // GET: /Admin/QuanLyNguoiDung/TrangQLNguoiDung
-        // =========================
-        public IActionResult TrangQLNguoiDung()
+        public IActionResult TrangQLNguoiDung(string? sdt, int page = 1)
         {
-            var users = _context.Users
-                                .OrderByDescending(u => u.Id)
-                                .ToList();
+            var users = _userService.GetUsers(
+                sdt,
+                page,
+                PAGE_SIZE,
+                out int totalUsers
+            );
 
-            return View(users);
+            var vm = new UserIndexVM
+            {
+                Users = users,
+                Sdt = sdt,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalUsers / PAGE_SIZE)
+            };
+
+            return View(vm);
         }
 
-        // =========================
-        // POST: Khóa / Mở khóa user
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ChangeStatus(int userId, int trangThai)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                TempData["Error"] = "Không tìm thấy người dùng";
-                return RedirectToAction(nameof(TrangQLNguoiDung));
-            }
-
-            user.TrangThai = trangThai;
-
-            _context.SaveChanges();
-
-            TempData["Success"] = trangThai == 1
-                ? "Mở khóa tài khoản thành công"
-                : "Khóa tài khoản thành công";
-
+            _userService.ChangeUserStatus(userId, trangThai, out string message);
+            TempData["Success"] = message;
             return RedirectToAction(nameof(TrangQLNguoiDung));
         }
     }

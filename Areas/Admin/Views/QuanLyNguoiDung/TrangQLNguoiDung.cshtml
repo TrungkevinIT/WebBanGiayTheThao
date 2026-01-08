@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebBanGiayTheThao.Models.User>
+﻿@model WebBanGiayTheThao.ViewModels.UserIndexVM
 
 @{
     Layout = "_LayoutAdmin";
@@ -11,6 +11,20 @@
 
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body">
+            <form method="get" class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <input type="text"
+                           name="sdt"
+                           value="@Model.Sdt"
+                           class="form-control"
+                           placeholder="Tìm theo số điện thoại" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Tìm kiếm
+                    </button>
+                </div>
+            </form>
 
             <table class="table table-hover align-middle">
                 <thead class="table-light">
@@ -28,9 +42,9 @@
                 </thead>
 
                 <tbody>
-                    @if (Model != null && Model.Any())
+                    @if (Model.Users.Any())
                     {
-                        foreach (var u in Model)
+                        @foreach (var u in Model.Users)
                         {
                             <tr>
                                 <td>@u.Id</td>
@@ -75,6 +89,21 @@
                     }
                 </tbody>
             </table>
+            <nav>
+                <ul class="pagination justify-content-center mt-3">
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link"
+                               href="?page=@i&sdt=@Model.Sdt">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </nav>
 
         </div>
     </div>
