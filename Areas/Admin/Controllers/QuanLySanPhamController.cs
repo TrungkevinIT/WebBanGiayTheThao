@@ -4,8 +4,8 @@ using WebBanGiayTheThao.Services.SanPham;
 [Area("Admin")]
 public class QuanLySanPhamController : Controller
 {
-    private readonly ISanPhamSevice _sevice;
-    public QuanLySanPhamController(ISanPhamSevice sevice)
+    private readonly ISanPhamService _sevice;
+    public QuanLySanPhamController(ISanPhamService sevice)
     {
         _sevice = sevice;
     }
@@ -50,5 +50,9 @@ public class QuanLySanPhamController : Controller
             trangThai = trangThai,
             page = page
         });
+    }
+
+    public IActionResult ThemSanPham() { 
+        return View();
     }
 }

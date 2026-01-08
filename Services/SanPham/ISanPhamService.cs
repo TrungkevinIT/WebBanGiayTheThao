@@ -1,7 +1,7 @@
 ﻿using WebBanGiayTheThao.Models;
 namespace WebBanGiayTheThao.Services.SanPham
 {
-    public interface ISanPhamSevice
+    public interface ISanPhamService
     {
         Task<(IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
          string? search,

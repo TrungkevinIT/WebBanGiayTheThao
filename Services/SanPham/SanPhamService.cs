@@ -4,10 +4,10 @@ using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
 namespace WebBanGiayTheThao.Services.SanPham
 {
-    public class SanPhamSevice : ISanPhamSevice
+    public class SanPhamService : ISanPhamService
     {
         private readonly QuanLyWebBanGiayContext _context;
-        public SanPhamSevice(QuanLyWebBanGiayContext context)
+        public SanPhamService(QuanLyWebBanGiayContext context)
         {
             _context = context;
         }
