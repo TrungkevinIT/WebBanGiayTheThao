@@ -3,10 +3,12 @@ using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Services.SanPham;
 using WebBanGiayTheThao.Services.SlideShow;
+using WebBanGiayTheThao.Services;
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// Ðãng kí service cho User DuyKhang 8:50 08/01/2026
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
