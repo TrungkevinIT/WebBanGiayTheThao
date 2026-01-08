@@ -54,7 +54,6 @@
                                 <td>@u.Sdt</td>
                                 <td>@u.Email</td>
                                 <td>@u.DiaChi</td>
-
                                 <td>
                                     @if (u.TrangThai == 0)
                                     {
@@ -65,7 +64,6 @@
                                         <span class="badge bg-success">Hoạt động</span>
                                     }
                                 </td>
-
                                 <td class="text-center">
                                     <button class="btn btn-sm @(u.TrangThai == 0 ? "btn-success" : "btn-danger")"
                                             data-bs-toggle="modal"
@@ -89,9 +87,20 @@
                     }
                 </tbody>
             </table>
+
+            <!-- PHÂN TRANG -->
             <nav>
                 <ul class="pagination justify-content-center mt-3">
 
+                    <!-- Nút Previous -->
+                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           href="?page=@(Model.CurrentPage - 1)&sdt=@Model.Sdt">
+                            &lt;
+                        </a>
+                    </li>
+
+                    <!-- Các số trang -->
                     @for (int i = 1; i <= Model.TotalPages; i++)
                     {
                         <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
@@ -101,6 +110,14 @@
                             </a>
                         </li>
                     }
+
+                    <!-- Nút Next -->
+                    <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           href="?page=@(Model.CurrentPage + 1)&sdt=@Model.Sdt">
+                            &gt;
+                        </a>
+                    </li>
 
                 </ul>
             </nav>
@@ -125,7 +142,6 @@
 
         document.getElementById('modalUserId').value = userId;
 
-        // Đang hoạt động (1) → khóa (0)
         document.getElementById('modalTrangThai').value =
             trangThai == "1" ? 0 : 1;
 

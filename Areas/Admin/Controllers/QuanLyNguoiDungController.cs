@@ -8,7 +8,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
     public class QuanLyNguoiDungController : Controller
     {
         private readonly IUserService _userService;
-        private const int PAGE_SIZE = 20;
+        private const int PAGE_SIZE = 10;
 
         public QuanLyNguoiDungController(IUserService userService)
         {
