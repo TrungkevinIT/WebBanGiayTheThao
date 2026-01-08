@@ -1,3 +1,168 @@
-﻿@{
-	Layout = "_LayoutAdmin";
+﻿@using WebBanGiayTheThao.Models
+@model IEnumerable<SanPham>
+
+@{
+    Layout = "_LayoutAdmin";
+    
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
 }
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="mb-0">Bộ lọc & Tìm kiếm</h6>
+            <a asp-action="ThemSanPham" class="btn btn-sm btn-success"><i class="fa fa-plus me-1"></i> Thêm mới</a>
+        </div>
+
+        <form action="" method="get">
+            <div class="row g-2">
+                <div class="col-md-2">
+                    <label class="form-label text-muted small">Từ khóa</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                        <input type="text" name="search" value="@ViewBag.Search" class="form-control border-start-0" placeholder="Tìm kiếm...">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label text-muted small">Thương hiệu</label>
+                    <select name="thuongHieuId" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="1">Nike</option>
+                        <option value="2">Adidas</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label text-muted small">Loại SP</label>
+                    <select name="loaiId" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="1">Chạy bộ</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label text-muted small">Sắp xếp giá</label>
+                    <select name="sortOrder" class="form-select">
+                        <option value="">Mặc định</option>
+                        <option value="gia_tang">Thấp đến cao</option>
+                        <option value="gia_giam">Cao xuống thấp</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label text-muted small">Trạng Thái</label>
+                    <select name="trangThai" class="form-select">
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Ngừng hoạt động</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa fa-search me-1"></i> Tìm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h6 class="mb-0">Danh sách sản phẩm</h6>
+        </div>
+        <div class="table-responsive border rounded-3 overflow-hidden shadow-sm" style="border-radius: 12px;">
+            <table class="table text-center align-middle table-bordered table-hover mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th scope="col" class="py-3">STT</th>
+                        <th scope="col" class="py-3">Tên sản phẩm</th>
+                        <th scope="col" class="py-3">Mã Kiểu Dáng</th>
+                        <th scope="col" class="py-3 text-start ps-4">Ảnh</th>
+                        <th scope="col" class="py-3">Giá Bán</th>
+                        <th scope="col" class="py-3">Thương Hiệu</th>
+                        <th scope="col" class="py-3">Loại Sản Phẩm</th>
+                        <th scope="col" class="py-3">Trạng Thái</th>
+                        <th scope="col" class="py-3">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = (currentPage - 1) * pageSize;
+                        foreach (var item in Model)
+                        {
+                            stt++;
+                            <tr>
+                                <td>@stt</td>
+                                <td class="text-start ps-4">@item.TenSanPham</td>
+                                <td><strong>@item.MaKieuDang</strong></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.AnhDaiDien))
+                                    {
+                                        <img src="~/img/@item.AnhDaiDien" alt="anh" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                    }
+                                    else
+                                    {
+                                        <span>No Image</span>
+                                    }
+                                </td>
+                                <td class="text-danger fw-bold">@(item.DonGia?.ToString("#,##0")) ₫</td>
+                                <td>@(item.ThuongHieu?.TenThuongHieu)</td>
+                                <td>@(item.LoaiSanPham?.TenLoai)</td>
+                                <td>
+                                    @if (item.TrangThai == 1)
+                                    {
+                                        <span class="badge bg-success rounded-pill">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary rounded-pill">Ngừng</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary rounded-circle me-1" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-sm btn-outline-danger rounded-circle" asp-action="Delete" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">Không tìm thấy dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, search = ViewBag.Search, thuongHieuId = ViewBag.ThuongHieuId, loaiId = ViewBag.LoaiId, sortOrder = ViewBag.SortOrder })">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, search = ViewBag.Search, thuongHieuId = ViewBag.ThuongHieuId, loaiId = ViewBag.LoaiId, sortOrder = ViewBag.SortOrder })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, search = ViewBag.Search, thuongHieuId = ViewBag.ThuongHieuId, loaiId = ViewBag.LoaiId, sortOrder = ViewBag.SortOrder })">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+</div>
