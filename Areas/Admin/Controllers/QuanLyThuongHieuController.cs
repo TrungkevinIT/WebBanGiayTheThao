@@ -59,5 +59,63 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             }
             return View(thuongHieu);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> TrangCapNhatThuongHieu(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var thuonghieu = await _context.ThuongHieus.FindAsync(id);
+            if (thuonghieu == null)
+            {
+                return NotFound();
+            }
+            return View(thuonghieu);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrangCapNhatThuongHieu(int id, [Bind("Id,TenThuongHieu,XuatXu,TrangThai")] ThuongHieu thuongHieu)
+        {
+            if (id != thuongHieu.Id)
+            {
+                return NotFound();
+            }
+
+            bool checkTenTrung = await _context.ThuongHieus
+                                                .AnyAsync(t => t.TenThuongHieu == thuongHieu.TenThuongHieu && t.Id != thuongHieu.Id);
+            if (checkTenTrung)
+            {
+                ModelState.AddModelError("TenThuongHieu", "Tên thương hiệu này đã tồn tại!");
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(thuongHieu);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(TrangQLThuongHieu));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ThuongHieuExists(thuongHieu.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return View(thuongHieu);
+        }
+
+        private bool ThuongHieuExists(int id)
+        {
+            return _context.ThuongHieus.Any(e => e.Id == id);
+        }
     }
 }
