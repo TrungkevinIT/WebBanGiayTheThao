@@ -50,6 +50,39 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
            return View(voucher);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> TrangCapNhatVoucher(int? id)
+        {
+            if (id == null) return NotFound();
+            var voucher = await _services.GetByIdAsync(id.Value);
+            if (voucher == null) return NotFound();
+            return View(voucher);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrangCapNhatVoucher(int id, [Bind("Id,MaCode,GiaTriDonToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc,SoLuong,TrangThai")] Voucher voucher)
+        {
+            if(id != voucher.Id) return NotFound();
+            if(await _services.CheckTonTaiAsync(voucher.MaCode,id))
+            {
+                ModelState.AddModelError("MaCode", "Mã code đã tồn tại.");
+            }    
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    await _services.UpdateAsync(voucher);
+                    TempData["ThongBao"] = "Cập nhật voucher thành công!";
+                    TempData["LoaiThongBao"] = "alert-success";
+                    return RedirectToAction(nameof(TrangQLVoucher));
+                }
+                catch(Exception)
+                {
+                    ModelState.AddModelError("", "Đã có lỗi xảy ra khi cập nhật voucher. Vui lòng thử lại.");
+                }
+            }   
+            return View(voucher);
+        }
     }
 }

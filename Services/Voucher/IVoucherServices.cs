@@ -6,6 +6,10 @@ namespace WebBanGiayTheThao.Services
     {
         Task<List<Voucher>> GetAllAsync();
         Task CreateAsync (Voucher voucher);
+        Task<Voucher?> GetByIdAsync(int id);
+        Task UpdateAsync (Voucher voucher);
+
         Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null);
+
     }
 }

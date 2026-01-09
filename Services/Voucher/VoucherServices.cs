@@ -26,6 +26,18 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<Voucher?> GetByIdAsync(int id)
+        {
+            return await _context.Vouchers.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(Voucher voucher)
+        {
+            _context.Update(voucher);
+            await _context.SaveChangesAsync();
+        }
+
+
         public async Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null)
         {
             var query = _context.Vouchers.AsQueryable();
