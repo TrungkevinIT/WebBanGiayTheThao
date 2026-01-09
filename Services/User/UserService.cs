@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
-using WebBanGiayTheThao.Models;
+using UserEntity = WebBanGiayTheThao.Models.User;
 
-namespace WebBanGiayTheThao.Services
+namespace WebBanGiayTheThao.Services.User
 {
     public class UserService : IUserService
     {
@@ -13,7 +13,7 @@ namespace WebBanGiayTheThao.Services
             _context = context;
         }
 
-        public async Task<(List<User> Users, int TotalUsers)> GetUsersAsync(
+        public async Task<(List<UserEntity> Users, int TotalUsers)> GetUsersAsync(
             string? sdt,
             int page,
             int pageSize
@@ -24,7 +24,7 @@ namespace WebBanGiayTheThao.Services
             // Tìm theo SĐT
             if (!string.IsNullOrEmpty(sdt))
             {
-                query = query.Where(u => u.Sdt.Contains(sdt));
+                query = query.Where(u => u.Sdt!.Contains(sdt));
             }
 
             var totalUsers = await query.CountAsync();

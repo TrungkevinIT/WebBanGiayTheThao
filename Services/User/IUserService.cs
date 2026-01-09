@@ -1,10 +1,11 @@
 ﻿using WebBanGiayTheThao.Models;
 
-namespace WebBanGiayTheThao.Services
+using UserEntity = WebBanGiayTheThao.Models.User;
+namespace WebBanGiayTheThao.Services.User
 {
     public interface IUserService
     {
-        Task<(List<User> Users, int TotalUsers)> GetUsersAsync(
+        Task<(List<UserEntity> Users, int TotalUsers)> GetUsersAsync(
             string? sdt,
             int page,
             int pageSize
@@ -13,3 +14,4 @@ namespace WebBanGiayTheThao.Services
         Task<string> ChangeUserStatusAsync(int userId, int trangThai);
     }
 }
+

@@ -1,0 +1,69 @@
+﻿<div class="modal fade glass-modal"
+     id="loginModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+
+            <h4 class="text-center fw-bold mb-4">
+                Đăng nhập
+            </h4>
+
+            @* Thông báo lỗi *@
+            @if (TempData["LoginError"] != null)
+            {
+                <div class="alert alert-danger text-center mb-3">
+                    @TempData["LoginError"]
+                </div>
+            }
+
+            <form asp-controller="NguoiDung" asp-action="DangNhap" method="post">
+                <div class="mb-3">
+                    <input name="Username"
+                           class="form-control"
+                           placeholder="Username"
+                           autocomplete="username" />
+                </div>
+
+                <div class="mb-4">
+                    <input name="Password"
+                           type="password"
+                           class="form-control"
+                           placeholder="Mật khẩu"
+                           autocomplete="current-password" />
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100 btn-pill">
+                    Đăng nhập
+                </button>
+            </form>
+
+            <p class="text-center text-muted mt-4 mb-0">
+                Chưa có tài khoản?
+                <a href="#"
+                   data-bs-dismiss="modal"
+                   data-bs-toggle="modal"
+                   data-bs-target="#registerModal"
+                   class="fw-semibold text-decoration-none">
+                    Đăng ký
+                </a>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+@* Tự động bật lại modal khi có lỗi *@
+@if (TempData["LoginError"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var loginModalEl = document.getElementById('loginModal');
+            if (loginModalEl) {
+                var loginModal = new bootstrap.Modal(loginModalEl);
+                loginModal.show();
+            }
+        });
+    </script>
+}

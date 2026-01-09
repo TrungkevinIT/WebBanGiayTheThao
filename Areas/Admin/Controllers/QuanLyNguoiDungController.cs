@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Services.User;
 using WebBanGiayTheThao.ViewModels;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
