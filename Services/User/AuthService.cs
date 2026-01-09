@@ -14,22 +14,25 @@ namespace WebBanGiayTheThao.Services
         }
 
         // ===================== ĐĂNG NHẬP =====================
-        public async Task<UserEntity?> LoginAsync(string username, string password)
+        public async Task<(UserEntity? user, string? error)> LoginAsync(
+            string username,
+            string password)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(u =>
-                    u.Username == username &&
-                    u.TrangThai == 1
-                );
+                .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
-                return null;
+                return (null, "Sai tài khoản hoặc mật khẩu");
 
-            // ✅ SO SÁNH MẬT KHẨU THÔ
+            // 🚫 TÀI KHOẢN BỊ KHÓA
+            if (user.TrangThai == 0)
+                return (null, "Tài khoản của bạn đã bị khóa");
+
+            // ❌ Sai mật khẩu (pass thô)
             if (user.Password != password)
-                return null;
+                return (null, "Sai tài khoản hoặc mật khẩu");
 
-            return user;
+            return (user, null);
         }
 
         // ===================== ĐĂNG KÝ =====================
@@ -54,7 +57,7 @@ namespace WebBanGiayTheThao.Services
             var user = new UserEntity
             {
                 Username = username,
-                Password = password,   // ✅ LƯU PASS THÔ
+                Password = password, // pass thô
                 HoTen = hoTen,
                 Email = email,
                 Sdt = sdt,

@@ -19,19 +19,23 @@ namespace WebBanGiayTheThao.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["LoginError"] = "Vui lòng nhập đầy đủ thông tin";
+                TempData["ThongBao"] = "Vui lòng nhập đầy đủ thông tin";
                 return RedirectToAction("TrangChu", "Home");
             }
 
-            var user = await _authService.LoginAsync(model.Username, model.Password);
+            var (user, error) = await _authService.LoginAsync(
+                model.Username,
+                model.Password
+            );
 
-            if (user == null)
+            if (error != null)
             {
-                TempData["LoginError"] = "Sai tài khoản hoặc mật khẩu";
+                TempData["ThongBao"] = error;
                 return RedirectToAction("TrangChu", "Home");
             }
 
-            HttpContext.Session.SetInt32("UserId", user.Id);
+            // ✅ ĐĂNG NHẬP THÀNH CÔNG
+            HttpContext.Session.SetInt32("UserId", user!.Id);
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetInt32("VaiTro", user.VaiTro ?? 2);
 
@@ -46,39 +50,6 @@ namespace WebBanGiayTheThao.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("TrangChu", "Home");
-        }
-
-        // ================== ĐĂNG KÝ ==================
-        [HttpPost]
-        public async Task<IActionResult> DangKy(DangKyVM model)
-        {
-            // ❌ KHÔNG REDIRECT KHI LỖI
-            if (!ModelState.IsValid)
-            {
-                ViewBag.ShowRegisterModal = true;
-                TempData["ShowRegisterModal"] = true;
-                return View("~/Views/Home/TrangChu.cshtml", model);
-            }
-
-            var error = await _authService.RegisterAsync(
-                model.Username,
-                model.Password,
-                model.HoTen,
-                model.Email,
-                model.Sdt,
-                model.DiaChi
-            );
-
-            if (error != null)
-            {
-                ModelState.AddModelError(string.Empty, error);
-                ViewBag.ShowRegisterModal = true;
-                return View("~/Views/Home/TrangChu.cshtml", model);
-            }
-
-            TempData["RegisterSuccess"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-            return RedirectToAction("TrangChu", "Home");
-
         }
     }
 }

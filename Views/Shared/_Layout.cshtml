@@ -82,6 +82,22 @@
             });
         </script>
     }
+    @if (TempData["ThongBao"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                document.getElementById("thongBaoNoiDung").innerText =
+                    "@Html.Raw(TempData["ThongBao"])";
+
+                const modal = new bootstrap.Modal(
+                    document.getElementById("thongBaoModal")
+                );
+                modal.show();
+            });
+        </script>
+    }
+
 
 
 
