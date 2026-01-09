@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using WebBanGiayTheThao.Models;
 using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
@@ -12,10 +13,94 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             _services = services;
         }
-        public async Task<IActionResult> TrangQLVoucher()
+        public async Task<IActionResult> TrangQLVoucher(int page = 1)
         {
-            var danhsach = await _services.GetAllAsync();
+            int pageSize = 5;
+            var (danhsach, totalCount) = await _services.GetAllPagingAsync(page, pageSize);
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = totalPages;
+            ViewData["ActionName"] = "TrangQLVoucher";
+            ViewData["Filters"] = new Dictionary<string, string>(); 
+
             return View(danhsach);
+        }
+
+        [HttpGet]
+        public IActionResult TrangThemVoucher()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrangThemVoucher([Bind("MaCode,GiaTriDonToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc,SoLuong,TrangThai")] Voucher voucher)
+        {
+            if (await _services.CheckTonTaiAsync(voucher.MaCode))
+            {
+                ModelState.AddModelError("MaCode", "Mã code đã tồn tại.");
+            }    
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _services.CreateAsync(voucher);
+                    TempData["ThongBao"] = "Thêm voucher thành công!";
+                    TempData["LoaiThongBao"] = "alert-success";
+                    return RedirectToAction(nameof(TrangQLVoucher));
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "Đã có lỗi xảy ra khi thêm voucher. Vui lòng thử lại.");
+                }
+            }
+           return View(voucher);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TrangCapNhatVoucher(int? id)
+        {
+            if (id == null) return NotFound();
+            var voucher = await _services.GetByIdAsync(id.Value);
+            if (voucher == null) return NotFound();
+            return View(voucher);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrangCapNhatVoucher(int id, [Bind("Id,MaCode,GiaTriDonToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc,SoLuong,TrangThai")] Voucher voucher)
+        {
+            if(id != voucher.Id) return NotFound();
+            if(await _services.CheckTonTaiAsync(voucher.MaCode,id))
+            {
+                ModelState.AddModelError("MaCode", "Mã code đã tồn tại.");
+            }    
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    await _services.UpdateAsync(voucher);
+                    TempData["ThongBao"] = "Cập nhật voucher thành công!";
+                    TempData["LoaiThongBao"] = "alert-success";
+                    return RedirectToAction(nameof(TrangQLVoucher));
+                }
+                catch(Exception)
+                {
+                    ModelState.AddModelError("", "Đã có lỗi xảy ra khi cập nhật voucher. Vui lòng thử lại.");
+                }
+            }   
+            return View(voucher);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
+        {
+            bool result = await _services.UpdateTrangThaiAsync(id, trangThai);
+            if (result)
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = "Không tìm thấy voucher!" });
         }
     }
 }

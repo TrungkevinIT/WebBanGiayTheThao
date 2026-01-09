@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model WebBanGiayTheThao.Models.Voucher
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="mb-0 text-primary text-uppercase">Cập nhật thông tin Mã Giảm Giá</h6>
+            <a asp-action="TrangQLVoucher" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+
+        <form asp-action="TrangCapNhatVoucher" asp-route-id="@Model.Id" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="MaCode" class="form-label fw-bold">Mã Voucher <span class="text-danger">*</span></label>
+                        <input asp-for="MaCode" class="form-control" required placeholder="VD: SALE50" />
+                        <span asp-validation-for="MaCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="GiaTriGiam" class="form-label fw-bold">Giá trị giảm (VNĐ) <span class="text-danger">*</span></label>
+                        <input asp-for="GiaTriGiam" class="form-control" required placeholder="VD: 50000" />
+                        <span asp-validation-for="GiaTriGiam" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="GiaTriDonToiThieu" class="form-label fw-bold">Đơn hàng tối thiểu</label>
+                        <input asp-for="GiaTriDonToiThieu" class="form-control" placeholder="VD: 100000" />
+                        <span asp-validation-for="GiaTriDonToiThieu" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="SoLuong" class="form-label fw-bold">Số lượng phát hành</label>
+                        <input asp-for="SoLuong" class="form-control" placeholder="Tổng số mã" />
+                        <span asp-validation-for="SoLuong" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NgayBatDau" class="form-label fw-bold">Ngày bắt đầu</label>
+                            <input asp-for="NgayBatDau" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NgayKetThuc" class="form-label fw-bold">Ngày kết thúc</label>
+                            <input asp-for="NgayKetThuc" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TrangThai" class="form-label fw-bold">Trạng Thái</label>
+                        <select asp-for="TrangThai" class="form-select">
+                            <option value="1">Đang hoạt động (Kích hoạt)</option>
+                            <option value="0">Dừng hoạt động (Ẩn)</option>
+                        </select>
+                        <span asp-validation-for="TrangThai" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 text-center border-top pt-3 mt-2">
+                    <button type="submit" class="btn btn-warning px-5 py-2 text-white"
+                            onclick="return confirm('Bạn có chắc chắn muốn cập nhật thông tin voucher này không?');">
+                        <i class="fa fa-sync-alt me-2"></i>Lưu Thay Đổi
+                    </button>
+
+                    <a asp-action="TrangQLVoucher" class="btn btn-secondary px-4 py-2 ms-2">Hủy bỏ</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

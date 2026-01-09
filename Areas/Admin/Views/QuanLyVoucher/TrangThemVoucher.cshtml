@@ -1,0 +1,78 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model WebBanGiayTheThao.Models.Voucher
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="mb-0 text-primary text-uppercase">Tạo Mã Giảm Giá Mới</h6>
+            <a asp-action="TrangQLVoucher" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+
+        <form asp-action="TrangThemVoucher" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="MaCode" class="form-label fw-bold">Mã Voucher <span class="text-danger">*</span></label>
+                        <input asp-for="MaCode" class="form-control" placeholder="VD: SALE50 (Viết liền in hoa)" />
+                        <span asp-validation-for="MaCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="GiaTriGiam" class="form-label fw-bold">Giá trị giảm (VNĐ) <span class="text-danger">*</span></label>
+                        <input asp-for="GiaTriGiam" class="form-control" placeholder="VD: 50000" />
+                        <span asp-validation-for="GiaTriGiam" class="text-danger"></span>
+                        <small class="text-muted fst-italic">Nhập số tiền bạn muốn giảm trực tiếp trên đơn hàng.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="GiaTriDonToiThieu" class="form-label fw-bold">Đơn hàng tối thiểu để áp dụng</label>
+                        <input asp-for="GiaTriDonToiThieu" class="form-control" placeholder="VD: 100000" />
+                        <span asp-validation-for="GiaTriDonToiThieu" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="SoLuong" class="form-label fw-bold">Số lượng phát hành</label>
+                        <input asp-for="SoLuong" class="form-control" placeholder="Tổng số mã (VD: 100)" />
+                        <span asp-validation-for="SoLuong" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NgayBatDau" class="form-label fw-bold">Ngày bắt đầu</label>
+                            <input asp-for="NgayBatDau" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NgayKetThuc" class="form-label fw-bold">Ngày kết thúc</label>
+                            <input asp-for="NgayKetThuc" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="TrangThai" class="form-label fw-bold">Trạng Thái</label>
+                        <select asp-for="TrangThai" class="form-select">
+                            <option value="1" selected>Kích hoạt ngay</option>
+                            <option value="0">Chờ kích hoạt (Ẩn)</option>
+                        </select>
+                        <span asp-validation-for="TrangThai" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 text-center mt-4 border-top pt-3">
+                    <button type="submit" class="btn btn-primary px-5 py-2">
+                        <i class="fa fa-save me-2"></i>Lưu Voucher
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
