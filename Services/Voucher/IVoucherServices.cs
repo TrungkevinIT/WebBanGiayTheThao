@@ -8,7 +8,7 @@ namespace WebBanGiayTheThao.Services
         Task CreateAsync (Voucher voucher);
         Task<Voucher?> GetByIdAsync(int id);
         Task UpdateAsync (Voucher voucher);
-
+        Task<bool> UpdateTrangThaiAsync(int id, int trangThai);
         Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null);
 
     }

@@ -63,9 +63,14 @@
                                 }
                             </td>
                             <td class="text-center">
-                                <span class="badge @(item.TrangThai == 1 ? "bg-success" : "bg-danger")">
-                                    @(item.TrangThai == 1 ? "Đang chạy" : "Ngưng hoạt động")
-                                </span>
+                                <select class="form-select form-select-sm border-0 fw-bold @(item.TrangThai == 1 ? "bg-success text-white" : "bg-danger text-white")"
+                                        style="width: 160px; margin: 0 auto; cursor: pointer;"
+                                        data-id="@item.Id"
+                                        data-original="@item.TrangThai"
+                                        onchange="doiTrangThaiVoucher(this)">
+                                    <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Đang chạy</option>
+                                    <option value="0" class="bg-white text-dark" selected="@(item.TrangThai != 1)">Ngưng hoạt động</option>
+                                </select>
                             </td>
                             <td>
                                 <a asp-action="TrangCapNhatVoucher" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Sửa">
@@ -79,3 +84,52 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Mình đổi tên hàm thành doiTrangThaiVoucher cho đỡ nhầm với bên Thương Hiệu
+        async function doiTrangThaiVoucher(element) {
+            const id = element.getAttribute('data-id');
+            const newStatus = element.value;
+            const originalStatus = element.getAttribute('data-original');
+
+            if (!confirm('Bạn có chắc muốn đổi trạng thái voucher này không?')) {
+                element.value = originalStatus;
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+                formData.append('trangThai', newStatus);
+
+                // --- SỬA QUAN TRỌNG: Đổi đường dẫn từ QuanLyThuongHieu sang QuanLyVoucher ---
+                const response = await fetch('/Admin/QuanLyVoucher/CapNhatTrangThai', {
+                    method: 'POST',
+                    body: formData
+                });
+                // -----------------------------------------------------------------------------
+
+                const result = await response.json();
+
+                if (result.success) {
+                    element.setAttribute('data-original', newStatus);
+
+                    // Cập nhật màu sắc: Xanh (Đang chạy) - Đỏ (Ngưng)
+                    if (newStatus == '1') {
+                        element.className = "form-select form-select-sm border-0 fw-bold bg-success text-white";
+                    } else {
+                        element.className = "form-select form-select-sm border-0 fw-bold bg-danger text-white";
+                    }
+                } else {
+                    alert('Lỗi: ' + result.message);
+                    element.value = originalStatus;
+                }
+            } catch (error) {
+                console.error('Lỗi:', error);
+                alert('Không thể kết nối đến máy chủ!');
+                element.value = originalStatus;
+            }
+        }
+    </script>
+}

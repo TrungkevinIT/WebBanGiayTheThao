@@ -84,5 +84,16 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             }   
             return View(voucher);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
+        {
+            bool result = await _services.UpdateTrangThaiAsync(id, trangThai);
+            if (result)
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = "Không tìm thấy voucher!" });
+        }
     }
 }

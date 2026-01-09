@@ -37,6 +37,16 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> UpdateTrangThaiAsync(int id, int trangThai)
+        {
+            var voucher = await _context.Vouchers.FindAsync(id);
+            if (voucher == null) return false;
+
+            voucher.TrangThai = trangThai;
+            _context.Update(voucher);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
         public async Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null)
         {
