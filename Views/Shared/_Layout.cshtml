@@ -51,9 +51,8 @@
     <!-- Footer -->
     <partial name="_LayoutFooter" />
 
-    <!-- Scripts leader 
+    <!-- Scripts leader -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <!-- DuyKhang:Bootstrap modal -->
@@ -62,9 +61,32 @@
     <!-- DuyKhang: Đăng nhập Modal-->
     @await Html.PartialAsync("~/Views/NguoiDung/_DangNhapModal.cshtml")
     <!-- DuyKhang: Đăng ký Modal-->
-    @*<!--@await Html.PartialAsync("~/Views/NguoiDung/_DangKyModal.cshtml")-->@**@
+    @await Html.PartialAsync("~/Views/NguoiDung/_DangKyModal.cshtml")
+    <!-- DuyKhang: Thông báo Modal -->
+    @await Html.PartialAsync("~/Views/NguoiDung/_ThongBaoModal.cshtml")
 
     @await RenderSectionAsync("Scripts", required: false)
+    <!-- Xử lý thông báo đăng ký thành công DuyKhang 00:55 10/01/2026-->
+    @if (TempData["RegisterSuccess"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                document.getElementById("thongBaoNoiDung").innerText =
+                    @Html.Raw(Json.Serialize(TempData["RegisterSuccess"]));
+
+                var modal = new bootstrap.Modal(
+                    document.getElementById("thongBaoModal")
+                );
+                modal.show();
+            });
+        </script>
+    }
+
+
+
+
 </body>
+
 </html>
 

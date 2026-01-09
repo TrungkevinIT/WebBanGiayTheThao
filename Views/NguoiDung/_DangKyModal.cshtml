@@ -1,0 +1,126 @@
+﻿@model WebBanGiayTheThao.ViewModels.NguoiDung.DangKyVM
+
+<div class="modal fade"
+     id="registerModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-4 glass-modal">
+
+            <h4 class="text-center fw-bold mb-4">
+                Tạo tài khoản
+            </h4>
+
+            <!-- Tổng hợp lỗi -->
+            <div asp-validation-summary="ModelOnly"
+                 class="alert alert-danger text-center mb-3">
+            </div>
+
+            <!-- Lỗi từ Service -->
+            @if (TempData["RegisterError"] != null)
+            {
+                <div class="alert alert-danger text-center mb-3">
+                    @TempData["RegisterError"]
+                </div>
+            }
+
+            <form asp-controller="NguoiDung"
+                  asp-action="DangKy"
+                  method="post">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <input asp-for="Username"
+                               class="form-control"
+                               placeholder="Username" />
+                        <span asp-validation-for="Username"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <input asp-for="HoTen"
+                               class="form-control"
+                               placeholder="Họ và tên" />
+                        <span asp-validation-for="HoTen"
+                              class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <input asp-for="Email"
+                           class="form-control"
+                           placeholder="Email" />
+                    <span asp-validation-for="Email"
+                          class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <input asp-for="Sdt"
+                           class="form-control"
+                           placeholder="Số điện thoại" />
+                    <span asp-validation-for="Sdt"
+                          class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <input asp-for="DiaChi"
+                           class="form-control"
+                           placeholder="Địa chỉ" />
+                    <span asp-validation-for="DiaChi"
+                          class="text-danger small"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <input asp-for="Password"
+                               type="password"
+                               class="form-control"
+                               placeholder="Mật khẩu" />
+                        <span asp-validation-for="Password"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <input asp-for="ConfirmPassword"
+                               type="password"
+                               class="form-control"
+                               placeholder="Xác nhận mật khẩu" />
+                        <span asp-validation-for="ConfirmPassword"
+                              class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-dark w-100 btn-pill">
+                    Đăng ký
+                </button>
+            </form>
+
+            <p class="text-center text-muted mt-4 mb-0">
+                Đã có tài khoản?
+                <a href="#"
+                   id="openLoginModal"
+                   class="fw-semibold text-decoration-none">
+                    Đăng nhập
+                </a>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- 🔁 Tự bật lại modal Đăng ký khi có lỗi -->
+@if (TempData["ShowRegisterModal"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var registerModalEl = document.getElementById('registerModal');
+            if (registerModalEl) {
+                var modal = new bootstrap.Modal(registerModalEl);
+                modal.show();
+            }
+        });
+    </script>
+}
