@@ -13,9 +13,17 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> TrangQLThuongHieu()
+        public async Task<IActionResult> TrangQLThuongHieu(string? searchString)
         {
-            var danhsach = await _context.ThuongHieus.ToListAsync();
+            var query = _context.ThuongHieus.AsQueryable();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.Trim();
+                query = query.Where(t => t.TenThuongHieu.Contains(searchString) ||
+                                 t.XuatXu.Contains(searchString));
+            }
+            var danhsach = await query.ToListAsync();
+            ViewData["CurrentFilter"] = searchString;
             return View(danhsach);
         }
     }
