@@ -28,34 +28,51 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             }
             return View(slide);
         }
-        [HttpPost]
-        public async  Task<IActionResult> TrangCapNhatSlideShow(WebBanGiayTheThao.Models.SlideShow model, IFormFile? fileAnh)
+
+        [HttpGet] // Hàm này chỉ để JS gọi, không trả về View
+        public async Task<IActionResult> CheckLinkTrung(string link, int id)
         {
+            // Gọi Service kiểm tra
+            bool isTrung = await _slideShowService.KiemTraLinkDaTonTai(link, id);
+
+            // Trả về kết quả dạng JSON (True/False)
+            return Json(isTrung);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrangCapNhatSlideShow(WebBanGiayTheThao.Models.SlideShow model, IFormFile? fileAnh)
+        {
+            //check rỗng
             if (string.IsNullOrEmpty(model.Link))
             {
-                ModelState.AddModelError("Link", "Vui lòng nhập đường dẫn liên kết (không được để trống).");
+                ModelState.AddModelError("Link", "vui lòng nhập đường liên kết.");
             }
+            // Check Trùng Link
             if (!string.IsNullOrEmpty(model.Link))
             {
                 bool isTrungLink = await _slideShowService.KiemTraLinkDaTonTai(model.Link, model.Id);
-
                 if (isTrungLink)
                 {
-                    ModelState.AddModelError("Link", "Link này đã tồn tại ở banner khác, vui lòng nhập link khác.");
+                    ModelState.AddModelError("Link", "Link này đã tồn tại, vui lòng nhập link khác.");
                 }
-            }
-            if (fileAnh == null && string.IsNullOrEmpty(model.HinhAnh))
-            {
-                ModelState.AddModelError("fileAnh", "Vui lòng chọn hình ảnh cho banner.");
             }
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
             if (fileAnh != null)
             {
                 string folder = Path.Combine(_env.WebRootPath, "img");
+
+                // Tự tạo thư mục để tránh lỗi DirectoryNotFound
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(fileAnh.FileName);
                 string path = Path.Combine(folder, fileName);
 
@@ -65,6 +82,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 }
                 model.HinhAnh = fileName;
             }
+
             await _slideShowService.UpdateSlideShow(model);
             return RedirectToAction("TrangQLSlideShow");
         }
