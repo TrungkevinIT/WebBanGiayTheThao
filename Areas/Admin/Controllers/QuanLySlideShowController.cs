@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Services.SlideShow;
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
+
     public class QuanLySlideShowController : Controller
     {
         private readonly ISlideShowService _slideShowService;

@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Services.SanPham;
 
 [Area("Admin")]
+[AdminAuthorize]
+
 public class QuanLySanPhamController : Controller
 {
     private readonly ISanPhamService _sevice;
@@ -9,7 +12,15 @@ public class QuanLySanPhamController : Controller
     {
         _sevice = sevice;
     }
+    // DuyKhang edit 15:30 09/01/2026 Hàm này giúp trình duyệt không lưu cache, mỗi lần back sẽ request lại server.
+    public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
+    {
+        Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        Response.Headers["Pragma"] = "no-cache";
+        Response.Headers["Expires"] = "0";
 
+        base.OnActionExecuting(context);
+    }
     public async Task<IActionResult> TrangQLSanPham(
         string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1)
     {
