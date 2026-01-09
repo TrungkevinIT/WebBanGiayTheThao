@@ -1,3 +1,137 @@
 ﻿@{
 	Layout = "_LayoutAdmin";
+    var currentFilter = ViewData["CurrentFilter"] as string;
+}
+@model IEnumerable<WebBanGiayTheThao.Models.ThuongHieu>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light text-center rounded p-4">
+
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Danh Sách Thương Hiệu</h3>
+            <a asp-area="Admin" asp-controller="QuanLyThuongHieu" asp-action="TrangThemThuongHieu" class="btn btn-primary">
+                <i class="fa fa-plus-circle me-2"></i>Thêm Thương Hiệu
+            </a>
+        </div>
+
+        <form asp-action="TrangQLThuongHieu" method="get" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fa fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="searchString" value="@currentFilter"
+                               class="form-control border-start-0"
+                               placeholder="Tìm kiếm theo tên thương hiệu hoặc xuất xứ...">
+                    </div>
+                </div>
+                <div class="col-md-4 text-start">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fa fa-filter me-2"></i>Tìm kiếm
+                    </button>
+                    @if (!string.IsNullOrEmpty(currentFilter))
+                    {
+                        <a asp-action="TrangQLThuongHieu" class="btn btn-outline-secondary ms-2">
+                            <i class="fa fa-sync-alt"></i> Tải lại
+                        </a>
+                    }
+                </div>
+            </div>
+        </form>
+
+             @if (Model != null && Model.Any())
+             {
+                <div class="table-responsive">
+                    <table class="table text-start align-middle table-bordered table-hover mb-0">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th scope="col" style="width: 50px;">ID</th>
+                                <th scope="col" style="width: 180px;">Tên thương hiệu</th>
+                                <th scope="col" style="width: 100px;">Xuất xứ</th>
+                                <th scope="col" class="text-center" style="width: 150px;">Trạng thái</th>
+                                <th scope="col" class="text-center" style="width: 120px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td class="fw-bold text-primary">@item.TenThuongHieu</td>
+                                    <td>@item.XuatXu</td>
+                                    <td class="text-center">
+                                        <select class="form-select form-select-sm border-0 fw-bold @(item.TrangThai == 1 ? "bg-success text-white" : "bg-danger text-white")"
+                                                style="width: 130px; margin: 0 auto; cursor: pointer;"
+                                                data-id="@item.Id"
+                                                data-original="@item.TrangThai"
+                                                onchange="doiTrangThai(this)">
+                                            <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Hiển thị</option>
+                                            <option value="0" class="bg-white text-dark" selected="@(item.TrangThai != 1)">Đang ẩn</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-center">
+                                        <a asp-action="TrangCapNhatThuongHieu" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Sửa">
+                                            <i class="fa fa-pen"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+               }
+                else
+                {
+                    <div class="alert alert-warning d-flex align-items-center justify-content-center mt-4" role="alert">
+                        <i class="fa fa-exclamation-triangle fa-2x me-3"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1">Không tìm thấy kết quả nào!</h5>
+                            <p class="mb-0">Không có thương hiệu nào khớp với từ khóa "<strong>@currentFilter</strong>". Vui lòng thử lại.</p>
+                        </div>
+                    </div>
+                }
+        </div>
+</div>
+       
+@section Scripts {
+    <script>
+        async function doiTrangThai(element) {
+            const id = element.getAttribute('data-id');
+            const newStatus = element.value;
+            const originalStatus = element.getAttribute('data-original');
+
+            if (!confirm('Bạn có chắc muốn đổi trạng thái không?')) {
+                element.value = originalStatus;
+                return;
+            }
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+                formData.append('trangThai', newStatus);
+
+                const response = await fetch('/Admin/QuanLyThuongHieu/CapNhatTrangThai', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    element.setAttribute('data-original', newStatus);
+                    if (newStatus == '1') {
+                        element.className = "form-select form-select-sm border-0 fw-bold bg-success text-white";
+                    } else {
+                        element.className = "form-select form-select-sm border-0 fw-bold bg-danger text-white";
+                    }
+                } else {
+                    alert('Lỗi: ' + result.message);
+                    element.value = originalStatus;
+                }
+            } catch (error) {
+                console.error('Lỗi:', error);
+                alert('Không thể kết nối đến máy chủ!');
+                element.value = originalStatus;
+            }
+        }
+    </script>
 }
