@@ -1,29 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
+using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class QuanLyThuongHieuController : Controller
     {
-        private readonly QuanLyWebBanGiayContext _context;
-        public QuanLyThuongHieuController(QuanLyWebBanGiayContext context)
+        private readonly IThuongHieuService _service;
+
+        public QuanLyThuongHieuController(IThuongHieuService service)
         {
-            _context = context;
+            _service = service;
         }
 
         public async Task<IActionResult> TrangQLThuongHieu(string? searchString)
         {
-            var query = _context.ThuongHieus.AsQueryable();
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                searchString = searchString.Trim();
-                query = query.Where(t => t.TenThuongHieu.Contains(searchString) ||
-                                 t.XuatXu.Contains(searchString));
-            }
-            var danhsach = await query.ToListAsync();
+            var danhsach = await _service.GetAllAsync(searchString);
             ViewData["CurrentFilter"] = searchString;
             return View(danhsach);
         }
@@ -38,18 +31,15 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TrangThemThuongHieu([Bind("TenThuongHieu,XuatXu,TrangThai")] ThuongHieu thuongHieu)
         {
-            bool checkTonTai = await _context.ThuongHieus.AnyAsync(t => t.TenThuongHieu == thuongHieu.TenThuongHieu);
-            if (checkTonTai)
+            if (await _service.CheckTenTonTaiAsync(thuongHieu.TenThuongHieu))
             {
                 ModelState.AddModelError("TenThuongHieu", "Thương hiệu đã tồn tại!");
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Add(thuongHieu);
-                    await _context.SaveChangesAsync();
+                    await _service.CreateAsync(thuongHieu);
                     return RedirectToAction(nameof(TrangQLThuongHieu));
                 }
                 catch (Exception)
@@ -63,15 +53,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> TrangCapNhatThuongHieu(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var thuonghieu = await _context.ThuongHieus.FindAsync(id);
-            if (thuonghieu == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+
+            var thuonghieu = await _service.GetByIdAsync(id.Value);
+            if (thuonghieu == null) return NotFound();
+
             return View(thuonghieu);
         }
 
@@ -79,57 +65,36 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TrangCapNhatThuongHieu(int id, [Bind("Id,TenThuongHieu,XuatXu,TrangThai")] ThuongHieu thuongHieu)
         {
-            if (id != thuongHieu.Id)
-            {
-                return NotFound();
-            }
-
-            bool checkTenTrung = await _context.ThuongHieus
-                                                .AnyAsync(t => t.TenThuongHieu == thuongHieu.TenThuongHieu && t.Id != thuongHieu.Id);
-            if (checkTenTrung)
+            if (id != thuongHieu.Id) return NotFound();
+            if (await _service.CheckTenTonTaiAsync(thuongHieu.TenThuongHieu, id))
             {
                 ModelState.AddModelError("TenThuongHieu", "Tên thương hiệu này đã tồn tại!");
             }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(thuongHieu);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(thuongHieu);
                     return RedirectToAction(nameof(TrangQLThuongHieu));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!ThuongHieuExists(thuongHieu.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", "Lỗi cập nhật.");
                 }
             }
             return View(thuongHieu);
         }
 
-        private bool ThuongHieuExists(int id)
-        {
-            return _context.ThuongHieus.Any(e => e.Id == id);
-        }
-
         [HttpPost]
         public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
         {
-            var thuongHieu = await _context.ThuongHieus.FindAsync(id);
-            if (thuongHieu == null)
+            bool result = await _service.UpdateTrangThaiAsync(id, trangThai);
+            if (result)
             {
-                return Json(new { success = false, message = "Không tìm thấy thương hiệu!" });
+                return Json(new { success = true });
             }
-            thuongHieu.TrangThai = trangThai;
-            _context.Update(thuongHieu);
-            await _context.SaveChangesAsync();
-            return Json(new { success = true });
+            return Json(new { success = false, message = "Không tìm thấy thương hiệu!" });
         }
     }
 }
