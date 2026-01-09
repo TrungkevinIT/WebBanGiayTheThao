@@ -13,7 +13,7 @@ public partial class Voucher
     public int Id { get; set; }
 
     [StringLength(50)]
-    public string? MaCode { get; set; }
+    public string MaCode { get; set; } = null!;
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? GiaTriDonToiThieu { get; set; }

@@ -1,13 +1,20 @@
 ﻿@{
 	Layout = "_LayoutAdmin";
 }
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert @TempData["LoaiThongBao"] alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["ThongBao"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 @model IEnumerable<WebBanGiayTheThao.Models.Voucher>
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h3 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Danh Sách Mã Giảm Giá</h3>
-            <a href="themvoucher.html" class="btn btn-primary">
+            <a asp-area="admin" asp-controller="QuanLyVoucher" asp-action="TrangThemVoucher" class="btn btn-primary">
                 <i class="fa fa-plus-circle me-2"></i>Tạo Voucher Mới
             </a>
         </div>

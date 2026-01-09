@@ -19,5 +19,21 @@ namespace WebBanGiayTheThao.Services
                 .OrderBy(x => x.Id)
                 .ToListAsync();
         }
+
+        public async Task CreateAsync(Voucher voucher)
+        {
+            _context.Add(voucher);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null)
+        {
+            var query = _context.Vouchers.AsQueryable();
+            if (idExclude.HasValue)
+            {
+                query = query.Where(v => v.Id != idExclude.Value);
+            }
+            return await query.AnyAsync(v => v.MaCode == maCode);
+        }
     }
 }
