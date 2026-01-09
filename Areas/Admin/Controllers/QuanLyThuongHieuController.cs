@@ -40,6 +40,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 try
                 {
                     await _service.CreateAsync(thuongHieu);
+                    TempData["ThongBao"] = "Thêm thương hiệu thành công!";
+                    TempData["LoaiThongBao"] = "alert-success"; 
                     return RedirectToAction(nameof(TrangQLThuongHieu));
                 }
                 catch (Exception)
@@ -76,6 +78,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 try
                 {
                     await _service.UpdateAsync(thuongHieu);
+                    TempData["ThongBao"] = "Cập nhật thông tin thành công!";
+                    TempData["LoaiThongBao"] = "alert-success";
                     return RedirectToAction(nameof(TrangQLThuongHieu));
                 }
                 catch (Exception)

@@ -39,9 +39,11 @@
                     </div>
 
                     <div class="text-center border-top pt-3">
-                        <button type="submit" class="btn btn-warning px-5 py-2 text-white">
+                        <button type="submit" class="btn btn-warning px-5 py-2 text-white"
+                                onclick="return confirm('Bạn có chắc chắn muốn cập nhật thông tin thương hiệu này không?');">
                             <i class="fa fa-sync-alt me-2"></i>Lưu Thay Đổi
                         </button>
+
                         <a asp-area="Admin" asp-controller="QuanLyThuongHieu" asp-action="TrangQLThuongHieu" class="btn btn-secondary px-4 py-2 ms-2">Hủy bỏ</a>
                     </div>
                 </div>
