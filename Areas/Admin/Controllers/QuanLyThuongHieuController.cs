@@ -117,5 +117,19 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             return _context.ThuongHieus.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
+        {
+            var thuongHieu = await _context.ThuongHieus.FindAsync(id);
+            if (thuongHieu == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thương hiệu!" });
+            }
+            thuongHieu.TrangThai = trangThai;
+            _context.Update(thuongHieu);
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
+        }
     }
 }
