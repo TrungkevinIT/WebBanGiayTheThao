@@ -13,9 +13,16 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             _services = services;
         }
-        public async Task<IActionResult> TrangQLVoucher()
+        public async Task<IActionResult> TrangQLVoucher(int page = 1)
         {
-            var danhsach = await _services.GetAllAsync();
+            int pageSize = 5;
+            var (danhsach, totalCount) = await _services.GetAllPagingAsync(page, pageSize);
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = totalPages;
+            ViewData["ActionName"] = "TrangQLVoucher";
+            ViewData["Filters"] = new Dictionary<string, string>(); 
+
             return View(danhsach);
         }
 

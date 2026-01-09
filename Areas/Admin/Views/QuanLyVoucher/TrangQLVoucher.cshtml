@@ -82,12 +82,12 @@
                 </tbody>
             </table>
         </div>
+        <partial name="_Pager" />
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // Mình đổi tên hàm thành doiTrangThaiVoucher cho đỡ nhầm với bên Thương Hiệu
         async function doiTrangThaiVoucher(element) {
             const id = element.getAttribute('data-id');
             const newStatus = element.value;
@@ -103,19 +103,16 @@
                 formData.append('id', id);
                 formData.append('trangThai', newStatus);
 
-                // --- SỬA QUAN TRỌNG: Đổi đường dẫn từ QuanLyThuongHieu sang QuanLyVoucher ---
                 const response = await fetch('/Admin/QuanLyVoucher/CapNhatTrangThai', {
                     method: 'POST',
                     body: formData
                 });
-                // -----------------------------------------------------------------------------
 
                 const result = await response.json();
 
                 if (result.success) {
                     element.setAttribute('data-original', newStatus);
 
-                    // Cập nhật màu sắc: Xanh (Đang chạy) - Đỏ (Ngưng)
                     if (newStatus == '1') {
                         element.className = "form-select form-select-sm border-0 fw-bold bg-success text-white";
                     } else {

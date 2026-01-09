@@ -1,0 +1,46 @@
+﻿@{
+    int currentPage = Convert.ToInt32(ViewData["CurrentPage"]);
+    int totalPages = Convert.ToInt32(ViewData["TotalPages"]);
+    string actionName = ViewData["ActionName"]?.ToString() ?? "TrangQLSanPham";
+    var filterParams = ViewData["Filters"] as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                @{
+                    var prevParams = new Dictionary<string, string>(filterParams);
+                    prevParams["page"] = (currentPage - 1).ToString();
+                }
+                <a class="page-link" asp-action="@actionName" asp-all-route-data="prevParams">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                var pageParams = new Dictionary<string, string>(filterParams);
+                pageParams["page"] = i.ToString();
+
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" asp-action="@actionName" asp-all-route-data="pageParams">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                @{
+                    var nextParams = new Dictionary<string, string>(filterParams);
+                    nextParams["page"] = (currentPage + 1).ToString();
+                }
+                <a class="page-link" asp-action="@actionName" asp-all-route-data="nextParams">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

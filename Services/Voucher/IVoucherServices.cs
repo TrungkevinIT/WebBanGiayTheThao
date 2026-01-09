@@ -10,6 +10,7 @@ namespace WebBanGiayTheThao.Services
         Task UpdateAsync (Voucher voucher);
         Task<bool> UpdateTrangThaiAsync(int id, int trangThai);
         Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null);
+        Task<(List<Voucher> List, int TotalCount)> GetAllPagingAsync(int page, int pageSize);
 
     }
 }
