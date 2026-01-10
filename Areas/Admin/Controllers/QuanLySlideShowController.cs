@@ -48,7 +48,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             if (!string.IsNullOrEmpty(model.Link))
             {
-                // Nhớ đảm bảo hàm này trong Service có check: x.Link == link && x.Id != id
+               
                 bool isTrungLink = await _slideShowService.KiemTraLinkDaTonTai(model.Link, model.Id);
 
                 if (isTrungLink)
