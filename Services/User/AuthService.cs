@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
 using UserEntity = WebBanGiayTheThao.Models.User;
+using WebBanGiayTheThao.Helpers; // dùng PasswordHasher helper
 
 namespace WebBanGiayTheThao.Services
 {
@@ -24,12 +25,12 @@ namespace WebBanGiayTheThao.Services
             if (user == null)
                 return (null, "Sai tài khoản hoặc mật khẩu");
 
-            // 🚫 TÀI KHOẢN BỊ KHÓA
+            // TÀI KHOẢN BỊ KHÓA
             if (user.TrangThai == 0)
                 return (null, "Tài khoản của bạn đã bị khóa");
 
-            // ❌ Sai mật khẩu (pass thô)
-            if (user.Password != password)
+            // So sánh mật khẩu bằng PasswordHasher
+            if (!HashHelper.VerifyPassword(user, user.Password, password))
                 return (null, "Sai tài khoản hoặc mật khẩu");
 
             return (user, null);
@@ -57,7 +58,6 @@ namespace WebBanGiayTheThao.Services
             var user = new UserEntity
             {
                 Username = username,
-                Password = password, // pass thô
                 HoTen = hoTen,
                 Email = email,
                 Sdt = sdt,
@@ -65,6 +65,9 @@ namespace WebBanGiayTheThao.Services
                 VaiTro = 0,
                 TrangThai = 1
             };
+
+            // Băm mật khẩu bằng PasswordHasher
+            user.Password = HashHelper.HashPassword(user, password);
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
