@@ -53,7 +53,7 @@ namespace WebBanGiayTheThao.Controllers
                 TempData["ShowRegisterModal"] = true;
                 return RedirectToAction("TrangChu", "Home");
             }
-
+            
             var error = await _authService.RegisterAsync(
                 model.Username,
                 model.Password,

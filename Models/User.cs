@@ -17,7 +17,7 @@ public partial class User
     [Unicode(false)]
     public string Username { get; set; } = null!;
 
-    [StringLength(255)]
+    [StringLength(100)]
     [Unicode(false)]
     public string Password { get; set; } = null!;
 
