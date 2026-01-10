@@ -52,7 +52,7 @@ public class QuanLySanPhamController : Controller
         });
     }
 
-    public IActionResult ThemSanPham() { 
+    public IActionResult TrangThemSanPham() { 
         return View();
     }
 }
