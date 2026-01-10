@@ -14,9 +14,9 @@
         </div>
 
         <form id="formCapNhat" asp-action="TrangCapNhatSlideShow" method="post" enctype="multipart/form-data">
-
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="HinhAnh" />
+
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="row g-4">
@@ -39,9 +39,9 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label asp-for="Link" class="form-label fw-bold small">Link liên kết (*)</label>
+                        <input asp-for="Link" class="form-control" placeholder="/san-pham/..." />
 
-                        <input asp-for="Link" id="txtLink" class="form-control" placeholder="/san-pham/..." />
-                        <span asp-validation-for="Link" id="errorLink" class="text-danger small"></span>
+                        <span asp-validation-for="Link" class="text-danger small"></span>
                     </div>
                 </div>
             </div>
@@ -56,47 +56,28 @@
 </div>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script>
         function hienThiAnhPreview(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('previewImage').src = e.target.result;
+                    $('#previewImage').attr('src', e.target.result);
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
         function xacNhanLuu() {
-            var inputLink = document.getElementById("txtLink");
-            var errorSpan = document.getElementById("errorLink");
-            var form = document.getElementById("formCapNhat");
-
-            var linkVal = inputLink.value.trim();
-            var idVal = document.getElementById("Id").value;
-            if (linkVal === "") {
-                errorSpan.innerText = "Vui lòng nhập đường dẫn liên kết (Bắt buộc).";
+            var form = $("#formCapNhat");
+            if (!form.valid()) {
                 return;
-            } else {
-                errorSpan.innerText = "";
             }
-
-            var url = '/Admin/QuanLySlideShow/CheckLinkTrung?link=' + encodeURIComponent(linkVal) + '&id=' + idVal;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(isTrung => {
-
-                    if (isTrung === true) {
-
-                        errorSpan.innerText = "Link này đã tồn tại, vui lòng nhập link khác.";
-                    } else {
-                        
-                        if (confirm('Bạn có chắc chắn muốn lưu thay đổi này không?')) {
-                            form.submit();
-                        }
-                    }
-                })
+            if (confirm('Bạn có chắc chắn muốn lưu thay đổi này không?')) {
+                form.submit();
+            }
         }
     </script>
 }

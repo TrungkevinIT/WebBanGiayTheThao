@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebBanGiayTheThao.Models;
 
 [Table("SlideShow")]
+[Index(nameof(Link), IsUnique = true)]
 public partial class SlideShow
 {
     [Key]
@@ -15,6 +16,7 @@ public partial class SlideShow
     [StringLength(255)]
     public string? HinhAnh { get; set; }
 
+    [Required(ErrorMessage = "Vui lòng nhập đường dẫn (Link).")]
     [StringLength(255)]
     public string? Link { get; set; }
 }

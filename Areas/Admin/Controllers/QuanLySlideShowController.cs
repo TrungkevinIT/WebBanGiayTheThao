@@ -46,15 +46,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TrangCapNhatSlideShow(WebBanGiayTheThao.Models.SlideShow model, IFormFile? fileAnh)
         {
-            //check rỗng
-            if (string.IsNullOrEmpty(model.Link))
-            {
-                ModelState.AddModelError("Link", "vui lòng nhập đường liên kết.");
-            }
-            // Check Trùng Link
             if (!string.IsNullOrEmpty(model.Link))
             {
+                // Nhớ đảm bảo hàm này trong Service có check: x.Link == link && x.Id != id
                 bool isTrungLink = await _slideShowService.KiemTraLinkDaTonTai(model.Link, model.Id);
+
                 if (isTrungLink)
                 {
                     ModelState.AddModelError("Link", "Link này đã tồn tại, vui lòng nhập link khác.");
