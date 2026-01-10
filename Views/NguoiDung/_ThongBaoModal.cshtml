@@ -1,0 +1,56 @@
+﻿<div class="modal fade"
+     id="thongBaoModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thông báo</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body text-center">
+                <p class="mb-0" id="thongBaoNoiDung">
+                    <!-- Nội dung sẽ set bằng JS -->
+                </p>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer justify-content-center">
+                <button type="button"
+                        class="btn btn-primary"
+                        id="btnThongBaoOK">
+                    OK
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Khi bấm OK ở modal thông báo
+        document.getElementById("btnThongBaoOK")?.addEventListener("click", function () {
+
+            // Đóng modal thông báo
+            var thongBaoModalEl = document.getElementById("thongBaoModal");
+            var thongBaoModal = bootstrap.Modal.getInstance(thongBaoModalEl);
+            thongBaoModal.hide();
+
+            // Mở modal đăng nhập
+            var loginModalEl = document.getElementById("loginModal");
+            if (loginModalEl) {
+                var loginModal = new bootstrap.Modal(loginModalEl);
+                loginModal.show();
+            }
+        });
+    });
+</script>

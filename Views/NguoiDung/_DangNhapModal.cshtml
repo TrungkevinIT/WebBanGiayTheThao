@@ -42,17 +42,65 @@
             <p class="text-center text-muted mt-4 mb-0">
                 Chưa có tài khoản?
                 <a href="#"
-                   data-bs-dismiss="modal"
-                   data-bs-toggle="modal"
-                   data-bs-target="#registerModal"
+                   id="openRegisterModal"
                    class="fw-semibold text-decoration-none">
                     Đăng ký
                 </a>
             </p>
 
+
         </div>
     </div>
 </div>
+@*Xử lý click đăng kí trong form đăng nhập DuyKhang 23:45 09/01/2026*@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* ===== Đăng nhập → Đăng ký ===== */
+        const openRegister = document.getElementById("openRegisterModal");
+        if (openRegister) {
+            openRegister.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                const loginModalEl = document.getElementById("loginModal");
+                const registerModalEl = document.getElementById("registerModal");
+
+                const loginModal = bootstrap.Modal.getInstance(loginModalEl)
+                    || new bootstrap.Modal(loginModalEl);
+                const registerModal = new bootstrap.Modal(registerModalEl);
+
+                loginModal.hide();
+
+                loginModalEl.addEventListener("hidden.bs.modal", function () {
+                    registerModal.show();
+                }, { once: true });
+            });
+        }
+
+        /* ===== Đăng ký → Đăng nhập ===== */
+        const openLogin = document.getElementById("openLoginModal");
+        if (openLogin) {
+            openLogin.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                const registerModalEl = document.getElementById("registerModal");
+                const loginModalEl = document.getElementById("loginModal");
+
+                const registerModal = bootstrap.Modal.getInstance(registerModalEl)
+                    || new bootstrap.Modal(registerModalEl);
+                const loginModal = new bootstrap.Modal(loginModalEl);
+
+                registerModal.hide();
+
+                registerModalEl.addEventListener("hidden.bs.modal", function () {
+                    loginModal.show();
+                }, { once: true });
+            });
+        }
+
+    });
+</script>
+
 
 @* Tự động bật lại modal khi có lỗi *@
 @if (TempData["LoginError"] != null)

@@ -4,12 +4,15 @@
     Layout = "_LayoutAdmin";
     ViewData["Title"] = "Quản lý tài khoản người dùng";
 }
+
 <div class="container-fluid">
 
     <h4 class="fw-bold mb-4">Quản lý tài khoản người dùng</h4>
 
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body">
+
+            <!-- FORM TÌM KIẾM -->
             <form method="get" class="row g-2 mb-3">
                 <div class="col-md-4">
                     <input type="text"
@@ -25,6 +28,7 @@
                 </div>
             </form>
 
+            <!-- BẢNG NGƯỜI DÙNG -->
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
@@ -39,7 +43,6 @@
                         <th class="text-center">Hành động</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @if (Model.Users.Any())
                     {
@@ -90,8 +93,6 @@
             <!-- PHÂN TRANG -->
             <nav>
                 <ul class="pagination justify-content-center mt-3">
-
-                    <!-- Nút Previous -->
                     <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
                         <a class="page-link"
                            href="?page=@(Model.CurrentPage - 1)&sdt=@Model.Sdt">
@@ -99,7 +100,6 @@
                         </a>
                     </li>
 
-                    <!-- Các số trang -->
                     @for (int i = 1; i <= Model.TotalPages; i++)
                     {
                         <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
@@ -110,14 +110,12 @@
                         </li>
                     }
 
-                    <!-- Nút Next -->
                     <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
                         <a class="page-link"
                            href="?page=@(Model.CurrentPage + 1)&sdt=@Model.Sdt">
                             &gt;
                         </a>
                     </li>
-
                 </ul>
             </nav>
 
@@ -126,33 +124,74 @@
 
 </div>
 
+<!-- MODAL THAY ĐỔI TRẠNG THÁI -->
+<div class="modal fade" id="changeStatusModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
 
+            <form asp-area="Admin"
+                  asp-controller="QuanLyNguoiDung"
+                  asp-action="ChangeStatus"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" id="modalUserId" name="userId" />
+                <input type="hidden" id="modalTrangThai" name="trangThai" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p id="modalMessage"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit"
+                            id="modalConfirmBtn"
+                            class="btn">
+                        Xác nhận
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT FIX MODAL BOOTSTRAP 5 -->
 <script>
-    var modal = document.getElementById('changeStatusModal');
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalEl = document.getElementById('changeStatusModal');
 
-    modal.addEventListener('show.bs.modal', function (event) {
+        // Tạo instance modal để tránh lỗi _initializeBackDrop
+        var modal = new bootstrap.Modal(modalEl);
 
-        var button = event.relatedTarget;
+        // Lắng nghe sự kiện show.bs.modal
+        modalEl.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
 
-        var userId = button.getAttribute('data-userid');
-        var username = button.getAttribute('data-username');
-        var trangThai = button.getAttribute('data-trangthai');
+            var userId = button.getAttribute('data-userid');
+            var username = button.getAttribute('data-username');
+            var trangThai = button.getAttribute('data-trangthai');
 
-        document.getElementById('modalUserId').value = userId;
+            document.getElementById('modalUserId').value = userId;
+            document.getElementById('modalTrangThai').value = trangThai == "1" ? 0 : 1;
 
-        document.getElementById('modalTrangThai').value =
-            trangThai == "1" ? 0 : 1;
-
-        if (trangThai == "0") {
-            document.getElementById('modalTitle').innerText = "Xác nhận mở khóa";
-            document.getElementById('modalMessage').innerText =
-                `Bạn có chắc muốn mở khóa tài khoản "${username}"?`;
-            document.getElementById('modalConfirmBtn').className = "btn btn-success";
-        } else {
-            document.getElementById('modalTitle').innerText = "Xác nhận khóa";
-            document.getElementById('modalMessage').innerText =
-                `Bạn có chắc muốn khóa tài khoản "${username}"?`;
-            document.getElementById('modalConfirmBtn').className = "btn btn-danger";
-        }
+            if (trangThai == "0") {
+                document.getElementById('modalTitle').innerText = "Xác nhận mở khóa";
+                document.getElementById('modalMessage').innerText =
+                    `Bạn có chắc muốn mở khóa tài khoản "${username}"?`;
+                document.getElementById('modalConfirmBtn').className = "btn btn-success";
+            } else {
+                document.getElementById('modalTitle').innerText = "Xác nhận khóa";
+                document.getElementById('modalMessage').innerText =
+                    `Bạn có chắc muốn khóa tài khoản "${username}"?`;
+                document.getElementById('modalConfirmBtn').className = "btn btn-danger";
+            }
+        });
     });
 </script>
