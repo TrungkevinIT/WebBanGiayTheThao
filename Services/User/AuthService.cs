@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// DuyKhang đã toàn quyền edit file này mem nào có edit đến vui lòng cmt Tên_thoigianedit.
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using WebBanGiayTheThao.Data;
 using UserEntity = WebBanGiayTheThao.Models.User;
+using WebBanGiayTheThao.Helpers; 
 
 namespace WebBanGiayTheThao.Services
 {
@@ -24,12 +28,13 @@ namespace WebBanGiayTheThao.Services
             if (user == null)
                 return (null, "Sai tài khoản hoặc mật khẩu");
 
-            // 🚫 TÀI KHOẢN BỊ KHÓA
+            //TÀI KHOẢN BỊ KHÓA
             if (user.TrangThai == 0)
                 return (null, "Tài khoản của bạn đã bị khóa");
 
-            // ❌ Sai mật khẩu (pass thô)
-            if (user.Password != password)
+            // So sánh mật khẩu đã băm
+            var hashedInput = HashHelper.MD5Hash(password);
+            if (user.Password != hashedInput)
                 return (null, "Sai tài khoản hoặc mật khẩu");
 
             return (user, null);
@@ -54,10 +59,12 @@ namespace WebBanGiayTheThao.Services
             if (await _context.Users.AnyAsync(u => u.Sdt == sdt))
                 return "Số điện thoại đã được sử dụng";
 
+            var hashedPassword = HashHelper.MD5Hash(password); // Băm password trước khi lưu
+
             var user = new UserEntity
             {
                 Username = username,
-                Password = password, // pass thô
+                Password = hashedPassword, // lưu password đã băm
                 HoTen = hoTen,
                 Email = email,
                 Sdt = sdt,

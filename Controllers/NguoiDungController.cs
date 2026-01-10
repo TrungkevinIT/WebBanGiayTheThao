@@ -48,10 +48,11 @@ namespace WebBanGiayTheThao.Controllers
         [HttpPost]
         public async Task<IActionResult> DangKy(DangKyVM model)
         {
+            // Khi xuất hiện lỗi validate sẽ hiện lại form đăng ký với thông báo lỗi
             if (!ModelState.IsValid)
             {
                 TempData["ShowRegisterModal"] = true;
-                return RedirectToAction("TrangChu", "Home");
+                return View("~/Views/Home/TrangChu.cshtml", model);
             }
 
             var error = await _authService.RegisterAsync(
