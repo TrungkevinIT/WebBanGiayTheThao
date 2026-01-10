@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebBanGiayTheThao.Models;
 using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Filters;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
+
     public class QuanLyThuongHieuController : Controller
     {
         private readonly IThuongHieuService _service;

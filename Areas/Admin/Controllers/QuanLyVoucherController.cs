@@ -2,10 +2,13 @@
 using System.Threading.Tasks;
 using WebBanGiayTheThao.Models;
 using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Filters;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
+
     public class QuanLyVoucherController : Controller
     {
         private readonly IVoucherServices _services;

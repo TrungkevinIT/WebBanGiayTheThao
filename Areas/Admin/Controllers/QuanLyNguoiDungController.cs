@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Filters;
+using WebBanGiayTheThao.Services.User;
 using WebBanGiayTheThao.ViewModels;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class QuanLyNguoiDungController : Controller
     {
         private readonly IUserService _userService;

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
+using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Services.SanPham;
 using WebBanGiayTheThao.Services.SlideShow;
-using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Services.User;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -11,7 +12,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBanGiayTheThao.Services.ThuongHieuService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
-
+// Ðãng kí service cho Auth
+builder.Services.AddScoped<AuthService>();
+// Ðãng kí session
+builder.Services.AddSession();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
   );
@@ -31,7 +35,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
