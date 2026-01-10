@@ -103,20 +103,7 @@
        
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var form = document.getElementById('formTimKiem');
-
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    var input = document.getElementById('tuKhoa');
-                    if (input && input.value.trim() === "") {
-                        e.preventDefault();
-                        alert('Vui lòng nhập từ khóa để tìm kiếm!');
-                        input.focus(); 
-                    }
-                });
-            }
-        });
+;
         async function doiTrangThai(element) {
             const id = element.getAttribute('data-id');
             const newStatus = element.value;
