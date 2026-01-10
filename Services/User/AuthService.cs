@@ -1,10 +1,7 @@
-﻿// DuyKhang đã toàn quyền edit file này mem nào có edit đến vui lòng cmt Tên_thoigianedit.
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
 using UserEntity = WebBanGiayTheThao.Models.User;
-using WebBanGiayTheThao.Helpers; 
+using WebBanGiayTheThao.Helpers; // dùng PasswordHasher helper
 
 namespace WebBanGiayTheThao.Services
 {
@@ -28,13 +25,12 @@ namespace WebBanGiayTheThao.Services
             if (user == null)
                 return (null, "Sai tài khoản hoặc mật khẩu");
 
-            //TÀI KHOẢN BỊ KHÓA
+            // TÀI KHOẢN BỊ KHÓA
             if (user.TrangThai == 0)
                 return (null, "Tài khoản của bạn đã bị khóa");
 
-            // So sánh mật khẩu đã băm
-            var hashedInput = HashHelper.MD5Hash(password);
-            if (user.Password != hashedInput)
+            // So sánh mật khẩu bằng PasswordHasher
+            if (!HashHelper.VerifyPassword(user, user.Password, password))
                 return (null, "Sai tài khoản hoặc mật khẩu");
 
             return (user, null);
@@ -59,12 +55,9 @@ namespace WebBanGiayTheThao.Services
             if (await _context.Users.AnyAsync(u => u.Sdt == sdt))
                 return "Số điện thoại đã được sử dụng";
 
-            var hashedPassword = HashHelper.MD5Hash(password); // Băm password trước khi lưu
-
             var user = new UserEntity
             {
                 Username = username,
-                Password = hashedPassword, // lưu password đã băm
                 HoTen = hoTen,
                 Email = email,
                 Sdt = sdt,
@@ -72,6 +65,9 @@ namespace WebBanGiayTheThao.Services
                 VaiTro = 0,
                 TrangThai = 1
             };
+
+            // Băm mật khẩu bằng PasswordHasher
+            user.Password = HashHelper.HashPassword(user, password);
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
