@@ -26,5 +26,10 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             ViewBag.SortOrder = sortOrder;
             return View(sp.products);
         }
+
+        public IActionResult ThemSanPham()
+        {
+            return View();
+        }
     }
 }
