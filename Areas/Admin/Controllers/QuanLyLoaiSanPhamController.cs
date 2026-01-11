@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Models;
 using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class QuanLyLoaiSanPhamController : Controller
     {
         private readonly ILoaiSanPhamService _loaiSanPhamService;

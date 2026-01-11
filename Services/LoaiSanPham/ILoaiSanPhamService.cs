@@ -7,6 +7,6 @@ namespace WebBanGiayTheThao.Services
     public interface ILoaiSanPhamService
     {
         Task<IEnumerable<LoaiSanPham>> GetAllLoaiSanPhamAsync(string searchName, int? trangThai);
-       
+        Task<LoaiSanPham?> GetLoaiSanPhamByIdAsync(int id);
     }
 }

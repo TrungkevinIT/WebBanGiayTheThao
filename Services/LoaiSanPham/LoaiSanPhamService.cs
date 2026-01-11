@@ -29,6 +29,10 @@ namespace WebBanGiayTheThao.Services
             }
             return await query.OrderBy(x => x.Id).ToListAsync();
         }
+        public async Task<LoaiSanPham?> GetLoaiSanPhamByIdAsync(int id)
+        {
+            return await _context.LoaiSanPhams.FindAsync(id);
+        }
 
     }
 }
