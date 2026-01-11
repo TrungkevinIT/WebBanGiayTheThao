@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
-using UserEntity = WebBanGiayTheThao.Models.User;
 using WebBanGiayTheThao.Helpers; // dùng PasswordHasher helper
+using UserEntity = WebBanGiayTheThao.Models.User;
+using WebBanGiayTheThao.ViewModels.NguoiDung;
 
 namespace WebBanGiayTheThao.Services
 {
@@ -74,5 +75,65 @@ namespace WebBanGiayTheThao.Services
 
             return null;
         }
+        // ===================== PROFILE USER =====================
+        public async Task<UserProfileVM?> GetProfileAsync(int userId)
+        {
+            return await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new UserProfileVM
+                {
+                    Username = u.Username,
+                    FullName = u.HoTen,
+                    Email = u.Email,
+                    Phone = u.Sdt,
+                    Address = u.DiaChi
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<string?> UpdateProfileAsync(int userId, UpdateProfileVM model)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return "Người dùng không tồn tại";
+
+            // Email trùng (trừ chính mình)
+            if (await _context.Users.AnyAsync(u =>
+                u.Email == model.Email && u.Id != userId))
+                return "Email đã được sử dụng";
+
+            // SĐT trùng (trừ chính mình)
+            if (await _context.Users.AnyAsync(u =>
+                u.Sdt == model.Phone && u.Id != userId))
+                return "Số điện thoại đã được sử dụng";
+
+            user.HoTen = model.FullName;
+            user.Email = model.Email;
+            user.Sdt = model.Phone;
+            user.DiaChi = model.Address;
+
+            await _context.SaveChangesAsync();
+            return null;
+        }
+
+
+        public async Task<string?> ChangePasswordAsync(
+            int userId,
+            string oldPassword,
+            string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return "Người dùng không tồn tại";
+
+            if (!HashHelper.VerifyPassword(user, user.Password, oldPassword))
+                return "Mật khẩu hiện tại không đúng";
+
+            user.Password = HashHelper.HashPassword(user, newPassword);
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
+
     }
 }

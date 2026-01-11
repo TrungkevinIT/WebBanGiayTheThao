@@ -34,23 +34,31 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+<<script>
+     // Mặc định KHÔNG mở login modal
+     let shouldOpenLoginModal = false;
 
-        // Khi bấm OK ở modal thông báo
-        document.getElementById("btnThongBaoOK")?.addEventListener("click", function () {
+     document.addEventListener("DOMContentLoaded", function () {
 
-            // Đóng modal thông báo
-            var thongBaoModalEl = document.getElementById("thongBaoModal");
-            var thongBaoModal = bootstrap.Modal.getInstance(thongBaoModalEl);
-            thongBaoModal.hide();
+         document.getElementById("btnThongBaoOK")?.addEventListener("click", function () {
 
-            // Mở modal đăng nhập
-            var loginModalEl = document.getElementById("loginModal");
-            if (loginModalEl) {
-                var loginModal = new bootstrap.Modal(loginModalEl);
-                loginModal.show();
-            }
-        });
-    });
+             // Đóng modal thông báo
+             const thongBaoModalEl = document.getElementById("thongBaoModal");
+             const thongBaoModal = bootstrap.Modal.getInstance(thongBaoModalEl);
+             thongBaoModal.hide();
+
+             // ✅ CHỈ mở login modal khi đăng ký thành công
+             if (shouldOpenLoginModal) {
+                 const loginModalEl = document.getElementById("loginModal");
+                 if (loginModalEl) {
+                     new bootstrap.Modal(loginModalEl).show();
+                 }
+             }
+
+             // Reset cờ
+             shouldOpenLoginModal = false;
+         });
+     });
 </script>
+
+
