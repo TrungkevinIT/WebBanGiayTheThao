@@ -1,34 +1,39 @@
-﻿@{
+﻿@model IEnumerable<WebBanGiayTheThao.Models.LoaiSanPham>
+
+@{
     Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý Loại Sản Phẩm";
 }
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4 mb-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Quản lý Loại Sản Phẩm</h6>
-            <a asp-area="Admin" asp-action="TrangThemMoiLoaiSanPham" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-success">
-                <i class="fa fa-plus me-1"></i> Thêm mới
-            </a>
         </div>
 
-        <form>
+        <form method="get" asp-action="TrangQLLoaiSanPham" asp-controller="QuanLyLoaiSanPham">
             <div class="row g-3">
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
-                        <input type="text" class="form-control border-start-0" placeholder="Tìm tên loại sản phẩm...">
+                        <input type="text" name="Tenloai" value="@ViewBag.SearchName" class="form-control border-start-0" placeholder="Tìm tên loại sản phẩm...">
                     </div>
                 </div>
 
                 <div class="col-md-3">
-                    <select class="form-select">
-                        <option selected>Tất cả trạng thái</option>
-                        <option value="1">Đang hoạt động</option>
-                        <option value="0">Ngừng hoạt động</option>
+                    <select class="form-select" name="trangThai">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="1" selected="@(ViewBag.TrangThai == 1 ? "selected" : null)">
+                            Đang hoạt động
+                        </option>
+                        <option value="0" selected="@(ViewBag.TrangThai != null && ViewBag.TrangThai == 0 ? "selected" : null)">
+                            Ngừng hoạt động
+                        </option>
                     </select>
                 </div>
 
                 <div class="col-md-4">
-                    <button type="button" class="btn btn-primary w-100">
+                    <button type="submit" class="btn btn-primary w-100">
                         <i class="fa fa-search me-1"></i> Tìm kiếm
                     </button>
                 </div>
@@ -41,60 +46,53 @@
             <table class="table text-center align-middle table-bordered table-hover mb-0">
                 <thead class="bg-primary text-white">
                     <tr>
-                        <th scope="col" style="width: 10%;">STT</th>
+                        <th scope="col" style="width: 10%;">ID</th>
                         <th scope="col" class="text-start ps-4">Tên Loại Sản Phẩm</th>
                         <th scope="col" style="width: 20%;">Trạng Thái</th>
                         <th scope="col" style="width: 15%;">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td class="text-start ps-4 fw-bold text-dark">Giày Chạy Bộ</td>
-                        <td>
-                            <div class="form-check form-switch d-flex justify-content-center align-items-center">
-                                <input class="form-check-input" type="checkbox" role="switch" id="catSwitch1" checked onchange="toggleCatStatus(this)">
-                                <label class="form-check-label ms-2 text-success small fw-bold" for="catSwitch1">Hoạt động</label>
-                            </div>
-                        </td>
-                        <td>
-                            <a asp-action="TrangCapNhatLoaiSanPham" asp-area="Admin" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Sửa">
-                                <i class="fa fa-pen"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-outline-danger rounded-circle" title="Xóa" onclick="return confirm('Xóa loại sản phẩm này?')">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-
-
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td class="text-start ps-4 fw-bold text-dark">@item.TenLoai</td>
+                                <td class="align-middle">
+                                    @if (item.TrangThai == 1)
+                                    {
+                                        <span class="badge bg-success text-white px-3 py-2 rounded-pill">
+                                            Đang hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary text-white px-3 py-2 rounded-pill">
+                                            Ngừng hoạt động
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="TrangCapNhatLoaiSanPham" asp-area="Admin" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Sửa">
+                                        <i class="fa fa-pen"></i>
+                                    </a>
+                                    
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                Không tìm thấy dữ liệu nào.
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
-
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-            </ul>
-        </nav>
     </div>
 </div>
-
-<script>
-    function toggleCatStatus(checkbox) {
-        var label = checkbox.nextElementSibling;
-
-        if (checkbox.checked) {
-            label.textContent = "Hoạt động";
-            label.classList.remove("text-muted");
-            label.classList.add("text-success");
-        } else {
-            label.textContent = "Đã ẩn";
-            label.classList.remove("text-success");
-            label.classList.add("text-muted");
-        }
-    }
-</script>

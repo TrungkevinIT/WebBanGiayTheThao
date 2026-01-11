@@ -1,21 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using WebBanGiayTheThao.Models;
+using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class QuanLyLoaiSanPhamController : Controller
     {
-        public IActionResult TrangQLLoaiSanPham()
+        private readonly ILoaiSanPhamService _loaiSanPhamService;
+
+        public QuanLyLoaiSanPhamController(ILoaiSanPhamService loaiSanPhamService)
         {
-            return View();
+            _loaiSanPhamService = loaiSanPhamService;
         }
-        public IActionResult TrangThemMoiLoaiSanPham()
+        [HttpGet]
+        public async Task<IActionResult> TrangQLLoaiSanPham(string Tenloai, int? trangThai)
         {
-            return View();
+            var dsLoaiSanPham = await _loaiSanPhamService.GetAllLoaiSanPhamAsync(Tenloai, trangThai);
+            ViewBag.SearchName = Tenloai;
+            ViewBag.TrangThai = trangThai;
+            return View(dsLoaiSanPham);
         }
-        public IActionResult TrangCapNhatLoaiSanPham()
-        {
-            return View();
-        }
+
+
+        
     }
 }

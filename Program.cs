@@ -21,6 +21,9 @@ builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   );
 builder.Services.AddScoped<ISanPhamService,SanPhamService>();
 builder.Services.AddScoped<ISlideShowService,SlideShowService>();
+
+builder.Services.AddScoped<ILoaiSanPhamService, LoaiSanPhamService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
