@@ -16,6 +16,8 @@ builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGi
 builder.Services.AddScoped<AuthService>();
 // Ðãng kí session
 builder.Services.AddSession();
+// Ðãng kí service cho báo cáo DuyKhang edit 20:14 11/01/2026 
+builder.Services.AddScoped<BaoCaoService>();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
   );
