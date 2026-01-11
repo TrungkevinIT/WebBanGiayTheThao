@@ -1,0 +1,41 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_LayoutAdmin";
+}
+<div class="bg-light rounded p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6 class="mb-0 text-primary text-uppercase">Thêm Loại Sản Phẩm Mới</h6>
+        <a asp-action="TrangQLLoaiSanPham" asp-area="Admin" asp-controller="QuanlyLoaiSanPham" class="btn btn-sm btn-outline-secondary">
+            <i class="fa fa-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <form>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-lg" placeholder="Nhập tên loại (VD: Giày tây, Giày lười...)" required>
+                    <div class="form-text">Tên loại sản phẩm nên ngắn gọn và rõ nghĩa.</div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Trạng thái hiển thị</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="activeSwitch" checked>
+                        <label class="form-check-label" for="activeSwitch">Kích hoạt ngay</label>
+                    </div>
+                </div>
+
+                <div class="text-center border-top pt-4">
+                    <button type="submit" class="btn btn-primary px-5 py-2">
+                        <i class="fa fa-save me-2"></i>Lưu Loại Sản Phẩm
+                    </button>
+                    <button type="reset" class="btn btn-secondary px-4 py-2 ms-2">Nhập lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
