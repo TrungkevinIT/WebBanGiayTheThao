@@ -33,6 +33,35 @@ namespace WebBanGiayTheThao.Services
         {
             return await _context.LoaiSanPhams.FindAsync(id);
         }
+        public async Task CapNhatLoaiSanPhamAsync(LoaiSanPham loaiSanPham)
+        {
+            try
+            {
+                var existingItem = await _context.LoaiSanPhams.FindAsync(loaiSanPham.Id);
+                if (existingItem != null)
+                {
+                    existingItem.TenLoai = loaiSanPham.TenLoai;
+                    existingItem.TrangThai = loaiSanPham.TrangThai;
 
+
+                    _context.LoaiSanPhams.Update(existingItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi cập nhật: " + ex.Message);
+            }
+        }
+        public async Task<bool> CapNhatTrangThaiAsync(int id, int trangThai)
+        {
+            var loaiSanPham = await _context.LoaiSanPhams.FindAsync(id);
+            if (loaiSanPham == null) return false;
+
+            loaiSanPham.TrangThai = trangThai;
+            _context.Update(loaiSanPham);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

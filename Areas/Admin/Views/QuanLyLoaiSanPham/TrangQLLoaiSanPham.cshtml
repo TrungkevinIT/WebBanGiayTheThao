@@ -6,31 +6,41 @@
 }
 
 <div class="container-fluid pt-4 px-4">
+
+    @if (TempData["ThongBao"] != null)
+    {
+        <div class="alert @TempData["LoaiThongBao"] alert-dismissible fade show" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["ThongBao"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="bg-light rounded p-4 mb-4">
-        <h6 class="mb-3 text-primary text-uppercase fw-bold">Tìm kiếm Loại Sản Phẩm</h6>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Quản lý Loại Sản Phẩm</h6>
+            <a asp-action="TrangThemMoiLoaiSanPham" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-success">
+                <i class="fa fa-plus me-1"></i> Thêm mới
+            </a>
+        </div>
 
         <form method="get" asp-action="TrangQLLoaiSanPham" asp-controller="QuanLyLoaiSanPham">
-            <div class="row g-3 align-items-end">
+            <div class="row g-3">
                 <div class="col-md-5">
-                    <label class="form-label small text-muted">Tên loại:</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="fa fa-search text-muted"></i></span>
-                        <input type="text" name="Tenloai" value="@ViewBag.SearchName" class="form-control" placeholder="Nhập tên cần tìm...">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                        <input type="text" name="Tenloai" value="@ViewBag.SearchName" class="form-control border-start-0" placeholder="Tìm tên loại sản phẩm...">
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <label class="form-label small text-muted">Trạng thái:</label>
+                <div class="col-md-3">
                     <select class="form-select" name="trangThai">
-                        <option value="">-- Tất cả --</option>
+                        <option value="">Tất cả trạng thái</option>
                         <option value="1" selected="@(ViewBag.TrangThai == 1)">Đang hoạt động</option>
                         <option value="0" selected="@(ViewBag.TrangThai != null && ViewBag.TrangThai == 0)">Ngừng hoạt động</option>
                     </select>
                 </div>
-
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fa fa-filter me-1"></i> Lọc dữ liệu
+                        <i class="fa fa-search me-1"></i> Tìm kiếm
                     </button>
                 </div>
             </div>
@@ -38,20 +48,13 @@
     </div>
 
     <div class="bg-light text-center rounded p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Danh sách</h6>
-            <a asp-action="TrangThemMoiLoaiSanPham" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-success">
-                <i class="fa fa-plus me-1"></i> Thêm mới
-            </a>
-        </div>
-
-        <div class="table-responsive border rounded-3 shadow-sm">
-            <table class="table text-center align-middle table-hover mb-0">
+        <div class="table-responsive border rounded-3 overflow-hidden shadow-sm">
+            <table class="table text-center align-middle table-bordered table-hover mb-0">
                 <thead class="bg-primary text-white">
                     <tr>
                         <th scope="col" style="width: 10%;">ID</th>
                         <th scope="col" class="text-start ps-4">Tên Loại Sản Phẩm</th>
-                        <th scope="col" style="width: 25%;">Trạng Thái</th>
+                        <th scope="col" style="width: 20%;">Trạng Thái</th>
                         <th scope="col" style="width: 15%;">Hành động</th>
                     </tr>
                 </thead>
@@ -63,22 +66,26 @@
                             <tr>
                                 <td>@item.Id</td>
                                 <td class="text-start ps-4 fw-bold text-dark">@item.TenLoai</td>
-                                <td>
+                                <td class="align-middle">
                                     @if (item.TrangThai == 1)
                                     {
-                                        <span class="badge bg-success rounded-pill px-3">Đang hoạt động</span>
+                                        <a asp-action="DoiTrangThai" asp-route-id="@item.Id"
+                                           class="badge bg-success text-white text-decoration-none p-2 w-75"
+                                           onclick="return confirm('Bạn có muốn NGỪNG hoạt động loại này?')">
+                                            Đang hoạt động
+                                        </a>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary rounded-pill px-3">Ngừng hoạt động</span>
+                                        <a asp-action="DoiTrangThai" asp-route-id="@item.Id"
+                                           class="badge bg-danger text-white text-decoration-none p-2 w-75"
+                                           onclick="return confirm('Bạn có muốn KÍCH HOẠT lại loại này?')">
+                                            Ngừng hoạt động
+                                        </a>
                                     }
                                 </td>
                                 <td>
-                                    <a asp-action="TrangCapNhatLoaiSanPham"
-                                       asp-controller="QuanLyLoaiSanPham"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-primary rounded-circle"
-                                       title="Sửa">
+                                    <a asp-action="TrangCapNhatLoaiSanPham" asp-controller="QuanLyLoaiSanPham" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Sửa">
                                         <i class="fa fa-pen"></i>
                                     </a>
                                 </td>
@@ -88,9 +95,8 @@
                     else
                     {
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-muted">
-                                <i class="fa fa-box-open fa-2x mb-3 d-block"></i>
-                                Không tìm thấy dữ liệu phù hợp.
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                Không tìm thấy dữ liệu.
                             </td>
                         </tr>
                     }
