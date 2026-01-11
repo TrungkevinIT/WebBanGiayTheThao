@@ -107,7 +107,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Lỗi khi thêm: " + ex.Message);
                 }
             }
-            return View(loaiSanPham);
+            return RedirectToAction(nameof(TrangQLLoaiSanPham));
         }
     }
 }
