@@ -83,5 +83,31 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             TempData["LoaiThongBao"] = "alert-success";
             return RedirectToAction(nameof(TrangQLLoaiSanPham));
         }
+        [HttpGet]
+        public IActionResult TrangThemMoiLoaiSanPham()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrangThemMoiLoaiSanPham(LoaiSanPham loaiSanPham)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _loaiSanPhamService.ThemLoaiSanPhamAsync(loaiSanPham);
+
+                    TempData["ThongBao"] = "Thêm mới thành công!";
+                    TempData["LoaiThongBao"] = "alert-success";
+                    return RedirectToAction(nameof(TrangQLLoaiSanPham));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi khi thêm: " + ex.Message);
+                }
+            }
+            return View(loaiSanPham);
+        }
     }
 }

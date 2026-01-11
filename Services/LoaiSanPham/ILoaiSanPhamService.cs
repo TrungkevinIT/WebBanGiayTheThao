@@ -11,6 +11,6 @@ namespace WebBanGiayTheThao.Services
 
         Task CapNhatLoaiSanPhamAsync(LoaiSanPham loaiSanPham);
         Task<bool> CapNhatTrangThaiAsync(int id, int trangThai);
-
+        Task ThemLoaiSanPhamAsync(LoaiSanPham loaiSanPham);
     }
 }

@@ -61,6 +61,27 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task ThemLoaiSanPhamAsync(LoaiSanPham loaiSanPham)
+        {
+            try
+            {
+
+                bool daTonTai = await _context.LoaiSanPhams
+                    .AnyAsync(x => x.TenLoai == loaiSanPham.TenLoai);
+
+                if (daTonTai)
+                {
+                    throw new Exception("Tên loại sản phẩm này đã tồn tại trong hệ thống!");
+                }
+                await _context.LoaiSanPhams.AddAsync(loaiSanPham);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Lỗi khi thêm loại sản phẩm: " + ex.Message);
+            }
+        }
 
     }
 }
