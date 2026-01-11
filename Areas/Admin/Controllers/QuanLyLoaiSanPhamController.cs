@@ -19,6 +19,15 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> TrangQLLoaiSanPham(string Tenloai, int? trangThai)
         {
+            if (string.IsNullOrWhiteSpace(Tenloai))
+            {
+                Tenloai = null;
+            }
+            else
+            {
+                
+                Tenloai = Tenloai.Trim();
+            }
             var dsLoaiSanPham = await _loaiSanPhamService.GetAllLoaiSanPhamAsync(Tenloai, trangThai);
             ViewBag.SearchName = Tenloai;
             ViewBag.TrangThai = trangThai;
