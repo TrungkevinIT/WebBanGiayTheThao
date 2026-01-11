@@ -42,8 +42,6 @@ namespace WebBanGiayTheThao.Services
                 {
                     existingItem.TenLoai = loaiSanPham.TenLoai;
                     existingItem.TrangThai = loaiSanPham.TrangThai;
-
-
                     _context.LoaiSanPhams.Update(existingItem);
                     await _context.SaveChangesAsync();
                 }
@@ -63,5 +61,6 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
     }
 }

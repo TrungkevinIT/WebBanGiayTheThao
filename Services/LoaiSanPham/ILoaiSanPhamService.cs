@@ -8,6 +8,7 @@ namespace WebBanGiayTheThao.Services
     {
         Task<IEnumerable<LoaiSanPham>> GetAllLoaiSanPhamAsync(string searchName, int? trangThai);
         Task<LoaiSanPham?> GetLoaiSanPhamByIdAsync(int id);
+
         Task CapNhatLoaiSanPhamAsync(LoaiSanPham loaiSanPham);
         Task<bool> CapNhatTrangThaiAsync(int id, int trangThai);
 

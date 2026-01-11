@@ -1,42 +1,55 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model WebBanGiayTheThao.Models.LoaiSanPham
+
 @{
     Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Cập nhật Loại Sản Phẩm";
 }
-<div class="bg-light rounded p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h6 class="mb-0 text-primary text-uppercase">Cập nhật Loại Sản Phẩm</h6>
-        <a asp-action="TrangQLLoaiSanPham" asp-area="Admin" asp-controller="QuanlyLoaiSanPham" class="btn btn-sm btn-outline-secondary">
-            <i class="fa fa-arrow-left me-1"></i> Quay lại
-        </a>
-    </div>
 
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <form>
-                <input type="hidden" value="101">
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Cập nhật Loại Sản Phẩm</h6>
+            <a asp-action="TrangQLLoaiSanPham" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-lg" value="Giày Chạy Bộ" required>
-                </div>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form method="post" asp-action="TrangCapNhatLoaiSanPham" asp-controller="QuanLyLoaiSanPham">
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Trạng thái hiển thị</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="editSwitch" checked>
-                        <label class="form-check-label" for="editSwitch">Đang hoạt động</label>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-4">
+                        <label asp-for="TenLoai" class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
+                        <input asp-for="TenLoai" class="form-control form-control-lg" placeholder="Nhập tên loại..." required />
+                        <span asp-validation-for="TenLoai" class="text-danger"></span>
                     </div>
-                </div>
 
-                <div class="text-center border-top pt-4">
-                    <button type="submit" class="btn btn-warning px-5 py-2 text-white">
-                        <i class="fa fa-sync-alt me-2"></i>Lưu Thay Đổi
-                    </button>
-                    <a href="quanlyloaisanpham.html" class="btn btn-secondary px-4 py-2 ms-2">Hủy bỏ</a>
-                </div>
-            </form>
+                    <div class="mb-4">
+                        <label asp-for="TrangThai" class="form-label fw-bold">Trạng thái hiển thị</label>
+                        <select asp-for="TrangThai" class="form-select form-select-lg">
+                            <option value="1">Đang hoạt động</option>
+                            <option value="0">Ngừng hoạt động</option>
+                        </select>
+                        <span asp-validation-for="TrangThai" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-center border-top pt-4">
+                        <button type="submit" class="btn btn-warning px-5 py-2 text-white">
+                            <i class="fa fa-sync-alt me-2"></i>Lưu Thay Đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
