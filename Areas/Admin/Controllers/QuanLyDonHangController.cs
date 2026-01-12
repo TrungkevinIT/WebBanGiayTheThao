@@ -22,5 +22,12 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             var danhSach = await _donHangService.GetAllHoaDonAsync(searchSDT, trangThai, ngayDat);
             return View(danhSach);
         }
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
+        {
+            await _donHangService.CapNhatTrangThaiAsync(id, trangThai);
+            return RedirectToAction("TrangQLDonHang");
+        }
     }
 }

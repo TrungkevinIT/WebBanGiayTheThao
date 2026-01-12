@@ -31,5 +31,14 @@ namespace WebBanGiayTheThao.Services.DonHang
             }
             return await query.OrderByDescending(x => x.NgayDat).ToListAsync();
         }
+        public async Task<bool> CapNhatTrangThaiAsync(int id, int trangThai)
+        {
+            var hoaDon = await _context.HoaDons.FindAsync(id);
+            if (hoaDon == null) return false;
+            hoaDon.TrangThai = trangThai;
+            _context.HoaDons.Update(hoaDon);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

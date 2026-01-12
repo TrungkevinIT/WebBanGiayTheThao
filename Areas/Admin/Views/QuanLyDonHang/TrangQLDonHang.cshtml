@@ -74,15 +74,20 @@
                                 </td>
 
                                 <td>
-                                    <select class="form-select form-select-sm w-auto border-0 text-center rounded-pill @mauNen"
-                                            style="font-weight: 600; cursor: pointer;"
-                                            data-id="@item.Id"
-                                            onchange="this.className = 'form-select form-select-sm w-auto border-0 text-center rounded-pill ' + (this.value == 1 ? 'bg-warning text-dark' : this.value == 2 ? 'bg-success text-white' : 'bg-danger text-white')">
+                                    <form asp-action="CapNhatTrangThai" method="post">
 
-                                        <option value="1" selected="@(item.TrangThai == 1)" class="bg-white text-dark">Đã duyệt</option>
-                                        <option value="2" selected="@(item.TrangThai == 2)" class="bg-white text-dark">Đã hoàn thành</option>
-                                        <option value="3" selected="@(item.TrangThai == 3)" class="bg-white text-dark">Đã hủy</option>
-                                    </select>
+                                        <input type="hidden" name="id" value="@item.Id" />
+
+                                        <select name="trangThai"
+                                                class="form-select form-select-sm w-auto border-0 text-center rounded @mauNen"
+                                                style="font-weight: 600; cursor: pointer;"
+                                                onchange="this.form.submit()">
+
+                                            <option value="1" selected="@(item.TrangThai == 1)" class="bg-white text-dark">Đã duyệt</option>
+                                            <option value="2" selected="@(item.TrangThai == 2)" class="bg-white text-dark">Đã hoàn thành</option>
+                                            <option value="3" selected="@(item.TrangThai == 3)" class="bg-white text-dark">Đã hủy</option>
+                                        </select>
+                                    </form>
                                 </td>
 
                                 <td>
