@@ -19,6 +19,7 @@ namespace WebBanGiayTheThao.Services.User
             int pageSize
         )
         {
+
             var query = _context.Users
                 .Where(u => u.VaiTro == 0)
                 .AsQueryable();
@@ -28,8 +29,10 @@ namespace WebBanGiayTheThao.Services.User
                 query = query.Where(u => u.Sdt != null && u.Sdt.Contains(sdt));
             }
 
+            
             var totalUsers = await query.CountAsync();
 
+          
             var users = await query
                 .OrderByDescending(u => u.Id)
                 .Skip((page - 1) * pageSize)
@@ -41,6 +44,7 @@ namespace WebBanGiayTheThao.Services.User
 
         public async Task<string> ChangeUserStatusAsync(int userId, int trangThai)
         {
+
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == userId && u.VaiTro == 0);
 

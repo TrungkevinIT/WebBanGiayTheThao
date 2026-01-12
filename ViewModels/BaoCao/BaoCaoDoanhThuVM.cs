@@ -1,5 +1,7 @@
-﻿namespace WebBanGiayTheThao.ViewModels.BaoCao
+﻿using WebBanGiayTheThao.ViewModels.BaoCao;
+namespace WebBanGiayTheThao.ViewModels.BaoCao
 {
+
     public class BaoCaoDoanhThuVM
     {
         public int Thang { get; set; }
@@ -9,7 +11,11 @@
 
         public List<DoanhThuTheoNgayVM> ChiTietTheoNgay { get; set; }
             = new();
+
+        public List<TopSanPhamBanChayVM> Top5SanPham { get; set; }
+            = new();
+
+        public List<DoanhThuTheoThangVM> DoanhThu12Thang { get; set; }
+            = new();
     }
-
-
 }
