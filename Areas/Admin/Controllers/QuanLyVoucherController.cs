@@ -36,28 +36,26 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TrangThemVoucher([Bind("MaCode,GiaTriDonToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc,SoLuong,TrangThai")] Voucher voucher)
+        public async Task<IActionResult> TrangThemVoucher(Voucher voucher)
         {
-            if (await _services.CheckTonTaiAsync(voucher.MaCode))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("MaCode", "Mã code đã tồn tại.");
-            }    
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _services.CreateAsync(voucher);
-                    TempData["ThongBao"] = "Thêm voucher thành công!";
-                    TempData["LoaiThongBao"] = "alert-success";
-                    return RedirectToAction(nameof(TrangQLVoucher));
-                }
-                catch (Exception)
-                {
-                    ModelState.AddModelError("", "Đã có lỗi xảy ra khi thêm voucher. Vui lòng thử lại.");
-                }
+                return View(voucher);
             }
-           return View(voucher);
+
+            var errors = await _services.CreateAsync(voucher);
+
+            if (errors != null && errors.Count > 0)
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+                return View(voucher);
+            }
+
+            TempData["SuccessMessage"] = "Tạo Voucher thành công!";
+            return RedirectToAction("TrangQLVoucher");
         }
 
         [HttpGet]

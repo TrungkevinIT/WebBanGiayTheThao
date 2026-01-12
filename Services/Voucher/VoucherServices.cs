@@ -21,10 +21,46 @@ namespace WebBanGiayTheThao.Services
                 .ToListAsync();
         }
 
-        public async Task CreateAsync(Voucher voucher)
+        public async Task<Dictionary<string, string>> CreateAsync(Voucher voucher)
         {
+            var errors = new Dictionary<string, string>();
+
+            if (voucher.GiaTriGiam < 0)
+            {
+                errors.Add("GiaTriGiam", "Giá trị giảm không được là số âm!");
+            }
+
+            if (voucher.GiaTriGiam.HasValue && voucher.GiaTriDonToiThieu.HasValue && voucher.GiaTriDonToiThieu > 0)
+            {
+                if (voucher.GiaTriGiam >= voucher.GiaTriDonToiThieu)
+                {
+                    if (!errors.ContainsKey("GiaTriGiam"))
+                    {
+                        errors.Add("GiaTriGiam", "Giá trị giảm phải nhỏ hơn đơn hàng tối thiểu!");
+                    }
+                }
+            }
+
+            if (voucher.SoLuong < 1)
+            {
+                errors.Add("SoLuong", "Số lượng phát hành phải từ 1 trở lên!");
+            }
+
+            if (voucher.NgayBatDau.HasValue && voucher.NgayKetThuc.HasValue)
+            {
+                if (voucher.NgayKetThuc <= voucher.NgayBatDau)
+                {
+                    errors.Add("NgayKetThuc", "Ngày kết thúc phải lớn hơn ngày bắt đầu!");
+                }
+            }
+
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
             _context.Add(voucher);
             await _context.SaveChangesAsync();
+            return null;
         }
 
         public async Task<Voucher?> GetByIdAsync(int id)
