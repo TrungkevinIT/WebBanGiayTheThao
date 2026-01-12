@@ -17,6 +17,8 @@ builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBa
 builder.Services.AddScoped<AuthService>();
 // √ê√£ng k√≠ session
 builder.Services.AddSession();
+// –„ng kÌ service cho b·o c·o DuyKhang edit 20:14 11/01/2026 
+builder.Services.AddScoped<BaoCaoService>();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
   );
