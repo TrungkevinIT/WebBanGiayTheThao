@@ -35,10 +35,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpGet] 
         public async Task<IActionResult> CheckLinkTrung(string link, int id)
         {
-            // Gọi Service kiểm tra
             bool isTrung = await _slideShowService.KiemTraLinkDaTonTai(link, id);
 
-            // Trả về kết quả dạng JSON (True/False)
             return Json(isTrung);
         }
 
@@ -66,7 +64,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             {
                 string folder = Path.Combine(_env.WebRootPath, "img","slideshow");
 
-                // Tự tạo thư mục để tránh lỗi DirectoryNotFound
+                
                 if (!Directory.Exists(folder))
                 {
                     Directory.CreateDirectory(folder);
@@ -83,6 +81,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             }
 
             await _slideShowService.UpdateSlideShow(model);
+            TempData["ThongBao"] = "Cập nhật thành công";
             return RedirectToAction("TrangQLSlideShow");
         }
     }

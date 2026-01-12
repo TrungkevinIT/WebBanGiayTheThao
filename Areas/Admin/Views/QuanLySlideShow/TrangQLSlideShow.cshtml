@@ -7,7 +7,13 @@
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
-
+        @if (TempData["ThongBao"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i> @TempData["ThongBao"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">Danh sách Banner Quảng Cáo</h6>
         </div>

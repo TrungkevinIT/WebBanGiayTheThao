@@ -50,7 +50,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
 
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", thuongHieuId);
-            var dsloaisanpham = await _lsp.LoadDSLoaiSanPham();
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", loaiId);
 
             return View(sp.products);
@@ -76,8 +76,9 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
         public async Task<IActionResult> TrangThemSanPham()
         {
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu");
-            var dsloaisanpham = await _lsp.LoadDSLoaiSanPham();
+            var thuongHieuActive = dsthuonghieu.Where(x => x.TrangThai == 1).ToList();
+            ViewBag.DanhSachThuongHieu = new SelectList(thuongHieuActive, "Id", "TenThuongHieu");
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai");
             return View();
         }
@@ -152,10 +153,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
                 return RedirectToAction("TrangQLSanPham");
             }
 
-            // Nếu lỗi -> Load lại dropdown
+
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu");
-            var dsloaisanpham = await _lsp.LoadDSLoaiSanPham();
+            var thuongHieuActive = dsthuonghieu.Where(x => x.TrangThai == 1).ToList();
+            ViewBag.DanhSachThuongHieu = new SelectList(thuongHieuActive, "Id", "TenThuongHieu");
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai");
             return View(sp);
         }
@@ -172,9 +174,14 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
             ten = ten.Trim();
             if (loai == "Loai")
             {
-                var kq = await _lsp.ThemLoaiNhanh(ten);
-                if (kq == null) return Json(new { success = false, message = "Đã tồn tại!" });
-                return Json(new { success = true, id = kq.Id, ten = kq.TenLoai });
+                var loaiMoi = new LoaiSanPham
+                {
+                    TenLoai = ten,
+                    TrangThai = 1
+                };
+                 await _lsp.ThemLoaiSanPhamAsync(loaiMoi);
+               
+                return Json(new { success = true, id = loaiMoi.Id, ten = loaiMoi.TenLoai });
             }
             else if (loai == "ThuongHieu")
             {
@@ -187,7 +194,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
                 await _thuonghieu.CreateAsync(thMoi);
                 return Json(new { success = true, id = thMoi.Id, ten = thMoi.TenThuongHieu });
             }
-            return Json(new { success = false, message = "Dữ liệu không hợp lệ" });
+            return Json(new { success = false, message = "Tên đã tồn tại" });
         }
 
         // --- TRANG CẬP NHẬT SẢN PHẨM ---
@@ -200,7 +207,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", sp.ThuongHieuId);
 
-            var dsloaisanpham = await _lsp.LoadDSLoaiSanPham();
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
 
             return View(sp);
@@ -252,7 +259,18 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
                     {
                         // Xóa ảnh cũ
                         var anhCu = spGoc.Ctanhs.ToList();
-                        foreach (var item in anhCu) spGoc.Ctanhs.Remove(item);
+                        foreach (var item in anhCu)
+                        {
+                            if (!string.IsNullOrEmpty(item.LinkAnh))
+                            {
+                                string oldPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu", item.LinkAnh);
+                                if (System.IO.File.Exists(oldPath))
+                                {
+                                    System.IO.File.Delete(oldPath); 
+                                }
+                            }
+                            spGoc.Ctanhs.Remove(item);
+                        }
 
                         // Thêm ảnh mới
                         string galleryFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu");
@@ -279,7 +297,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
                             if (sizeCu != null)
                             {
                                 sizeCu.SoLuongTon = item.SoLuongTon;
-                                sizeCu.Size = item.Size; // Cập nhật số size
+                                sizeCu.Size = item.Size;
                             }
                         }
                     }
@@ -302,26 +320,22 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
                     return RedirectToAction("TrangQLSanPham");
                 }
             }
-
-            // --- KHU VỰC CỨU HỘ DỮ LIỆU KHI LỖI (SỬA LỖI MẤT ẢNH) ---
-
-            // 1. Load lại Dropdown
+   
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", sp.ThuongHieuId);
-            var dsloaisanpham = await _lsp.LoadDSLoaiSanPham();
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
-
-            // 2. Lấy lại dữ liệu cũ để đắp vào View
-            // SỬA: Dùng hàm _sp.GetSanPhamById thay vì gọi trực tiếp _context (vì Controller này không có _context)
+           
             var sanPhamCu = await _sp.GetSanPhamById(sp.Id);
 
             if (sanPhamCu != null)
             {
-                sp.AnhDaiDien = sanPhamCu.AnhDaiDien; // Khôi phục ảnh đại diện
-                sp.Ctanhs = sanPhamCu.Ctanhs;         // Khôi phục ảnh phụ (SỬA: Dùng Ctanhs cho đồng bộ)
+                sp.AnhDaiDien = sanPhamCu.AnhDaiDien; 
+                sp.Ctanhs = sanPhamCu.Ctanhs;
 
-                // Nếu danh sách size bị null, lấy lại size cũ
-                if (sp.Ctsizes == null) sp.Ctsizes = sanPhamCu.Ctsizes;
+                if (sp.Ctsizes == null) {
+                    sp.Ctsizes = sanPhamCu.Ctsizes;
+                }
             }
 
             return View(sp);
