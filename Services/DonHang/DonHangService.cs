@@ -40,5 +40,17 @@ namespace WebBanGiayTheThao.Services.DonHang
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<HoaDon?> GetHoaDonByIdAsync(int id)
+        {
+            var hoaDon = await _context.HoaDons
+                .Include(h => h.User) // Lấy thông tin người đặt
+                .Include(h => h.CthoaDons)
+                    .ThenInclude(ct => ct.SanPham) // Chỉ cần include Sản phẩm để lấy tên và AnhDaiDien
+                .Include(h => h.CthoaDons)
+                    .ThenInclude(ct => ct.Size)    // Lấy thông tin Size
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            return hoaDon;
+        }
     }
 }

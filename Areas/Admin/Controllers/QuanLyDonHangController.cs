@@ -21,7 +21,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             ViewBag.TrangThai = trangThai;
             ViewBag.NgayDat = ngayDat.HasValue ? ngayDat.Value.ToString("yyyy-MM-dd") : "";
             var danhSach = await _donHangService.GetAllHoaDonAsync(searchSDT, trangThai, ngayDat);
-            int pageSize = 5; 
+            int pageSize = 15; 
             int totalPages = (int)Math.Ceiling((double)danhSach.Count() / pageSize);
 
             ViewBag.TotalPages = totalPages;
@@ -36,5 +36,19 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             await _donHangService.CapNhatTrangThaiAsync(id, trangThai);
             return RedirectToAction("TrangQLDonHang");
         }
+        [HttpGet]
+        public async Task<IActionResult> TrangXemChiTietDonHang(int id)
+        {
+
+            var hoaDon = await _donHangService.GetHoaDonByIdAsync(id);
+
+            if (hoaDon == null)
+            {
+                return NotFound();
+            }
+
+            return View(hoaDon);
+        }
+
     }
 }
