@@ -106,3 +106,24 @@
     </div>
 </div>
 
+<script>
+    function doiMauTrangThai(selectElement) {
+        selectElement.classList.remove('bg-warning', 'bg-success', 'bg-danger', 'text-white', 'text-dark');
+
+        var val = selectElement.value;
+
+        if (val == '1') {
+            selectElement.classList.add('bg-warning', 'text-dark');
+        } else if (val == '2') {
+            selectElement.classList.add('bg-success', 'text-white');
+        } else if (val == '3') {
+            selectElement.classList.add('bg-danger', 'text-white');
+        }
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        var selects = document.querySelectorAll('select[onchange="doiMauTrangThai(this)"]');
+        selects.forEach(function(s) {
+            doiMauTrangThai(s);
+        });
+    });
+</script>
