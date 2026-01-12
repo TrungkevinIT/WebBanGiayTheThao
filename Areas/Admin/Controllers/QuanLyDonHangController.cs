@@ -13,16 +13,23 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             _donHangService = donHangService;
         }
+        
         [HttpGet]
-        public async Task<IActionResult> TrangQLDonHang(string searchSDT, int? trangThai, DateTime? ngayDat)
+        public async Task<IActionResult> TrangQLDonHang(string searchSDT, int? trangThai, DateTime? ngayDat, int page = 1)
         {
             ViewBag.SearchSDT = searchSDT;
             ViewBag.TrangThai = trangThai;
             ViewBag.NgayDat = ngayDat.HasValue ? ngayDat.Value.ToString("yyyy-MM-dd") : "";
             var danhSach = await _donHangService.GetAllHoaDonAsync(searchSDT, trangThai, ngayDat);
-            return View(danhSach);
+            int pageSize = 5; 
+            int totalPages = (int)Math.Ceiling((double)danhSach.Count() / pageSize);
+
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = page;
+            var danhSachHienThi = danhSach.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return View(danhSachHienThi);
         }
-        [HttpPost]
         [HttpPost]
         public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
         {
