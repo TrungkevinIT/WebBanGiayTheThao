@@ -27,14 +27,7 @@
                             <span asp-validation-for="XuatXu" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="TrangThai" class="form-label">Trạng Thái</label>
-                        <select asp-for="TrangThai" class="form-select">
-                            <option value="1">Hoạt động (Hiển thị)</option>
-                            <option value="0">Ngừng hoạt động (Ẩn)</option>
-                        </select>
-                        <span asp-validation-for="TrangThai" class="text-danger"></span>
-                    </div>
+                    <input type="hidden" asp-for="TrangThai" value="1" />
                     <div class="text-center border-top pt-3">
                         <button type="submit" class="btn btn-primary px-5 py-2">
                             <i class="fa fa-save me-2"></i>Lưu Thương Hiệu

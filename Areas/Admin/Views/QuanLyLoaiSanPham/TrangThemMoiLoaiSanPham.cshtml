@@ -1,0 +1,50 @@
+﻿@model WebBanGiayTheThao.Models.LoaiSanPham
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Thêm Mới Loại Sản Phẩm";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Thêm Loại Sản Phẩm Mới</h6>
+            <a asp-action="TrangQLLoaiSanPham" asp-controller="QuanLyLoaiSanPham" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="TrangThemMoiLoaiSanPham" asp-controller="QuanLyLoaiSanPham" method="post">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="TenLoai" class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
+                        <input asp-for="TenLoai" class="form-control form-control-lg" placeholder="Nhập tên loại (VD: Giày tây, Giày lười...)" required />
+                        <div class="form-text">Tên loại sản phẩm nên ngắn gọn và rõ nghĩa.</div>
+                        <span asp-validation-for="TenLoai" class="text-danger"></span>
+                    </div>
+
+                    <input type="hidden" asp-for="TrangThai" value="1" />
+
+                    <div class="text-center border-top pt-4">
+                        <button type="submit" class="btn btn-primary px-5 py-2"
+                                onclick="return confirm('Bạn có chắc chắn muốn lưu thay đổi cho loại sản phẩm này không?')">
+                            
+                            <i class="fa fa-save me-2"></i>Lưu Loại Sản Phẩm
+                        </button>
+                       
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

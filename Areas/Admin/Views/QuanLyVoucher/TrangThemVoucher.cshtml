@@ -19,20 +19,20 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label asp-for="MaCode" class="form-label fw-bold">Mã Voucher <span class="text-danger">*</span></label>
-                        <input asp-for="MaCode" class="form-control" placeholder="VD: SALE50 (Viết liền in hoa)" />
+                        <input asp-for="MaCode" class="form-control" placeholder="VD: SALE50 (Viết liền in hoa)" required>
                         <span asp-validation-for="MaCode" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="GiaTriGiam" class="form-label fw-bold">Giá trị giảm (VNĐ) <span class="text-danger">*</span></label>
-                        <input asp-for="GiaTriGiam" class="form-control" placeholder="VD: 50000" />
+                        <input asp-for="GiaTriGiam" class="form-control" placeholder="VD: 50000" required>
                         <span asp-validation-for="GiaTriGiam" class="text-danger"></span>
                         <small class="text-muted fst-italic">Nhập số tiền bạn muốn giảm trực tiếp trên đơn hàng.</small>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="GiaTriDonToiThieu" class="form-label fw-bold">Đơn hàng tối thiểu để áp dụng</label>
-                        <input asp-for="GiaTriDonToiThieu" class="form-control" placeholder="VD: 100000" />
+                        <input asp-for="GiaTriDonToiThieu" class="form-control" placeholder="VD: 100000" required>
                         <span asp-validation-for="GiaTriDonToiThieu" class="text-danger"></span>
                     </div>
                 </div>
@@ -40,31 +40,23 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label asp-for="SoLuong" class="form-label fw-bold">Số lượng phát hành</label>
-                        <input asp-for="SoLuong" class="form-control" placeholder="Tổng số mã (VD: 100)" />
+                        <input asp-for="SoLuong" class="form-control" placeholder="Tổng số mã (VD: 100)" required>
                         <span asp-validation-for="SoLuong" class="text-danger"></span>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="NgayBatDau" class="form-label fw-bold">Ngày bắt đầu</label>
-                            <input asp-for="NgayBatDau" type="datetime-local" class="form-control" />
+                            <input asp-for="NgayBatDau" type="datetime-local" class="form-control" required>
                             <span asp-validation-for="NgayBatDau" class="text-danger"></span>
                         </div>
-
                         <div class="col-md-6 mb-3">
                             <label asp-for="NgayKetThuc" class="form-label fw-bold">Ngày kết thúc</label>
-                            <input asp-for="NgayKetThuc" type="datetime-local" class="form-control" />
+                            <input asp-for="NgayKetThuc" type="datetime-local" class="form-control" required>
                             <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="TrangThai" class="form-label fw-bold">Trạng Thái</label>
-                        <select asp-for="TrangThai" class="form-select">
-                            <option value="1" selected>Kích hoạt ngay</option>
-                            <option value="0">Chờ kích hoạt (Ẩn)</option>
-                        </select>
-                        <span asp-validation-for="TrangThai" class="text-danger"></span>
-                    </div>
+                    <input type="hidden" asp-for="TrangThai" value="1" />
                 </div>
 
                 <div class="col-12 text-center mt-4 border-top pt-3">
