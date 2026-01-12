@@ -26,16 +26,6 @@
                         <div class="form-text">Tên loại sản phẩm nên ngắn gọn và rõ nghĩa.</div>
                         <span asp-validation-for="TenLoai" class="text-danger"></span>
                     </div>
-
-                    <div class="mb-4">
-                        <label asp-for="TrangThai" class="form-label fw-bold">Trạng thái hiển thị</label>
-                        <select asp-for="TrangThai" class="form-select form-select-lg">
-                            <option value="1" selected>Kích hoạt ngay</option>
-                            <option value="0">Chờ kích hoạt</option>
-                        </select>
-                        <span asp-validation-for="TrangThai" class="text-danger"></span>
-                    </div>
-
                     <div class="text-center border-top pt-4">
                         <button type="submit" class="btn btn-primary px-5 py-2"
                                 onclick="return confirm('Bạn có chắc chắn muốn lưu thay đổi cho loại sản phẩm này không?')">
@@ -50,8 +40,10 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@if (ViewBag.LoiTrungTen != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa fa-exclamation-circle me-2"></i> @ViewBag.LoiTrungTen
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 }
