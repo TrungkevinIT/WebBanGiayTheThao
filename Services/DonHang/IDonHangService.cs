@@ -4,6 +4,6 @@ namespace WebBanGiayTheThao.Services.DonHang
 {
     public interface IDonHangService
     {
-        
+        Task<IEnumerable<HoaDon>> GetAllHoaDonAsync();
     }
 }

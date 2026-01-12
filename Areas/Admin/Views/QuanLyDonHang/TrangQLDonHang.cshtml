@@ -1,6 +1,10 @@
-﻿@{
+﻿@model IEnumerable<WebBanGiayTheThao.Models.HoaDon>
+
+@{
     Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý đơn hàng";
 }
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -16,11 +20,10 @@
             </div>
             <div class="col-md-3">
                 <select class="form-select" aria-label="Lọc trạng thái">
-                    <option selected value="">-- Trạng thái --</option>
-                    <option value="pending">Chờ xử lý</option>
-                    <option value="shipping">Đang giao</option>
-                    <option value="completed">Hoàn thành</option>
-                    <option value="cancelled">Đã hủy</option>
+                    <option selected value="">-- Tất cả trạng thái --</option>
+                    <option value="1">Đã duyệt</option>
+                    <option value="2">Đã hoàn thành</option>
+                    <option value="3">Đã hủy</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -37,31 +40,55 @@
                     <tr>
                         <th scope="col">Mã ĐH</th>
                         <th scope="col" class="text-start ps-3">Khách Hàng</th>
-                        <th scope="col">Sản Phẩm</th>
                         <th scope="col">Ngày Đặt</th>
                         <th scope="col">Tổng Tiền</th>
-                        <th scope="col" style="width: 160px;">Trạng Thái</th>
+                        <th scope="col" style="width: 170px;">Trạng Thái</th>
                         <th scope="col">Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="fw-bold">#DH003</td>
-                        <td class="text-start ps-3">Lê Văn C</td>
-                        <td><span class="badge bg-light text-dark border">PUMA-MB02</span></td>
-                        <td>05/01/2026</td>
-                        <td class="text-danger fw-bold">3.800.000 ₫</td>
-                        <td>
-                            <select class="form-select form-select-sm w-auto border-success text-success fw-bold">
-                                <option value="pending">Đã Duyệt</option>
-                                <option value="2" selected>Đã Hoàn Thành</option>
-                                <option value="3">Đã hủy</option>
-                            </select>
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-outline-info rounded-circle me-1" asp-area="Admin" asp-action="TrangXemChiTietDonHang" asp-controller="QuanLyDonHang"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.Id</td>
+                                <td class="text-start ps-3">
+                                    @(item.HoTenNguoiNhan)
+                                </td>
+                                <td>@item.NgayDat?.ToString("dd/MM/yyyy")</td>
+                                <td class="text-danger fw-bold">
+                                    @string.Format("{0:N0} ₫", item.TongTien)
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm w-auto border-0 text-center "
+                                            style="font-weight: 600; cursor: pointer;"
+                                            onchange="doiMauTrangThai(this)"
+                                            data-id="@item.Id">
+
+                                        <option value="1" selected="@(item.TrangThai == 1)" class="bg-white text-dark">Đã duyệt</option>
+                                        <option value="2" selected="@(item.TrangThai == 2)" class="bg-white text-dark">Đã hoàn thành</option>
+                                        <option value="3" selected="@(item.TrangThai == 3)" class="bg-white text-dark">Đã hủy</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-info rounded-circle me-1"
+                                       asp-area="Admin"
+                                       asp-controller="DonHang"
+                                       asp-action="TrangXemChiTietDonHang"
+                                       asp-route-id="@item.Id">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4">Không có dữ liệu đơn hàng.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -72,29 +99,10 @@
                     <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
                     <li class="page-item active"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
                     <li class="page-item"><a class="page-link" href="#">Sau</a></li>
                 </ul>
             </nav>
         </div>
     </div>
 </div>
-
-<script>
-    function updateStatusColor(select) {
-        // Xóa hết các class màu cũ
-        select.classList.remove('bg-warning', 'text-dark', 'bg-info', 'text-white', 'bg-success', 'bg-danger');
-
-        // Thêm class màu mới dựa trên value được chọn
-        if (select.value === 'pending') {
-            select.classList.add('bg-warning', 'text-dark');
-        } else if (select.value === 'shipping') {
-            select.classList.add('bg-info', 'text-white');
-        } else if (select.value === 'completed') {
-            select.classList.add('bg-success', 'text-white');
-        } else if (select.value === 'cancelled') {
-            select.classList.add('bg-danger', 'text-white');
-        }
-    }
-</script>
 

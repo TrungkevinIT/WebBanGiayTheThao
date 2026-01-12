@@ -13,9 +13,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             _donHangService = donHangService;
         }
-        public IActionResult TrangQLDonHang()
+        public async Task<IActionResult> TrangQLDonHang()
         {
-            return View();
+           
+            var danhSachHoaDon = await _donHangService.GetAllHoaDonAsync();
+            return View(danhSachHoaDon);
         }
     }
 }

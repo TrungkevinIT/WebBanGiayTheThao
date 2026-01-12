@@ -12,6 +12,10 @@ namespace WebBanGiayTheThao.Services.DonHang
         {
             _context = context;
         }
-        
+        public async Task<IEnumerable<HoaDon>> GetAllHoaDonAsync()
+        {
+            var query = _context.HoaDons.AsQueryable();
+            return await query.OrderByDescending(x => x.NgayDat).ToListAsync();
+        }
     }
 }
