@@ -18,7 +18,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         }
         public async Task<IActionResult> TrangQLVoucher(int page = 1)
         {
-            int pageSize = 5;
+            int pageSize = 10;
             var (danhsach, totalCount) = await _services.GetAllPagingAsync(page, pageSize);
             int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
             ViewData["CurrentPage"] = page;
@@ -54,7 +54,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 return View(voucher);
             }
 
-            TempData["SuccessMessage"] = "Tạo Voucher thành công!";
+            TempData["ThongBao"] = "Cập nhật thành công!";
+            TempData["LoaiThongBao"] = "alert-success";
             return RedirectToAction("TrangQLVoucher");
         }
 
