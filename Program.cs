@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Services.DonHang;
 using WebBanGiayTheThao.Services.SanPham;
 using WebBanGiayTheThao.Services.SlideShow;
 using WebBanGiayTheThao.Services.User;
@@ -21,6 +22,8 @@ builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   );
 builder.Services.AddScoped<ISanPhamService,SanPhamService>();
 builder.Services.AddScoped<ISlideShowService,SlideShowService>();
+
+builder.Services.AddScoped<IDonHangService, DonHangService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
