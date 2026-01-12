@@ -66,22 +66,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             }
             return View(loaiSanPham);
         }
-        [HttpGet]
-        public async Task<IActionResult> DoiTrangThai(int id)
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai(int id, int trangThai)
         {
-            var loaiSanPham = await _loaiSanPhamService.GetLoaiSanPhamByIdAsync(id);
-            if (loaiSanPham == null)
-            {
-                TempData["ThongBao"] = "Không tìm thấy loại sản phẩm!";
-                TempData["LoaiThongBao"] = "alert-danger";
-                return RedirectToAction(nameof(TrangQLLoaiSanPham));
-            }
-            loaiSanPham.TrangThai = (loaiSanPham.TrangThai == 1) ? 0 : 1;
-            await _loaiSanPhamService.CapNhatLoaiSanPhamAsync(loaiSanPham);
-
-            TempData["ThongBao"] = "Đổi trạng thái thành công!";
-            TempData["LoaiThongBao"] = "alert-success";
-            return RedirectToAction(nameof(TrangQLLoaiSanPham));
+            await _loaiSanPhamService.CapNhatTrangThaiAsync(id, trangThai);
+            return RedirectToAction("TrangQLLoaiSanPham");
         }
         [HttpGet]
         public IActionResult TrangThemMoiLoaiSanPham()
@@ -89,7 +78,6 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> TrangThemMoiLoaiSanPham(LoaiSanPham loaiSanPham)
         {
             if (ModelState.IsValid)
@@ -97,17 +85,16 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 try
                 {
                     await _loaiSanPhamService.ThemLoaiSanPhamAsync(loaiSanPham);
-
                     TempData["ThongBao"] = "Thêm mới thành công!";
                     TempData["LoaiThongBao"] = "alert-success";
                     return RedirectToAction(nameof(TrangQLLoaiSanPham));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Lỗi khi thêm: " + ex.Message);
+                    ViewBag.LoiTrungTen = ex.Message;
                 }
             }
-            return RedirectToAction(nameof(TrangQLLoaiSanPham));
+            return View(loaiSanPham);
         }
     }
 }

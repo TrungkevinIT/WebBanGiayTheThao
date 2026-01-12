@@ -63,26 +63,27 @@
                     {
                         @foreach (var item in Model)
                         {
+                            string mauNen = "";
+                            
+                            if (item.TrangThai == 1) { mauNen = "bg-success text-white"; }
+                            else if (item.TrangThai == 0) { mauNen = "bg-danger text-white"; }
                             <tr>
                                 <td>@item.Id</td>
                                 <td class="text-start ps-4 fw-bold text-dark">@item.TenLoai</td>
                                 <td class="align-middle">
-                                    @if (item.TrangThai == 1)
-                                    {
-                                        <a asp-action="DoiTrangThai" asp-route-id="@item.Id"
-                                           class="badge bg-success text-white text-decoration-none p-2 w-75"
-                                           onclick="return confirm('Bạn có muốn NGỪNG hoạt động loại này?')">
-                                            Đang hoạt động
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a asp-action="DoiTrangThai" asp-route-id="@item.Id"
-                                           class="badge bg-danger text-white text-decoration-none p-2 w-75"
-                                           onclick="return confirm('Bạn có muốn KÍCH HOẠT lại loại này?')">
-                                            Ngừng hoạt động
-                                        </a>
-                                    }
+                                    <form asp-action="CapNhatTrangThai" asp-controller="QuanLyLoaiSanPham" method="post">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <select name="trangThai"
+                                                data-original="@item.TrangThai"
+                                                class="form-select form-select-sm w-75 fw-bold text-center mx-auto @mauNen"
+                                                style="cursor: pointer; box-shadow: none;"
+                                                onchange="confirmChange(this)">
+
+                                            <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Đang hoạt động</option>
+                                            <option value="0" class="bg-white text-dark" selected="@(item.TrangThai != 1)">Ngừng hoạt động</option>
+
+                                        </select>
+                                    </form>
                                 </td>
                                 <td>
                                     <a asp-action="TrangCapNhatLoaiSanPham" asp-controller="QuanLyLoaiSanPham" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Sửa">
@@ -105,3 +106,15 @@
         </div>
     </div>
 </div>
+<script>
+    function confirmChange(selectElement) {
+        var originalValue = selectElement.getAttribute('data-original');
+        var result = confirm("Bạn có chắc chắn muốn thay đổi trạng thái không?");
+
+        if (result) {
+            selectElement.form.submit();
+        } else {
+            selectElement.value = originalValue;
+        }
+    }
+</script>

@@ -13,6 +13,7 @@ public partial class LoaiSanPham
     public int Id { get; set; }
 
     [StringLength(255)]
+    [Required(ErrorMessage ="Tên loại không được rỗng")]
     public string TenLoai { get; set; } = null!;
 
     public int? TrangThai { get; set; }

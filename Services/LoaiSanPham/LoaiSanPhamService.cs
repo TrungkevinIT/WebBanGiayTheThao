@@ -77,24 +77,18 @@ namespace WebBanGiayTheThao.Services
         }
         public async Task ThemLoaiSanPhamAsync(LoaiSanPham loaiSanPham)
         {
-            try
-            {
 
+                loaiSanPham.TenLoai = loaiSanPham.TenLoai.Trim();
                 bool daTonTai = await _context.LoaiSanPhams
-                    .AnyAsync(x => x.TenLoai == loaiSanPham.TenLoai);
+                    .AnyAsync(x => x.TenLoai.ToLower() == loaiSanPham.TenLoai.ToLower());
 
                 if (daTonTai)
                 {
-                    throw new Exception("Tên loại sản phẩm này đã tồn tại trong hệ thống!");
+                    throw new Exception($"Tên loại sản phẩm '{loaiSanPham.TenLoai}' đã tồn tại trong hệ thống!");
                 }
                 await _context.LoaiSanPhams.AddAsync(loaiSanPham);
                 await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw new Exception("Lỗi khi thêm loại sản phẩm: " + ex.Message);
-            }
+            
         }
 
     }

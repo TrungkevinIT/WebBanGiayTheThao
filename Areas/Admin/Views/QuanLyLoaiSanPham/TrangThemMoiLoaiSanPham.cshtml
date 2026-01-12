@@ -16,26 +16,30 @@
 
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                <form asp-action="TrangThemMoiLoaiSanPham" asp-controller="QuanLyLoaiSanPham" method="post">
+                
+                @if (ViewBag.LoiTrungTen != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                        <i class="fa fa-exclamation-circle me-2"></i> @ViewBag.LoiTrungTen
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form id="formThemMoi" asp-action="TrangThemMoiLoaiSanPham" asp-controller="QuanLyLoaiSanPham" method="post">
 
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                     <div class="mb-4">
                         <label asp-for="TenLoai" class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
-                        <input asp-for="TenLoai" class="form-control form-control-lg" placeholder="Nhập tên loại (VD: Giày tây, Giày lười...)" required />
+                        <input asp-for="TenLoai" class="form-control form-control-lg" placeholder="Nhập tên loại (VD: Giày tây, Giày lười...)" />
                         <div class="form-text">Tên loại sản phẩm nên ngắn gọn và rõ nghĩa.</div>
                         <span asp-validation-for="TenLoai" class="text-danger"></span>
                     </div>
 
-                    <input type="hidden" asp-for="TrangThai" value="1" />
-
                     <div class="text-center border-top pt-4">
-                        <button type="submit" class="btn btn-primary px-5 py-2"
-                                onclick="return confirm('Bạn có chắc chắn muốn lưu thay đổi cho loại sản phẩm này không?')">
-                            
+                        <button type="button" class="btn btn-primary px-5 py-2" onclick="xacNhanLuu()">
                             <i class="fa fa-save me-2"></i>Lưu Loại Sản Phẩm
                         </button>
-                       
                     </div>
                 </form>
             </div>
@@ -47,4 +51,17 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        function xacNhanLuu() {
+            var form = $("#formThemMoi");
+
+            if (!form.valid()) {
+                return;}
+
+            if (confirm('Bạn có chắc chắn muốn lưu loại sản phẩm này không?')) {
+                form.submit();
+            }
+        }
+    </script>
 }
