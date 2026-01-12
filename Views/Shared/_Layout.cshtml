@@ -30,6 +30,9 @@
     <!-- Site CSS -->
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true">
     <link href="~/css/user-glass.css" rel="stylesheet" asp-append-version="true">
+    <!--Boostrap icon DuyKhang edit 17:11 12/07/2026-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,16 +59,14 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- ================= MODALS (FIXED) ================= -->
-    @await Html.PartialAsync(
-    "~/Views/NguoiDung/_DangNhapModal.cshtml",
-        new WebBanGiayTheThao.ViewModels.NguoiDung.DangNhapVM()
-        )
+    @await Html.PartialAsync("~/Views/NguoiDung/_DangNhapModal.cshtml",new WebBanGiayTheThao.ViewModels.NguoiDung.DangNhapVM())
 
-    @await Html.PartialAsync(
-        "~/Views/NguoiDung/_DangKyModal.cshtml",
-        new WebBanGiayTheThao.ViewModels.NguoiDung.DangKyVM()
-        )
+    @await Html.PartialAsync("~/Views/NguoiDung/_DangKyModal.cshtml", new WebBanGiayTheThao.ViewModels.NguoiDung.DangKyVM())
+
+    <!-- Modals -->
+    @await Html.PartialAsync("~/Views/NguoiDung/_DangKyModal.cshtml", new WebBanGiayTheThao.ViewModels.NguoiDung.DangKyVM())
+
+    @await Html.PartialAsync("~/Views/NguoiDung/_DangNhapModal.cshtml",new WebBanGiayTheThao.ViewModels.NguoiDung.DangNhapVM())
 
     @await Html.PartialAsync("~/Views/NguoiDung/_ThongBaoModal.cshtml")
 
@@ -79,7 +80,6 @@
                 document.getElementById("thongBaoNoiDung").innerText =
                     @Html.Raw(Json.Serialize(TempData["RegisterSuccess"]));
 
-                // ✅ CHỈ TRƯỜNG HỢP NÀY MỚI MỞ LOGIN
                 shouldOpenLoginModal = true;
 
                 new bootstrap.Modal(
@@ -97,7 +97,7 @@
                 document.getElementById("thongBaoNoiDung").innerText =
                     @Html.Raw(Json.Serialize(TempData["ThongBao"]));
 
-                // ✅ ThongBao cũng mở đăng nhập
+               
                 shouldOpenLoginModal = true;
 
                 new bootstrap.Modal(

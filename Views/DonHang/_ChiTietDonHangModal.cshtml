@@ -1,0 +1,243 @@
+﻿<div class="modal fade" id="orderDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content glass-modal rounded-4">
+
+            <!-- HEADER -->
+            <div class="modal-header border-0 px-4 py-3">
+                <div>
+                    <h4 class="fw-bold mb-1">
+                        Chi tiết đơn hàng #<span id="modalOrderCode"></span>
+                    </h4>
+                    <div class="text-muted fs-6">
+                        Ngày đặt: <span id="modalOrderDate"></span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body px-4 py-3 fs-5">
+
+                <!-- TRẠNG THÁI -->
+                <div class="mb-4">
+                    <span id="modalStatusBadge"
+                          class="badge px-4 py-2 fs-6"></span>
+                </div>
+
+                <!-- THÔNG TIN NHẬN HÀNG -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Thông tin nhận hàng</h5>
+
+                    <p class="mb-2">
+                        <b>Người nhận:</b> <span id="modalReceiver"></span>
+                    </p>
+
+                    <p class="mb-2">
+                        <b>SĐT:</b> <span id="modalPhone"></span>
+                    </p>
+
+                    <p class="mb-2">
+                        <b>Địa chỉ:</b> <span id="modalAddress"></span>
+                    </p>
+
+                    <p class="mb-0">
+                        <b>Phương thức thanh toán:</b> COD
+                    </p>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- SẢN PHẨM -->
+                <h5 class="fw-bold mb-3">Sản phẩm</h5>
+                <div id="orderProducts"></div>
+
+                <!-- TỔNG TIỀN -->
+                <div class="border-top pt-4 mt-4 fs-5">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí vận chuyển</span>
+                        <span id="modalShipping"></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Giảm giá</span>
+                        <span id="modalDiscount"></span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold fs-4">
+                        <span>Tổng thanh toán</span>
+                        <span class="text-danger" id="modalTotal"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer border-0 px-4 py-3">
+                <button id="cancelBtn"
+                        class="btn btn-outline-danger btn-lg rounded-pill px-4 d-none">
+                    Hủy đơn
+                </button>
+
+                <button id="reviewBtn"
+                        class="btn btn-success btn-lg rounded-pill px-4 d-none">
+                    Đánh giá
+                </button>
+
+                <button class="btn btn-danger btn-lg rounded-pill px-4"
+                        data-bs-dismiss="modal">
+                    Đóng
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_DanhGiaModal")
+
+<script>
+    const orderModal = document.getElementById('orderDetailModal');
+
+    orderModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const orderId = button.getAttribute('data-orderid');
+
+        document.getElementById('orderProducts').innerHTML = '';
+        document.getElementById('cancelBtn').classList.add('d-none');
+
+        fetch(`/DonHang/ChiTiet?orderId=${orderId}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Không thể tải chi tiết đơn hàng');
+                return res.json();
+            })
+            .then(data => {
+
+                document.getElementById('modalOrderCode').innerText = data.orderCode;
+                document.getElementById('modalOrderDate').innerText =
+                    new Date(data.orderDate).toLocaleDateString('vi-VN');
+
+                document.getElementById('modalReceiver').innerText = data.receiver;
+                document.getElementById('modalPhone').innerText = data.phone;
+                document.getElementById('modalAddress').innerText = data.address;
+
+                document.getElementById('modalShipping').innerText =
+                    data.shipping.toLocaleString() + ' ₫';
+
+                document.getElementById('modalDiscount').innerText =
+                    data.discount.toLocaleString() + ' ₫';
+
+                document.getElementById('modalTotal').innerText =
+                    data.total.toLocaleString() + ' ₫';
+
+                const badge = document.getElementById('modalStatusBadge');
+                badge.className = 'badge px-4 py-2 fs-6';
+
+                if (data.status === 'Approved') {
+                    badge.classList.add('bg-warning', 'text-dark');
+                    badge.innerText = 'Đã duyệt';
+                }
+                else if (data.status === 'Completed') {
+                    badge.classList.add('bg-success');
+                    badge.innerText = 'Hoàn thành';
+                }
+                else {
+                    badge.classList.add('bg-secondary');
+                    badge.innerText = 'Đã hủy';
+                }
+
+                const productContainer = document.getElementById('orderProducts');
+                productContainer.innerHTML = '';
+
+                data.products.forEach(p => {
+                    let reviewBtn = '';
+
+                    if (data.status === 'Completed') {
+                        reviewBtn = `
+                            <button class="btn btn-success rounded-pill px-4"
+                                    onclick="openReview(${p.sanPhamId})">
+                                Đánh giá
+                            </button>`;
+                    }
+
+                    productContainer.innerHTML += `
+                        <div class="d-flex align-items-center justify-content-between border-bottom py-3">
+                            <div class="d-flex align-items-center">
+                                <img src="${p.anh}" width="80" class="me-3 rounded" />
+                                <div>
+                                    <div class="fw-semibold fs-5">${p.tenSanPham}</div>
+                                    <div class="text-muted">
+                                        Size: ${p.size} | SL: ${p.soLuong}
+                                    </div>
+                                    <div class="text-danger fw-bold fs-5">
+                                        ${p.donGia.toLocaleString()} ₫
+                                    </div>
+                                </div>
+                            </div>
+                            ${reviewBtn}
+                        </div>
+                    `;
+                });
+
+                if (data.status === 'Approved') {
+                    const cancelBtn = document.getElementById('cancelBtn');
+                    cancelBtn.classList.remove('d-none');
+                    cancelBtn.onclick = () => cancelOrder(orderId);
+                }
+            })
+            .catch(err => alert(err.message));
+    });
+
+    function cancelOrder(orderId) {
+        if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) return;
+
+        fetch('/DonHang/HuyDon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        });
+    }
+
+    function openReview(sanPhamId) {
+        document.getElementById('reviewProductId').value = sanPhamId;
+        document.getElementById('reviewContent').value = '';
+        document.getElementById('reviewStar').value = 5;
+
+        new bootstrap.Modal(
+            document.getElementById('reviewModal')
+        ).show();
+    }
+
+    function submitReview() {
+        const data = {
+            SanPhamId: document.getElementById('reviewProductId').value,
+            Sao: document.getElementById('reviewStar').value,
+            NoiDung: document.getElementById('reviewContent').value
+        };
+
+        if (!data.NoiDung) {
+            alert('Vui lòng nhập nội dung đánh giá');
+            return;
+        }
+
+        fetch('/BinhLuan/DanhGia', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            alert(result.message);
+
+            if (result.success) {
+                bootstrap.Modal.getInstance(
+                    document.getElementById('reviewModal')
+                ).hide();
+            }
+        });
+    }
+</script>
