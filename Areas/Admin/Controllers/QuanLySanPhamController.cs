@@ -84,7 +84,6 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // Nên có
         public async Task<IActionResult> TrangThemSanPham(SanPham sp)
         {
             // 1. Kiểm tra trùng tên (Thêm mới -> idLoaiTru = null)
