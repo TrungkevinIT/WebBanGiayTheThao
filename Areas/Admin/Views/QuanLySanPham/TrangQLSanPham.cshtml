@@ -5,12 +5,19 @@
     Layout = "_LayoutAdmin";
 
     // Lấy thông tin phân trang cơ bản
-    int currentPage = ViewBag.CurrentPage ?? 1;
-    int totalPages = ViewBag.TotalPages ?? 1;
-    int pageSize = ViewBag.PageSize ?? 10;
+    int currentPage = (ViewData["CurrentPage"] as int?) ?? 1;
+    int totalPages = (ViewData["TotalPages"] as int?) ?? 1;
+    int pageSize = (ViewData["PageSize"] as int?) ?? 10;
 }
 
 <div class="container-fluid pt-4 px-4">
+    @if (TempData["ThongBao"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa fa-check-circle me-2"></i> @TempData["ThongBao"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     <div class="bg-light rounded p-4 mb-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h6 class="mb-0">Bộ lọc & Tìm kiếm</h6>
@@ -27,17 +34,14 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label text-muted small">Thương hiệu</label>
-                    <select name="thuongHieuId" class="form-select">
+                    <select name="thuongHieuId" class="form-select" asp-items="ViewBag.DanhSachThuongHieu">
                         <option value="">Tất cả</option>
-                        <option value="1">Nike</option>
-                        <option value="2">Adidas</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label text-muted small">Loại SP</label>
-                    <select name="loaiId" class="form-select">
+                    <select name="loaiId" class="form-select" asp-items="ViewBag.DanhSachLoaiSanPham">
                         <option value="">Tất cả</option>
-                        <option value="1">Chạy bộ</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -98,7 +102,7 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.AnhDaiDien))
                                     {
-                                        <img src="~/img/@item.AnhDaiDien" alt="anh" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                        <img src="/img/sanpham/@item.AnhDaiDien" alt="anh" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                                     }
                                     else
                                     {
@@ -119,7 +123,7 @@
                                     }
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-outline-primary rounded-circle me-1" asp-action="" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-sm btn-outline-primary rounded-circle me-1" asp-action="TrangCapNhatSanPham" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
                                     @if (item.TrangThai == 1)
                                     {
                                         <a class="btn btn-sm btn-outline-danger rounded-circle"

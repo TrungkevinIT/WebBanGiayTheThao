@@ -11,7 +11,7 @@ public partial class Ctanh
 {
     [Key]
     public int Id { get; set; }
-
+    [Required(ErrorMessage ="Ảnh phụ không được rỗng")]
     public string? LinkAnh { get; set; }
 
     public int? SanPhamId { get; set; }

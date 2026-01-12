@@ -4,6 +4,7 @@
     Layout = "_LayoutAdmin";
 }
 <style>
+    /* CSS GIỮ NGUYÊN */
     .img-preview-box {
         width: 100%;
         height: 180px;
@@ -43,7 +44,7 @@
         border-radius: 5px;
         object-fit: cover;
     }
-    /* Style cho bảng Size */
+
     .table-size input {
         text-align: center;
     }
@@ -51,34 +52,49 @@
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded h-100 p-4">
-        <h4 class="mb-4 text-primary"><i class="fa fa-cube me-2"></i>THÊM SẢN PHẨM MỚI</h4>
+        <h4 class="mb-4 text-primary"><i class="fa fa-edit me-2"></i>CẬP NHẬT SẢN PHẨM</h4>
 
-        <form asp-action="TrangThemSanPham" method="post" enctype="multipart/form-data" id="formSanPham">
+        <form asp-action="TrangCapNhatSanPham" method="post" enctype="multipart/form-data" id="formSanPham">
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="AnhDaiDien" />
+            <input type="hidden" name="trangThaiBool" value="@(Model.TrangThai == 1 ? "true" : "false")" />
+
             <div class="row g-4">
-
                 <div class="col-md-4">
                     <div class="card shadow-sm">
                         <div class="card-header bg-white fw-bold">Hình ảnh</div>
                         <div class="card-body text-center">
                             <label class="form-label fw-bold small">Ảnh đại diện chính (*)</label>
-
                             <div class="img-preview-box mb-3" onclick="document.getElementById('MainImageInput').click()">
-                                <img id="MainPreview" src="" class="d-none" />
-                                <i id="MainIcon" class="fa fa-cloud-upload-alt"></i>
+                                @if (!string.IsNullOrEmpty(Model.AnhDaiDien))
+                                {
+                                    <img id="MainPreview" src="~/img/sanpham/@Model.AnhDaiDien" />
+                                    <i id="MainIcon" class="fa fa-cloud-upload-alt d-none"></i>
+                                }
+                                else
+                                {
+                                    <img id="MainPreview" src="" class="d-none" />
+                                    <i id="MainIcon" class="fa fa-cloud-upload-alt"></i>
+                                }
                             </div>
-
-                            <input asp-for="ImageFile" id="MainImageInput" type="file"
-                                   style="opacity:0; position:absolute; z-index:-1;"
-                                   accept="image/*" onchange="previewSingle(this)" />
-
+                            <input asp-for="ImageFile" id="MainImageInput" type="file" class="d-none" accept="image/*" onchange="previewSingle(this)" />
                             <span asp-validation-for="ImageFile" class="text-danger small"></span>
 
                             <hr />
-
-                            <label class="form-label fw-bold small text-start w-100">Ảnh phụ (Chọn nhiều)</label>
-                            <input asp-for="ListAnhPhu" type="file" class="form-control form-control-sm" multiple accept="image/*" onchange="previewGallery(this)" required />
+                            <label class="form-label fw-bold small text-start w-100">Ảnh phụ (Chọn thêm để thay thế)</label>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                @if (Model.Ctanhs != null)
+                                {
+                                    foreach (var item in Model.Ctanhs)
+                                    {
+                                        <img src="~/img/anhphu/@item.LinkAnh" class="gallery-item" title="Ảnh hiện có" />
+                                    }
+                                }
+                            </div>
+                            <input asp-for="ListAnhPhu" type="file" class="form-control form-control-sm" multiple accept="image/*" onchange="previewGallery(this)" />
                             <div class="gallery-container" id="GalleryPreview"></div>
-                  
+                            <span asp-validation-for="ListAnhPhu" class="text-danger small"></span>
                         </div>
                     </div>
                 </div>
@@ -95,12 +111,12 @@
                                 </div>
                                 <div class="col-md-8">
                                     <label class="form-label">Mã Kiểu Dáng</label>
-                                    <input asp-for="MaKieuDang" class="form-control" placeholder="Nhập Mã Kiểu Dáng(Nhóm Màu)..." />
+                                    <input asp-for="MaKieuDang" class="form-control" />
                                     <span asp-validation-for="MaKieuDang" class="text-danger small"></span>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Đơn giá (VNĐ)</label>
-                                    <input asp-for="DonGia" type="number" class="form-control"/>
+                                    <input asp-for="DonGia" type="number" class="form-control" />
                                     <span asp-validation-for="DonGia" class="text-danger small"></span>
                                 </div>
                             </div>
@@ -109,18 +125,14 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Loại sản phẩm</label>
                                     <div class="input-group">
-                                        <select asp-for="LoaiSanPhamId" id="ddlLoai" class="form-select" asp-items="ViewBag.DanhSachLoaiSanPham">
-                                          
-                                        </select>
+                                        <select asp-for="LoaiSanPhamId" id="ddlLoai" class="form-select" asp-items="ViewBag.DanhSachLoaiSanPham"></select>
                                         <button class="btn btn-outline-secondary" type="button" onclick="openModal('Loại sản phẩm', 'Loai')"><i class="fa fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Thương hiệu</label>
                                     <div class="input-group">
-                                        <select asp-for="ThuongHieuId" id="ddlThuongHieu" class="form-select" asp-items="ViewBag.DanhSachThuongHieu">
-                                            
-                                        </select>
+                                        <select asp-for="ThuongHieuId" id="ddlThuongHieu" class="form-select" asp-items="ViewBag.DanhSachThuongHieu"></select>
                                         <button class="btn btn-outline-secondary" type="button" onclick="openModal('Thương hiệu', 'ThuongHieu')"><i class="fa fa-plus"></i></button>
                                     </div>
                                 </div>
@@ -138,7 +150,7 @@
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <span class="fw-bold">Quản lý Phiên bản (Size & Số lượng)</span>
                             <button type="button" class="btn btn-sm btn-success" onclick="themDongSize()">
-                                <i class="fa fa-plus-circle me-1"></i> Thêm Size
+                                <i class="fa fa-plus-circle me-1"></i> Thêm Size Mới
                             </button>
                         </div>
                         <div class="card-body p-0">
@@ -147,15 +159,32 @@
                                     <tr>
                                         <th class="text-center">Kích thước (Size)</th>
                                         <th class="text-center">Số lượng nhập kho</th>
-                                        <th class="text-center" style="width: 50px;">#</th>
+                                        <th class="text-center" style="width: 80px;">Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBodySize">
-                                    <tr>
-                                        <td><input name="ChiTietSizeNhap[0].Size" type="number" step="0.5" class="form-control form-control-sm" placeholder="VD: 40" min="0" required /></td>
-                                        <td><input name="ChiTietSizeNhap[0].SoLuongTon" type="number" class="form-control form-control-sm" value="1" min="0" required /></td>
-                                        <td class="text-center"><button type="button" class="btn btn-danger btn-sm disabled"><i class="fa fa-trash"></i></button></td>
-                                    </tr>
+                                    @if (Model.Ctsizes != null && Model.Ctsizes.Count > 0)
+                                    {
+                                        for (int i = 0; i < Model.Ctsizes.Count; i++)
+                                        {
+                                            <tr>
+                                                <input type="hidden" name="Ctsizes[@i].Id" value="@Model.Ctsizes.ElementAt(i).Id" />
+                                                <td>
+                                                    <input name="Ctsizes[@i].Size" value="@Model.Ctsizes.ElementAt(i).Size" type="number" step="0.5" class="form-control form-control-sm" style="background-color: #e9ecef" />
+                                                </td>
+                                                <td>
+                                                    <input name="Ctsizes[@i].SoLuongTon" value="@Model.Ctsizes.ElementAt(i).SoLuongTon" type="number" class="form-control form-control-sm" required />
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="xoaDong(this)" title="Xóa size này"><i class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr><td colspan="3" class="text-center text-muted">Chưa có phiên bản size nào</td></tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>
@@ -163,7 +192,9 @@
 
                     <div class="d-flex justify-content-end mt-4">
                         <a asp-area="Admin" asp-controller="QuanLySanPham" asp-action="TrangQLSanPham" class="btn btn-secondary me-2">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary px-4"><i class="fa fa-save me-2"></i>Lưu sản phẩm</button>
+                        <button type="button" class="btn btn-primary px-4" onclick="xacNhanCapNhat()">
+                            <i class="fa fa-save me-2"></i> Lưu thay đổi
+                        </button>
                     </div>
                 </div>
             </div>
@@ -180,13 +211,11 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="modalType" />
-
                 <div class="mb-3">
                     <label class="form-label">Nhập tên mới:</label>
                     <input type="text" id="modalInputName" class="form-control" placeholder="Nhập tên..." />
                     <span id="errorName" class="text-danger small d-none">Vui lòng nhập tên!</span>
                 </div>
-
                 <div class="mb-3 d-none" id="divXuatXu">
                     <label class="form-label">Xuất xứ:</label>
                     <input type="text" id="modalInputOrigin" class="form-control" placeholder="Ví dụ: Việt Nam, Mỹ..." />
@@ -206,7 +235,24 @@
     }
 
     <script>
-        // --- 1. XỬ LÝ ẢNH ---
+        // --- A. HÀM XÁC NHẬN CẬP NHẬT (MẶC ĐỊNH BROWSER) ---
+        function xacNhanCapNhat() {
+            var form = $('#formSanPham');
+
+            // Bước 1: Kiểm tra Validate Form
+            if (!form.valid()) {
+                return; // Nếu chưa nhập đủ thông tin thì dừng lại
+            }
+
+            // Bước 2: Dùng lệnh confirm() mặc định của trình duyệt
+            // Nó sẽ hiện hộp thoại đơn giản: OK / Cancel
+            if (confirm("Bạn có chắc chắn muốn cập nhật thông tin sản phẩm này không?")) {
+                // Bước 3: Nếu chọn OK -> Gửi form
+                form.submit();
+            }
+        }
+
+        // --- CÁC HÀM XỬ LÝ KHÁC (GIỮ NGUYÊN) ---
         function previewSingle(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -233,14 +279,12 @@
             }
         }
 
-        // --- 2. XỬ LÝ SIZE ĐỘNG (Đã sửa tên biến cho đúng Model) ---
-        var sizeIndex = 1;
+        var sizeIndex = 0;
         function themDongSize() {
-            // Sửa DanhSachSize -> ChiTietSizeNhap
             var html = `
                 <tr>
-                    <td><input name="ChiTietSizeNhap[${sizeIndex}].Size" type="number" step="0.5" class="form-control form-control-sm" required /></td>
-                    <td><input name="ChiTietSizeNhap[${sizeIndex}].SoLuongTon" type="number" class="form-control form-control-sm" value="1" required /></td>
+                    <td><input name="ChiTietSizeNhap[${sizeIndex}].Size" type="number" step="0.5" class="form-control form-control-sm" placeholder="Size mới"/></td>
+                    <td><input name="ChiTietSizeNhap[${sizeIndex}].SoLuongTon" type="number" class="form-control form-control-sm" value="1" min="0"  /></td>
                     <td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="xoaDong(this)"><i class="fa fa-trash"></i></button></td>
                 </tr>`;
             $('#tableBodySize').append(html);
@@ -251,49 +295,42 @@
             $(btn).closest('tr').remove();
         }
 
-        // --- 3. XỬ LÝ THÊM NHANH (AJAX Đã cập nhật) ---
         var myModal = new bootstrap.Modal(document.getElementById('quickAddModal'));
 
         function openModal(title, type) {
             $('#modalTitle').text('Thêm mới ' + title);
             $('#modalType').val(type);
-
-            // Reset form
             $('#modalInputName').val('');
             $('#modalInputOrigin').val('');
             $('#errorName').addClass('d-none');
 
-            // Logic ẩn hiện ô Xuất xứ
             if (type === 'ThuongHieu') {
                 $('#divXuatXu').removeClass('d-none');
             } else {
                 $('#divXuatXu').addClass('d-none');
             }
-
             myModal.show();
         }
 
         function luuNhanh() {
             var type = $('#modalType').val();
             var name = $('#modalInputName').val().trim();
-            var origin = $('#modalInputOrigin').val().trim(); // Lấy giá trị xuất xứ
+            var origin = $('#modalInputOrigin').val().trim();
 
             if (!name) {
                 $('#errorName').removeClass('d-none');
                 return;
             }
 
-            // Gọi AJAX
             $.ajax({
                 url: '/Admin/QuanLySanPham/ThemNhanhDuLieu',
                 type: 'POST',
-                data: { loai: type, ten: name, xuatXu: origin }, // Gửi kèm xuất xứ
+                data: { loai: type, ten: name, xuatXu: origin },
                 success: function (res) {
                     if (res.success) {
                         var newOption = new Option(res.ten, res.id, true, true);
                         if (type == 'Loai') $('#ddlLoai').append(newOption).trigger('change');
                         else $('#ddlThuongHieu').append(newOption).trigger('change');
-
                         myModal.hide();
                     } else {
                         alert('Lỗi: ' + res.message);

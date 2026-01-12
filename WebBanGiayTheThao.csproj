@@ -24,7 +24,9 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Data\" />
-    <Folder Include="wwwroot\img\" />
+    <Folder Include="wwwroot\img\anhphu\" />
+    <Folder Include="wwwroot\img\slideshow\" />
+    <Folder Include="wwwroot\img\sanpham\" />
   </ItemGroup>
 
 </Project>

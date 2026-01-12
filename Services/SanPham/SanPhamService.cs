@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
-namespace WebBanGiayTheThao.Services.SanPham
+namespace WebBanGiayTheThao.Services
 {
     public class SanPhamService : ISanPhamService
     {
@@ -12,7 +12,7 @@ namespace WebBanGiayTheThao.Services.SanPham
             _context = context;
         }
 
-        public async Task<(IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
+        public async Task<(List<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
          string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize
          )
         {
@@ -71,5 +71,41 @@ namespace WebBanGiayTheThao.Services.SanPham
                await _context.SaveChangesAsync();
             }
         }
+        public async Task<bool> ThemSanPham(SanPham sp)
+        {
+            try
+            {
+                _context.SanPhams.Add(sp);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public async Task<bool> CapNhatSanPham(SanPham sp)
+        {
+            _context.SanPhams.Update(sp);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<SanPham?> GetSanPhamById(int id)
+        {
+            return await _context.SanPhams.Include(x=>x.Ctanhs).Include(x=>x.Ctsizes).FirstOrDefaultAsync(x=>x.Id==id);
+        }
+        public async Task<bool> KiemTraTenTrung(string tenSanPham, int? idLoaiTru = null)
+        {
+            var query = _context.SanPhams.AsQueryable();
+
+            if (idLoaiTru.HasValue)
+            {
+                query = query.Where(x => x.Id != idLoaiTru.Value);
+            }
+
+            return await query.AnyAsync(x => x.TenSanPham.Trim() == tenSanPham.Trim());
+        }
     }
+
 }
+

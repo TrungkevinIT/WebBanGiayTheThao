@@ -12,8 +12,12 @@ public partial class Ctsize
     [Key]
     public int Id { get; set; }
 
+    [Required(ErrorMessage ="Size không được rỗng")]
+    [Range(0, double.MaxValue, ErrorMessage = "Size không được nhỏ hơn 0")]
     public double? Size { get; set; }
 
+    [Required(ErrorMessage = "số lượng không được rỗng")]
+    [Range(0, int.MaxValue, ErrorMessage = "Số lượng phải từ 0 trở lên")]
     public int? SoLuongTon { get; set; }
 
     public int? SanPhamId { get; set; }

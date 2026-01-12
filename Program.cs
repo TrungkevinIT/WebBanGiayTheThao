@@ -1,20 +1,21 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Services;
-using WebBanGiayTheThao.Services.SanPham;
 using WebBanGiayTheThao.Services.SlideShow;
 using WebBanGiayTheThao.Services.User;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-// ��ng k� service cho User DuyKhang 8:50 08/01/2026
+// Ðãng kí service cho User DuyKhang 8:50 08/01/2026
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBanGiayTheThao.Services.ThuongHieuService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
-// ��ng k� service cho Auth
+// Đăng ký Service Loại Sản Phẩm
+builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBanGiayTheThao.Services.LoaiSanPhamService>();
+// Ðãng kí service cho Auth
 builder.Services.AddScoped<AuthService>();
-// ��ng k� session
+// Ðãng kí session
 builder.Services.AddSession();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
@@ -32,7 +33,14 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+// Thêm định nghĩa cho file .avif
+provider.Mappings[".avif"] = "image/avif";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
 
 app.UseRouting();
 app.UseSession();

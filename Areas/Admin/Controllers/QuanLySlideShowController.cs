@@ -32,7 +32,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             return View(slide);
         }
 
-        [HttpGet] // Hàm này chỉ để JS gọi, không trả về View
+        [HttpGet] 
         public async Task<IActionResult> CheckLinkTrung(string link, int id)
         {
             // Gọi Service kiểm tra
@@ -64,7 +64,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
 
             if (fileAnh != null)
             {
-                string folder = Path.Combine(_env.WebRootPath, "img");
+                string folder = Path.Combine(_env.WebRootPath, "img","slideshow");
 
                 // Tự tạo thư mục để tránh lỗi DirectoryNotFound
                 if (!Directory.Exists(folder))

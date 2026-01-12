@@ -1,9 +1,9 @@
 ﻿using WebBanGiayTheThao.Models;
-namespace WebBanGiayTheThao.Services.SanPham
+namespace WebBanGiayTheThao.Services
 {
     public interface ISanPhamService
     {
-        Task<(IEnumerable<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
+        Task<(List<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
          string? search,
          int? loaispid,
          int? thuonghieuid,
@@ -12,7 +12,10 @@ namespace WebBanGiayTheThao.Services.SanPham
          int page,
          int pagesize
          );
-
-        Task CapNhatTrangThaiSanPham(int trangthai);  
+        Task<SanPham?> GetSanPhamById(int id);
+        Task CapNhatTrangThaiSanPham(int trangthai);
+        Task<bool> ThemSanPham(SanPham sp);
+        Task<bool> CapNhatSanPham(SanPham sp);
+        Task<bool> KiemTraTenTrung(string tenSanPham, int? idLoaiTru = null);
     }
 }
