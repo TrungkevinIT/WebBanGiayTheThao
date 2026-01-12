@@ -19,16 +19,21 @@ namespace WebBanGiayTheThao.Services.User
             int pageSize
         )
         {
-            var query = _context.Users.AsQueryable();
+            // ✅ CHỈ LẤY USER THƯỜNG (VaiTro = 0)
+            var query = _context.Users
+                .Where(u => u.VaiTro == 0)
+                .AsQueryable();
 
-            // Tìm theo SĐT
+            // 🔍 Tìm theo SĐT
             if (!string.IsNullOrEmpty(sdt))
             {
-                query = query.Where(u => u.Sdt!.Contains(sdt));
+                query = query.Where(u => u.Sdt != null && u.Sdt.Contains(sdt));
             }
 
+            // ✅ Tổng số user (KHÔNG TÍNH ADMIN)
             var totalUsers = await query.CountAsync();
 
+            // ✅ Phân trang
             var users = await query
                 .OrderByDescending(u => u.Id)
                 .Skip((page - 1) * pageSize)
@@ -40,11 +45,13 @@ namespace WebBanGiayTheThao.Services.User
 
         public async Task<string> ChangeUserStatusAsync(int userId, int trangThai)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            // ❗ Không cho đổi trạng thái admin
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId && u.VaiTro == 0);
 
             if (user == null)
             {
-                return "Không tìm thấy người dùng";
+                return "Không tìm thấy người dùng hoặc không được phép thao tác admin";
             }
 
             user.TrangThai = trangThai;

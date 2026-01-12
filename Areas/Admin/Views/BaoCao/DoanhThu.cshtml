@@ -40,13 +40,15 @@
 
     <!-- TỔNG DOANH THU -->
     <div class="alert alert-info fw-bold">
-        Tổng doanh thu:
+        Tổng doanh thu tháng @Model.Thang/@Model.Nam:
         <span class="text-danger">
             @Model.TongDoanhThu.ToString("N0") VNĐ
         </span>
     </div>
 
-    <!-- KHÔNG CÓ DỮ LIỆU -->
+    <!-- ================= DOANH THU THEO NGÀY ================= -->
+    <h5 class="fw-bold mb-3">Chi tiết doanh thu theo ngày</h5>
+
     @if (!Model.ChiTietTheoNgay.Any())
     {
         <div class="alert alert-warning">
@@ -55,14 +57,13 @@
     }
     else
     {
-        <!-- BẢNG CHI TIẾT -->
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-0 mb-5">
             <div class="card-body">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>Ngày</th>
-                            <th>Doanh thu</th>
+                            <th class="text-end">Doanh thu</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,4 +82,104 @@
         </div>
     }
 
+    <!-- ================= TOP 5 SẢN PHẨM ================= -->
+    <h5 class="fw-bold mb-3">
+        Top 5 sản phẩm bán chạy tháng @Model.Thang/@Model.Nam
+    </h5>
+
+    @if (!Model.Top5SanPham.Any())
+    {
+        <div class="alert alert-warning">
+            Không có dữ liệu sản phẩm
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-body">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">Số lượng bán</th>
+                            <th class="text-end">Doanh thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                        }
+                        @foreach (var sp in Model.Top5SanPham)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@sp.TenSanPham</td>
+                                <td class="text-center">@sp.TongSoLuongBan</td>
+                                <td class="text-end">
+                                    @sp.TongDoanhThu.ToString("N0") VNĐ
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- ================= BIỂU ĐỒ DOANH THU 12 THÁNG ================= -->
+    <h5 class="fw-bold mb-3">
+        Biểu đồ doanh thu năm @Model.Nam
+    </h5>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <canvas id="doanhThuChart" height="120"></canvas>
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const labels = @Html.Raw(
+                    System.Text.Json.JsonSerializer.Serialize(
+                            Model.DoanhThu12Thang.Select(x => "Tháng " + x.Thang)
+                    )
+            );
+
+    const data = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(
+                        Model.DoanhThu12Thang.Select(x => x.TongDoanhThu)
+                )
+        );
+
+    new Chart(document.getElementById('doanhThuChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: data,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+}
