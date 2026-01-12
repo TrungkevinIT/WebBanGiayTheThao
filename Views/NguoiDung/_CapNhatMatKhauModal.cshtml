@@ -1,0 +1,64 @@
+﻿@model WebBanGiayTheThao.ViewModels.NguoiDung.ChangePasswordVM
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Đổi mật khẩu</h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <form asp-action="ChangePassword" method="post">
+                <div class="modal-body">
+
+                    <!-- HIỂN THỊ LỖI LOGIC -->
+                    @if (ViewBag.ChangePasswordError != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.ChangePasswordError
+                        </div>
+                    }
+
+                    <!-- MẬT KHẨU HIỆN TẠI -->
+                    <input asp-for="OldPassword"
+                           type="password"
+                           class="form-control mb-1"
+                           placeholder="Mật khẩu hiện tại" />
+                    <span asp-validation-for="OldPassword"
+                          class="text-danger"></span>
+
+                    <!-- MẬT KHẨU MỚI -->
+                    <input asp-for="NewPassword"
+                           type="password"
+                           class="form-control mb-1 mt-2"
+                           placeholder="Mật khẩu mới" />
+                    <span asp-validation-for="NewPassword"
+                          class="text-danger"></span>
+
+                    <!-- XÁC NHẬN -->
+                    <input asp-for="ConfirmPassword"
+                           type="password"
+                           class="form-control mb-1 mt-2"
+                           placeholder="Xác nhận mật khẩu mới" />
+                    <span asp-validation-for="ConfirmPassword"
+                          class="text-danger"></span>
+
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button class="btn btn-dark">
+                        Cập nhật
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

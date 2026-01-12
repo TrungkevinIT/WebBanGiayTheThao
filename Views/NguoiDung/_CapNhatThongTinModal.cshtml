@@ -1,0 +1,58 @@
+﻿@model WebBanGiayTheThao.ViewModels.NguoiDung.UpdateProfileVM
+
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Cập nhật thông tin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form asp-action="UpdateProfile" method="post" novalidate>
+
+                <!-- 🔴 THÔNG BÁO LỖI LOGIC -->
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger"
+                     role="alert">
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <input asp-for="FullName" class="form-control" placeholder="Họ tên" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <input asp-for="Phone" class="form-control" placeholder="SĐT" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <input asp-for="Address" class="form-control" placeholder="Địa chỉ" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="submit" class="btn btn-dark">
+                        Lưu
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
