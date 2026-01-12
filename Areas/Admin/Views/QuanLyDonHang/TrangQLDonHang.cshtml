@@ -60,10 +60,11 @@
                     {
                         @foreach (var item in Model)
                         {
+                            
                             string mauNen = "";
-                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }
-                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; }
-                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; }
+                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }       
+                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; } 
+                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; } 
 
                             <tr>
                                 <td class="fw-bold">@item.Id</td>
@@ -79,13 +80,14 @@
                                         <input type="hidden" name="id" value="@item.Id" />
 
                                         <select name="trangThai"
-                                                class="form-select form-select-sm w-auto border-0 text-center rounded @mauNen"
-                                                style="font-weight: 600; cursor: pointer;"
-                                                onchange="this.form.submit()">
+                                                data-original="@item.TrangThai"
+                                                class="form-select form-select-sm w-auto border-0 text-center rounded mx-auto @mauNen"
+                                                style="font-weight: 600; cursor: pointer; box-shadow: none;"
+                                                onchange="confirmStatusChange(this)">
 
-                                            <option value="1" selected="@(item.TrangThai == 1)" class="bg-white text-dark">Đã duyệt</option>
-                                            <option value="2" selected="@(item.TrangThai == 2)" class="bg-white text-dark">Đã hoàn thành</option>
-                                            <option value="3" selected="@(item.TrangThai == 3)" class="bg-white text-dark">Đã hủy</option>
+                                            <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Đã duyệt</option>
+                                            <option value="2" class="bg-white text-dark" selected="@(item.TrangThai == 2)">Đã hoàn thành</option>
+                                            <option value="3" class="bg-white text-dark" selected="@(item.TrangThai == 3)">Đã hủy</option>
                                         </select>
                                     </form>
                                 </td>
@@ -95,7 +97,8 @@
                                        asp-area="Admin"
                                        asp-controller="QuanLyDonHang"
                                        asp-action="TrangXemChiTietDonHang"
-                                       asp-route-id="@item.Id">
+                                       asp-route-id="@item.Id"
+                                       title="Xem chi tiết">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
@@ -105,7 +108,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-4">Không tìm thấy dữ liệu đơn hàng nào.</td>
+                            <td colspan="6" class="text-center py-4 text-muted">Không tìm thấy dữ liệu đơn hàng nào.</td>
                         </tr>
                     }
                 </tbody>
@@ -162,3 +165,24 @@
             </nav>
         </div>
 </div>
+
+    <script>
+        function confirmStatusChange(selectElement) {
+            // Lấy giá trị ban đầu (đã lưu trong data-original)
+            var originalValue = selectElement.getAttribute('data-original');
+
+            // Lấy text của trạng thái mới để hiển thị trong thông báo cho rõ ràng (tùy chọn)
+            var newText = selectElement.options[selectElement.selectedIndex].text;
+
+            // Hiện hộp thoại xác nhận
+            var message = "Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang '" + newText + "' không?";
+
+            if (confirm(message)) {
+                // Nếu chọn OK -> Submit form
+                selectElement.form.submit();
+            } else {
+                // Nếu chọn Cancel -> Quay về giá trị cũ
+                selectElement.value = originalValue;
+            }
+        }
+    </script>
