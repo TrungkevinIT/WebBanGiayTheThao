@@ -13,11 +13,14 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             _donHangService = donHangService;
         }
-        public async Task<IActionResult> TrangQLDonHang()
+        [HttpGet]
+        public async Task<IActionResult> TrangQLDonHang(string searchSDT, int? trangThai, DateTime? ngayDat)
         {
-           
-            var danhSachHoaDon = await _donHangService.GetAllHoaDonAsync();
-            return View(danhSachHoaDon);
+            ViewBag.SearchSDT = searchSDT;
+            ViewBag.TrangThai = trangThai;
+            ViewBag.NgayDat = ngayDat.HasValue ? ngayDat.Value.ToString("yyyy-MM-dd") : "";
+            var danhSach = await _donHangService.GetAllHoaDonAsync(searchSDT, trangThai, ngayDat);
+            return View(danhSach);
         }
     }
 }

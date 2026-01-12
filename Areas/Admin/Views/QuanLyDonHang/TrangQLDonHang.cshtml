@@ -11,28 +11,37 @@
             <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Danh Sách Đơn Hàng</h6>
         </div>
 
-        <div class="row g-3 mb-4">
+        <form asp-area="Admin" asp-controller="QuanLyDonHang" asp-action="TrangQLDonHang" method="get" class="row g-3 mb-4">
+
             <div class="col-md-4">
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
-                    <input type="text" class="form-control border-start-0" placeholder="Tìm mã đơn, tên khách...">
+                    <input type="text" class="form-control border-start-0"
+                           name="searchSDT"
+                           value="@ViewBag.SearchSDT"
+                           placeholder="Tìm theo số điện thoại">
                 </div>
             </div>
+
             <div class="col-md-3">
-                <select class="form-select" aria-label="Lọc trạng thái">
-                    <option selected value="">-- Tất cả trạng thái --</option>
-                    <option value="1">Đã duyệt</option>
-                    <option value="2">Đã hoàn thành</option>
-                    <option value="3">Đã hủy</option>
+                <select class="form-select" name="trangThai" aria-label="Lọc trạng thái">
+                    <option value="" selected="@(ViewBag.TrangThai == null)">-- Tất cả trạng thái --</option>
+                    <option value="1" selected="@(ViewBag.TrangThai == 1)">Đã duyệt</option>
+                    <option value="2" selected="@(ViewBag.TrangThai == 2)">Đã hoàn thành</option>
+                    <option value="3" selected="@(ViewBag.TrangThai == 3)">Đã hủy</option>
                 </select>
             </div>
+
             <div class="col-md-3">
-                <input type="date" class="form-control">
+                <input type="date" class="form-control"
+                       name="ngayDat"
+                       value="@ViewBag.NgayDat">
             </div>
+
             <div class="col-md-2">
-                <button class="btn btn-primary w-100"><i class="fa fa-filter me-2"></i>Lọc</button>
+                <button type="submit" class="btn btn-primary w-100"><i class="fa fa-filter me-2"></i>Lọc</button>
             </div>
-        </div>
+        </form>
 
         <div class="table-responsive">
             <table class="table text-center align-middle table-bordered table-hover mb-0">
@@ -51,30 +60,35 @@
                     {
                         @foreach (var item in Model)
                         {
+                            string mauNen = "";
+                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }
+                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; }
+                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; }
+
                             <tr>
                                 <td class="fw-bold">@item.Id</td>
-                                <td class="text-start ps-3">
-                                    @(item.HoTenNguoiNhan)
-                                </td>
+                                <td class="text-start ps-3">@item.HoTenNguoiNhan</td>
                                 <td>@item.NgayDat?.ToString("dd/MM/yyyy")</td>
                                 <td class="text-danger fw-bold">
                                     @string.Format("{0:N0} ₫", item.TongTien)
                                 </td>
+
                                 <td>
-                                    <select class="form-select form-select-sm w-auto border-0 text-center "
+                                    <select class="form-select form-select-sm w-auto border-0 text-center rounded-pill @mauNen"
                                             style="font-weight: 600; cursor: pointer;"
-                                            onchange="doiMauTrangThai(this)"
-                                            data-id="@item.Id">
+                                            data-id="@item.Id"
+                                            onchange="this.className = 'form-select form-select-sm w-auto border-0 text-center rounded-pill ' + (this.value == 1 ? 'bg-warning text-dark' : this.value == 2 ? 'bg-success text-white' : 'bg-danger text-white')">
 
                                         <option value="1" selected="@(item.TrangThai == 1)" class="bg-white text-dark">Đã duyệt</option>
                                         <option value="2" selected="@(item.TrangThai == 2)" class="bg-white text-dark">Đã hoàn thành</option>
                                         <option value="3" selected="@(item.TrangThai == 3)" class="bg-white text-dark">Đã hủy</option>
                                     </select>
                                 </td>
+
                                 <td>
                                     <a class="btn btn-sm btn-outline-info rounded-circle me-1"
                                        asp-area="Admin"
-                                       asp-controller="DonHang"
+                                       asp-controller="QuanLyDonHang"
                                        asp-action="TrangXemChiTietDonHang"
                                        asp-route-id="@item.Id">
                                         <i class="fa fa-eye"></i>
@@ -86,7 +100,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-4">Không có dữ liệu đơn hàng.</td>
+                            <td colspan="6" class="text-center py-4">Không tìm thấy dữ liệu đơn hàng nào.</td>
                         </tr>
                     }
                 </tbody>
@@ -105,25 +119,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function doiMauTrangThai(selectElement) {
-        selectElement.classList.remove('bg-warning', 'bg-success', 'bg-danger', 'text-white', 'text-dark');
-
-        var val = selectElement.value;
-
-        if (val == '1') {
-            selectElement.classList.add('bg-warning', 'text-dark');
-        } else if (val == '2') {
-            selectElement.classList.add('bg-success', 'text-white');
-        } else if (val == '3') {
-            selectElement.classList.add('bg-danger', 'text-white');
-        }
-    }
-    document.addEventListener("DOMContentLoaded", function() {
-        var selects = document.querySelectorAll('select[onchange="doiMauTrangThai(this)"]');
-        selects.forEach(function(s) {
-            doiMauTrangThai(s);
-        });
-    });
-</script>
