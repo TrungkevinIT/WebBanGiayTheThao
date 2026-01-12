@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Services.DonHang;
 using WebBanGiayTheThao.Services.SlideShow;
 using WebBanGiayTheThao.Services.User;
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,7 @@ builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBa
 builder.Services.AddScoped<AuthService>();
 // √ê√£ng k√≠ session
 builder.Services.AddSession();
-// –„ng kÌ service cho b·o c·o DuyKhang edit 20:14 11/01/2026 
+// DuyKhang edit 20:14 11/01/2026 
 builder.Services.AddScoped<BaoCaoService>();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
@@ -25,7 +26,9 @@ builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
 builder.Services.AddScoped<ISanPhamService,SanPhamService>();
 builder.Services.AddScoped<ISlideShowService,SlideShowService>();
 
+
 builder.Services.AddScoped<ILoaiSanPhamService, LoaiSanPhamService>();
+builder.Services.AddScoped<IDonHangService, DonHangService>();
 
 var app = builder.Build();
 

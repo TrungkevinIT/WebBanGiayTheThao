@@ -1,77 +1,188 @@
-﻿@{
-	Layout = "_LayoutAdmin";
+﻿@model IEnumerable<WebBanGiayTheThao.Models.HoaDon>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý đơn hàng";
 }
-<div class="modal fade" id="orderDetailModal" tabindex="-1">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content glass-modal">
 
-            <!-- HEADER -->
-            <div class="modal-header border-0">
-                <div>
-                    <h5 class="fw-bold mb-1">
-                        Chi tiết đơn hàng #<span id="modalOrderCode"></span>
-                    </h5>
-                    <small class="text-muted">
-                        Ngày đặt: <span id="modalOrderDate"></span>
-                    </small>
-                </div>
-                <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"></button>
-            </div>
-
-            <!-- BODY -->
-            <div class="modal-body">
-
-                <!-- TRẠNG THÁI -->
-                <div class="mb-4">
-                    <span id="modalStatusBadge" class="badge"></span>
-                </div>
-
-                <!-- THÔNG TIN NHẬN HÀNG -->
-                <div class="mb-4">
-                    <h6 class="fw-bold mb-2">Thông tin nhận hàng</h6>
-                    <p class="mb-1"><b>Người nhận:</b> <span id="modalReceiver"></span></p>
-                    <p class="mb-1"><b>SĐT:</b> <span id="modalPhone"></span></p>
-                    <p class="mb-0"><b>Địa chỉ:</b> <span id="modalAddress"></span></p>
-                </div>
-
-                <!-- TỔNG TIỀN -->
-                <div class="border-top pt-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Phí vận chuyển</span>
-                        <span id="modalShipping"></span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Giảm giá</span>
-                        <span id="modalDiscount"></span>
-                    </div>
-                    <div class="d-flex justify-content-between fw-bold fs-5">
-                        <span>Tổng thanh toán</span>
-                        <span class="text-danger" id="modalTotal"></span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- FOOTER -->
-            <div class="modal-footer border-0">
-                <button id="cancelBtn"
-                        class="btn btn-outline-danger rounded-pill px-4 d-none">
-                    Hủy đơn
-                </button>
-
-                <button id="reviewBtn"
-                        class="btn btn-dark rounded-pill px-4 d-none">
-                    Đánh giá
-                </button>
-
-                <button class="btn btn-outline-secondary rounded-pill px-4"
-                        data-bs-dismiss="modal">
-                    Đóng
-                </button>
-            </div>
-
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Danh Sách Đơn Hàng</h6>
         </div>
-    </div>
+
+        <form asp-area="Admin" asp-controller="QuanLyDonHang" asp-action="TrangQLDonHang" method="get" class="row g-3 mb-4">
+
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0"
+                           name="searchSDT"
+                           value="@ViewBag.SearchSDT"
+                           placeholder="Tìm theo số điện thoại">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <select class="form-select" name="trangThai" aria-label="Lọc trạng thái">
+                    <option value="" selected="@(ViewBag.TrangThai == null)">-- Tất cả trạng thái --</option>
+                    <option value="1" selected="@(ViewBag.TrangThai == 1)">Đã duyệt</option>
+                    <option value="2" selected="@(ViewBag.TrangThai == 2)">Đã hoàn thành</option>
+                    <option value="3" selected="@(ViewBag.TrangThai == 3)">Đã hủy</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <input type="date" class="form-control"
+                       name="ngayDat"
+                       value="@ViewBag.NgayDat">
+            </div>
+
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="fa fa-filter me-2"></i>Lọc</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table text-center align-middle table-bordered table-hover mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th scope="col">Mã ĐH</th>
+                        <th scope="col" class="text-start ps-3">Khách Hàng</th>
+                        <th scope="col">Ngày Đặt</th>
+                        <th scope="col">Tổng Tiền</th>
+                        <th scope="col" style="width: 170px;">Trạng Thái</th>
+                        <th scope="col">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            
+                            string mauNen = "";
+                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }       
+                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; } 
+                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; } 
+
+                            <tr>
+                                <td class="fw-bold">@item.Id</td>
+                                <td class="text-start ps-3">@item.HoTenNguoiNhan</td>
+                                <td>@item.NgayDat?.ToString("dd/MM/yyyy")</td>
+                                <td class="text-danger fw-bold">
+                                    @string.Format("{0:N0} ₫", item.TongTien)
+                                </td>
+
+                                <td>
+                                    <form asp-action="CapNhatTrangThai" method="post">
+
+                                        <input type="hidden" name="id" value="@item.Id" />
+
+                                        <select name="trangThai"
+                                                data-original="@item.TrangThai"
+                                                class="form-select form-select-sm w-auto border-0 text-center rounded mx-auto @mauNen"
+                                                style="font-weight: 600; cursor: pointer; box-shadow: none;"
+                                                onchange="confirmStatusChange(this)">
+
+                                            <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Đã duyệt</option>
+                                            <option value="2" class="bg-white text-dark" selected="@(item.TrangThai == 2)">Đã hoàn thành</option>
+                                            <option value="3" class="bg-white text-dark" selected="@(item.TrangThai == 3)">Đã hủy</option>
+                                        </select>
+                                    </form>
+                                </td>
+
+                                <td>
+                                    <a class="btn btn-sm btn-outline-info rounded-circle me-1"
+                                       asp-area="Admin"
+                                       asp-controller="QuanLyDonHang"
+                                       asp-action="TrangXemChiTietDonHang"
+                                       asp-route-id="@item.Id"
+                                       title="Xem chi tiết">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">Không tìm thấy dữ liệu đơn hàng nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            <nav>
+                <ul class="pagination">
+                    @{
+                        int currentPage = ViewBag.CurrentPage;
+                        int totalPages = ViewBag.TotalPages;
+                    }
+
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-action="TrangQLDonHang"
+                           asp-route-page="@(currentPage - 1)"
+                           asp-route-searchSDT="@ViewBag.SearchSDT"
+                           asp-route-trangThai="@ViewBag.TrangThai"
+                           asp-route-ngayDat="@ViewBag.NgayDat">
+                            &laquo;
+                        </a>
+                    </li>
+
+                    @if (totalPages > 0)
+                    {
+                        for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-action="TrangQLDonHang"
+                                   asp-route-page="@i"
+                                   asp-route-searchSDT="@ViewBag.SearchSDT"
+                                   asp-route-trangThai="@ViewBag.TrangThai"
+                                   asp-route-ngayDat="@ViewBag.NgayDat">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                    }
+
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-action="TrangQLDonHang"
+                           asp-route-page="@(currentPage + 1)"
+                           asp-route-searchSDT="@ViewBag.SearchSDT"
+                           asp-route-trangThai="@ViewBag.TrangThai"
+                           asp-route-ngayDat="@ViewBag.NgayDat">
+                           &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 </div>
 
+    <script>
+        function confirmStatusChange(selectElement) {
+            // Lấy giá trị ban đầu (đã lưu trong data-original)
+            var originalValue = selectElement.getAttribute('data-original');
+
+            // Lấy text của trạng thái mới để hiển thị trong thông báo cho rõ ràng (tùy chọn)
+            var newText = selectElement.options[selectElement.selectedIndex].text;
+
+            // Hiện hộp thoại xác nhận
+            var message = "Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang '" + newText + "' không?";
+
+            if (confirm(message)) {
+                // Nếu chọn OK -> Submit form
+                selectElement.form.submit();
+            } else {
+                // Nếu chọn Cancel -> Quay về giá trị cũ
+                selectElement.value = originalValue;
+            }
+        }
+    </script>
