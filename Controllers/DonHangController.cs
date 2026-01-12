@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.ViewModels.DonHang;
 
 namespace WebBanGiayTheThao.Controllers
 {
+    [SessionAuthorize]
     public class DonHangController : Controller
     {
         private readonly QuanLyWebBanGiayContext _context;

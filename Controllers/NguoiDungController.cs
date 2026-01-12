@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.ViewModels.NguoiDung;
 
@@ -82,6 +83,7 @@ namespace WebBanGiayTheThao.Controllers
         }
 
         // ================== QUẢN LÝ TÀI KHOẢN ==================
+        [SessionAuthorize]
         [HttpGet]
         public async Task<IActionResult> QuanLyTaiKhoanCaNhan()
         {
@@ -98,6 +100,7 @@ namespace WebBanGiayTheThao.Controllers
 
 
         // ================== CẬP NHẬT THÔNG TIN ==================
+        [SessionAuthorize]
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(UpdateProfileVM model)
         {
@@ -137,6 +140,7 @@ namespace WebBanGiayTheThao.Controllers
 
 
         // ================== ĐỔI MẬT KHẨU ==================
+        [SessionAuthorize]
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
         {

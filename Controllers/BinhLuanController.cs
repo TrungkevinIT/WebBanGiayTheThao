@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebBanGiayTheThao.Data;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Models;
 
 namespace WebBanGiayTheThao.Controllers
 {
+    [SessionAuthorize]
     public class BinhLuanController : Controller
     {
         private readonly QuanLyWebBanGiayContext _context;
