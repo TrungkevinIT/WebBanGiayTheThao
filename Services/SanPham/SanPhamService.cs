@@ -16,7 +16,7 @@ namespace WebBanGiayTheThao.Services
          string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize
          )
         {
-            var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).AsQueryable();
+            var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).Where(sp=>sp.LoaiSanPham.TrangThai==1 && sp.ThuongHieu.TrangThai==1).AsQueryable();
             if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(sp=>sp.TenSanPham != null && sp.TenSanPham.Contains(search)
@@ -71,39 +71,30 @@ namespace WebBanGiayTheThao.Services
                await _context.SaveChangesAsync();
             }
         }
-        public async Task<bool> ThemSanPham(SanPham sp)
+        public async Task ThemSanPham(SanPham sp)
         {
-            try
+         bool trungten=await _context.SanPhams.AnyAsync(x=>x.TenSanPham.Trim() ==sp.TenSanPham.Trim());
+            if (trungten)
             {
-                _context.SanPhams.Add(sp);
-                await _context.SaveChangesAsync();
-                return true;
+                throw new Exception("Tên sản phẩm này đã tồn tại, vui lòng chọn tên khác!");
             }
-            catch
-            {
-                return false;
-            }
+            _context.SanPhams.Add(sp);
+            await _context.SaveChangesAsync();
+           
         }
-        public async Task<bool> CapNhatSanPham(SanPham sp)
+        public async Task CapNhatSanPham(SanPham sp)
         {
+            bool trungten = await _context.SanPhams.AnyAsync(x => x.TenSanPham.Trim() == sp.TenSanPham.Trim() && x.Id != sp.Id);
+            if (trungten)
+            {
+                throw new Exception("Tên sản phẩm này đã tồn tại, vui lòng chọn tên khác!");
+            }
             _context.SanPhams.Update(sp);
             await _context.SaveChangesAsync();
-            return true;
         }
         public async Task<SanPham?> GetSanPhamById(int id)
         {
             return await _context.SanPhams.Include(x=>x.Ctanhs).Include(x=>x.Ctsizes).FirstOrDefaultAsync(x=>x.Id==id);
-        }
-        public async Task<bool> KiemTraTenTrung(string tenSanPham, int? idLoaiTru = null)
-        {
-            var query = _context.SanPhams.AsQueryable();
-
-            if (idLoaiTru.HasValue)
-            {
-                query = query.Where(x => x.Id != idLoaiTru.Value);
-            }
-
-            return await query.AnyAsync(x => x.TenSanPham.Trim() == tenSanPham.Trim());
         }
     }
 

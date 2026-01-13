@@ -86,12 +86,6 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
         [HttpPost]
         public async Task<IActionResult> TrangThemSanPham(SanPham sp)
         {
-            // 1. Kiểm tra trùng tên (Thêm mới -> idLoaiTru = null)
-            if (await _sp.KiemTraTenTrung(sp.TenSanPham, null))
-            {
-                ModelState.AddModelError("TenSanPham", "Tên sản phẩm này đã tồn tại, vui lòng chọn tên khác!");
-            }
-
             // 2. Kiểm tra ảnh bắt buộc (Thủ công)
             if (sp.ImageFile == null)
             {
@@ -100,50 +94,55 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
 
             if (ModelState.IsValid)
             {
-                // Xử lý ảnh đại diện
-                if (sp.ImageFile != null)
+                try
                 {
-                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(sp.ImageFile.FileName);
-                    string path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "sanpham", filename);
-                    using (var stream = new FileStream(path, FileMode.Create))
+                    // Xử lý ảnh đại diện
+                    if (sp.ImageFile != null)
                     {
-                        await sp.ImageFile.CopyToAsync(stream);
-                    }
-                    sp.AnhDaiDien = filename;
-                }
-
-                // Xử lý ảnh phụ
-                if (sp.ListAnhPhu != null && sp.ListAnhPhu.Count > 0)
-                {
-                    if (sp.Ctanhs == null) sp.Ctanhs = new List<Ctanh>(); // Khởi tạo list tránh lỗi null
-
-                    foreach (var file in sp.ListAnhPhu)
-                    {
-                        if (file.Length > 0)
+                        string filename = DateTime.Now.Ticks + "_" + Path.GetFileName(sp.ImageFile.FileName);
+                        string path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "sanpham", filename);
+                        using (var stream = new FileStream(path, FileMode.Create))
                         {
-                            string fname = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                            string path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu", fname);
-                            using (var stream = new FileStream(path, FileMode.Create))
+                            await sp.ImageFile.CopyToAsync(stream);
+                        }
+                        sp.AnhDaiDien = filename;
+                    }
+                    // Xử lý ảnh phụ
+                    if (sp.ListAnhPhu != null && sp.ListAnhPhu.Count > 0)
+                    {
+                        if (sp.Ctanhs == null) sp.Ctanhs = new List<Ctanh>(); // Khởi tạo list tránh lỗi null
+
+                        foreach (var file in sp.ListAnhPhu)
+                        {
+                            if (file.Length > 0)
                             {
-                                await file.CopyToAsync(stream);
+                                string fname = DateTime.Now.Ticks + "_" + Path.GetFileName(file.FileName);
+                                string path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu", fname);
+                                using (var stream = new FileStream(path, FileMode.Create))
+                                {
+                                    await file.CopyToAsync(stream);
+                                }
+                                sp.Ctanhs.Add(new Ctanh { LinkAnh = fname });
                             }
-                            sp.Ctanhs.Add(new Ctanh { LinkAnh = fname });
                         }
                     }
-                }
 
-                // Xử lý Size + Số lượng
-                if (sp.ChiTietSizeNhap != null)
-                {
-                    if (sp.Ctsizes == null) sp.Ctsizes = new List<Ctsize>(); // Khởi tạo list tránh lỗi null
-
-                    foreach (var item in sp.ChiTietSizeNhap)
+                    // Xử lý Size + Số lượng
+                    if (sp.ChiTietSizeNhap != null)
                     {
-                        if (item.Size > 0)
+                        if (sp.Ctsizes == null) sp.Ctsizes = new List<Ctsize>(); // Khởi tạo list tránh lỗi null
+
+                        foreach (var item in sp.ChiTietSizeNhap)
                         {
-                            sp.Ctsizes.Add(new Ctsize { Size = item.Size, SoLuongTon = item.SoLuongTon });
+                            if (item.Size > 0)
+                            {
+                                sp.Ctsizes.Add(new Ctsize { Size = item.Size, SoLuongTon = item.SoLuongTon });
+                            }
                         }
                     }
+                }catch(Exception ex)
+                {
+                    ModelState.AddModelError("TenSanPham",ex.Message);
                 }
 
                 sp.TrangThai = 1;
@@ -213,110 +212,109 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> TrangCapNhatSanPham(SanPham sp)
         {
             // 1. Bỏ qua check bắt buộc chọn ảnh
             ModelState.Remove("ImageFile");
             ModelState.Remove("AnhDaiDien");
-
-            // 2. Kiểm tra trùng tên (Truyền sp.Id để trừ chính nó ra)
-            if (await _sp.KiemTraTenTrung(sp.TenSanPham, sp.Id))
-            {
-                ModelState.AddModelError("TenSanPham", "Tên sản phẩm này đã tồn tại, vui lòng chọn tên khác!");
-            }
+            ModelState.Remove("ListAnhPhu");
 
             if (ModelState.IsValid)
             {
+                try { 
                 // Lấy sản phẩm gốc từ DB
                 var spGoc = await _sp.GetSanPhamById(sp.Id);
 
-                if (spGoc != null)
+                    if (spGoc != null)
+                    {
+                        spGoc.TenSanPham = sp.TenSanPham;
+                        spGoc.MaKieuDang = sp.MaKieuDang;
+                        spGoc.DonGia = sp.DonGia;
+                        spGoc.MoTa = sp.MoTa;
+                        spGoc.ThuongHieuId = sp.ThuongHieuId;
+                        spGoc.LoaiSanPhamId = sp.LoaiSanPhamId;
+                        spGoc.TrangThai = 1;
+
+                        // A. Cập nhật Ảnh đại diện
+                        if (sp.ImageFile != null)
+                        {
+                            string filename = DateTime.Now.Ticks + "_" + Path.GetFileName(sp.ImageFile.FileName);
+                            string path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "sanpham", filename);
+                            using (var stream = new FileStream(path, FileMode.Create))
+                            {
+                                await sp.ImageFile.CopyToAsync(stream);
+                            }
+                            spGoc.AnhDaiDien = filename;
+                        }
+
+                        // B. Cập nhật Ảnh phụ
+                        if (sp.ListAnhPhu != null && sp.ListAnhPhu.Count > 0)
+                        {
+                            // Xóa ảnh cũ
+                            var anhCu = spGoc.Ctanhs.ToList();
+                            foreach (var item in anhCu)
+                            {
+                                if (!string.IsNullOrEmpty(item.LinkAnh))
+                                {
+                                    string oldPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu", item.LinkAnh);
+                                    if (System.IO.File.Exists(oldPath))
+                                    {
+                                        System.IO.File.Delete(oldPath);
+                                    }
+                                }
+                                spGoc.Ctanhs.Remove(item);
+                            }
+
+                            // Thêm ảnh mới
+                            string galleryFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu");
+                            foreach (var file in sp.ListAnhPhu)
+                            {
+                                if (file.Length > 0)
+                                {
+                                    string fname = DateTime.Now.Ticks + "_" + Path.GetFileName(file.FileName);
+                                    using (var stream = new FileStream(Path.Combine(galleryFolder, fname), FileMode.Create))
+                                    {
+                                        await file.CopyToAsync(stream);
+                                    }
+                                    spGoc.Ctanhs.Add(new Ctanh { LinkAnh = fname });
+                                }
+                            }
+                        }
+
+                        // C. Cập nhật Size cũ (Sửa cả số Size và Số lượng)
+                        if (sp.Ctsizes != null)
+                        {
+                            foreach (var item in sp.Ctsizes)
+                            {
+                                var sizeCu = spGoc.Ctsizes.FirstOrDefault(x => x.Id == item.Id);
+                                if (sizeCu != null)
+                                {
+                                    sizeCu.SoLuongTon = item.SoLuongTon;
+                                    sizeCu.Size = item.Size;
+                                }
+                            }
+                        }
+
+                        // D. Thêm Size mới
+                        if (sp.ChiTietSizeNhap != null)
+                        {
+                            foreach (var item in sp.ChiTietSizeNhap)
+                            {
+                                if (item.Size > 0)
+                                {
+                                    spGoc.Ctsizes.Add(new Ctsize { Size = item.Size, SoLuongTon = item.SoLuongTon });
+                                }
+                            }
+                        }
+                    
+                        await _sp.CapNhatSanPham(spGoc);
+                        TempData["ThongBao"] = "Cập nhật thành công";
+                        return RedirectToAction("TrangQLSanPham");
+
+                    }
+                }catch(Exception ex)
                 {
-                    spGoc.TenSanPham = sp.TenSanPham;
-                    spGoc.MaKieuDang = sp.MaKieuDang;
-                    spGoc.DonGia = sp.DonGia;
-                    spGoc.MoTa = sp.MoTa;
-                    spGoc.ThuongHieuId = sp.ThuongHieuId;
-                    spGoc.LoaiSanPhamId = sp.LoaiSanPhamId;
-                    spGoc.TrangThai = 1;
-
-                    // A. Cập nhật Ảnh đại diện
-                    if (sp.ImageFile != null)
-                    {
-                        string filename = Guid.NewGuid().ToString() + Path.GetExtension(sp.ImageFile.FileName);
-                        string path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "sanpham", filename);
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await sp.ImageFile.CopyToAsync(stream);
-                        }
-                        spGoc.AnhDaiDien = filename;
-                    }
-
-                    // B. Cập nhật Ảnh phụ
-                    if (sp.ListAnhPhu != null && sp.ListAnhPhu.Count > 0)
-                    {
-                        // Xóa ảnh cũ
-                        var anhCu = spGoc.Ctanhs.ToList();
-                        foreach (var item in anhCu)
-                        {
-                            if (!string.IsNullOrEmpty(item.LinkAnh))
-                            {
-                                string oldPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu", item.LinkAnh);
-                                if (System.IO.File.Exists(oldPath))
-                                {
-                                    System.IO.File.Delete(oldPath); 
-                                }
-                            }
-                            spGoc.Ctanhs.Remove(item);
-                        }
-
-                        // Thêm ảnh mới
-                        string galleryFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img", "anhphu");
-                        foreach (var file in sp.ListAnhPhu)
-                        {
-                            if (file.Length > 0)
-                            {
-                                string fname = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                                using (var stream = new FileStream(Path.Combine(galleryFolder, fname), FileMode.Create))
-                                {
-                                    await file.CopyToAsync(stream);
-                                }
-                                spGoc.Ctanhs.Add(new Ctanh { LinkAnh = fname });
-                            }
-                        }
-                    }
-
-                    // C. Cập nhật Size cũ (Sửa cả số Size và Số lượng)
-                    if (sp.Ctsizes != null)
-                    {
-                        foreach (var item in sp.Ctsizes)
-                        {
-                            var sizeCu = spGoc.Ctsizes.FirstOrDefault(x => x.Id == item.Id);
-                            if (sizeCu != null)
-                            {
-                                sizeCu.SoLuongTon = item.SoLuongTon;
-                                sizeCu.Size = item.Size;
-                            }
-                        }
-                    }
-
-                    // D. Thêm Size mới
-                    if (sp.ChiTietSizeNhap != null)
-                    {
-                        foreach (var item in sp.ChiTietSizeNhap)
-                        {
-                            if (item.Size > 0)
-                            {
-                                spGoc.Ctsizes.Add(new Ctsize { Size = item.Size, SoLuongTon = item.SoLuongTon });
-                            }
-                        }
-                    }
-
-                    await _sp.CapNhatSanPham(spGoc);
-
-                    TempData["ThongBao"] = "Cập nhật thành công";
-                    return RedirectToAction("TrangQLSanPham");
+                    ModelState.AddModelError("TenSanPham",ex.Message);
                 }
             }
    
