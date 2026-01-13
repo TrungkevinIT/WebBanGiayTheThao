@@ -60,11 +60,10 @@
                     {
                         @foreach (var item in Model)
                         {
-                            
                             string mauNen = "";
-                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }       
-                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; } 
-                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; } 
+                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }
+                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; }
+                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; }
 
                             <tr>
                                 <td class="fw-bold">@item.Id</td>
@@ -75,21 +74,36 @@
                                 </td>
 
                                 <td>
-                                    <form asp-action="CapNhatTrangThai" method="post">
+                                    @if (item.TrangThai == 3)
+                                    {
+                                        <div class="@mauNen rounded p-1 text-center fw-bold" style="font-size: 0.875rem;">
+                                            Đã hủy
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="CapNhatTrangThai" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
 
-                                        <input type="hidden" name="id" value="@item.Id" />
-
-                                        <select name="trangThai"
-                                                data-original="@item.TrangThai"
-                                                class="form-select form-select-sm w-auto border-0 text-center rounded mx-auto @mauNen"
-                                                style="font-weight: 600; cursor: pointer; box-shadow: none;"
-                                                onchange="confirmStatusChange(this)">
-
-                                            <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Đã duyệt</option>
-                                            <option value="2" class="bg-white text-dark" selected="@(item.TrangThai == 2)">Đã hoàn thành</option>
-                                            <option value="3" class="bg-white text-dark" selected="@(item.TrangThai == 3)">Đã hủy</option>
-                                        </select>
-                                    </form>
+                                            <select name="trangThai"
+                                                    data-original="@item.TrangThai"
+                                                    class="form-select form-select-sm w-auto border-0 text-center rounded mx-auto @mauNen"
+                                                    style="font-weight: 600; cursor: pointer; box-shadow: none;"
+                                                    onchange="confirmStatusChange(this)">
+                                                @if (item.TrangThai == 1)
+                                                {
+                                                    <option value="1" class="bg-white text-dark" selected>Đã duyệt</option>
+                                                    <option value="2" class="bg-white text-dark">Đã hoàn thành</option>
+                                                    <option value="3" class="bg-white text-dark">Đã hủy</option>
+                                                }
+                                                else if (item.TrangThai == 2)
+                                                {
+                                                    <option value="2" class="bg-white text-dark" selected>Đã hoàn thành</option>
+                                                    <option value="3" class="bg-white text-dark">Đã hủy</option>
+                                                }
+                                            </select>
+                                        </form>
+                                    }
                                 </td>
 
                                 <td>
