@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Sản Phẩm</div>
+            <div class="card-body">
+                <h2 class="card-title">@ViewBag.TongSanPham</h2>
+                <p class="card-text">Tổng số sản phẩm đang bán</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Đơn Hàng</div>
+            <div class="card-body">
+                <h2 class="card-title">@ViewBag.TongDonHang</h2>
+                <p class="card-text">Đơn hàng đã đặt</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">Khách Hàng</div>
+            <div class="card-body">
+                <h2 class="card-title">@ViewBag.TongKhachHang</h2>
+                <p class="card-text">Thành viên đăng ký</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Tổng Doanh Thu Hiện Tại</div>
+            <div class="card-body">
+                <h2 class="card-title">@(((decimal)ViewBag.TongDoanhThu).ToString("N0")) VNĐ</h2>
+            </div>
+        </div>
+    </div>
+</div>
