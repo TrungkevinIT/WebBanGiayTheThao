@@ -1,186 +1,206 @@
-﻿
-
-@model WebBanGiayTheThao.Models.SanPham
+﻿@model WebBanGiayTheThao.Models.SanPham
 
 @{
     ViewData["Title"] = Model.TenSanPham;
+
+    // Logic lấy ảnh
     var allImages = new List<string>();
     if (!string.IsNullOrEmpty(Model.AnhDaiDien)) { allImages.Add(Model.AnhDaiDien); }
     if (Model.Ctanhs != null) { allImages.AddRange(Model.Ctanhs.Select(x => x.LinkAnh)); }
 }
 
-<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-20 max-w-7xl">
+<div class="bg-gray-50 min-h-screen pb-20 font-sans">
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-20 max-w-[1440px]">
 
-    <nav class="flex text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap">
-        <a asp-controller="Home" asp-action="TrangChu" class="hover:text-black transition-colors">Trang chủ</a>
-        <span class="mx-2">/</span>
-        <a class="hover:text-black transition-colors">@Model.LoaiSanPham?.TenLoai</a>
-        <span class="mx-2">/</span>
-        <span class="text-black font-medium truncate">@Model.TenSanPham</span>
-    </nav>
+        <nav class="flex text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap px-2">
+            <a asp-controller="Home" asp-action="TrangChu" class="hover:text-black transition-colors">Trang chủ</a>
+            <span class="mx-2">/</span>
+            <a class="hover:text-black transition-colors">@Model.LoaiSanPham?.TenLoai</a>
+            <span class="mx-2">/</span>
+            <span class="text-black font-medium truncate">@Model.TenSanPham</span>
+        </nav>
 
-    <form asp-controller="GioHang"  method="post">
-        <input type="hidden" name="productId" value="@Model.Id" />
+        <form asp-controller="GioHang" method="post">
+            <input type="hidden" name="productId" value="@Model.Id" />
+            <input type="hidden" name="soLuong" value="1" />
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start">
+            <div class="bg-white rounded-[40px] p-8 lg:p-16 shadow-lg mb-12">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20 items-start">
 
-            <div class="lg:col-span-7 flex flex-col-reverse lg:flex-row gap-4">
+                    <div class="lg:col-span-8 flex flex-col-reverse lg:flex-row gap-4">
 
-                <div id="gallery-thumbs" class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:w-24 lg:h-[600px] no-scrollbar py-1">
-                    @foreach (var img in allImages)
-                    {
-                        <div class="flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 cursor-pointer border-2 border-transparent hover:border-black rounded-xl overflow-hidden transition-all duration-200"
-                             onclick="changeImage(this, '@Url.Content($"~/img/sanpham/{img}")')">
-
-                            <img src="~/img/sanpham/@img" class="w-full h-full object-cover" onerror="this.src='/img/no-image.jpg'">
-                        </div>
-                    }
-                </div>
-
-                <div class="flex-1 bg-gray-50 rounded-3xl overflow-hidden relative aspect-square lg:aspect-auto lg:h-[600px] group">
-                    <img id="main-image"
-                         src="~/img/sanpham/@Model.AnhDaiDien"
-                         alt="@Model.TenSanPham"
-                         class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                         onerror="this.src='/img/no-image.jpg'">
-                </div>
-            </div>
-
-            <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-8">
-
-                <div>
-                    <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
-                        @Model.TenSanPham
-                    </h1>
-                    <div class="flex justify-between items-end mt-4">
-                        <div>
-                            <p class="text-gray-500 font-medium">Mã SP: <span class="text-gray-900 uppercase">@Model.MaKieuDang</span></p>
-                            <div class="flex items-center gap-2 mt-2">
-                                <div class="flex text-yellow-400 text-sm">
-                                    <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                        <div id="gallery-thumbs" class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:w-20 lg:h-[500px] no-scrollbar py-1">
+                            @foreach (var img in allImages)
+                            {
+                                <div class="flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 cursor-pointer border-2 border-transparent hover:border-black rounded-xl overflow-hidden transition-all duration-200"
+                                     onclick="changeImage(this, '@Url.Content($"~/img/sanpham/{img}")')">
+                                    <img src="~/img/sanpham/@img" class="w-full h-full object-cover" onerror="this.src='/img/no-image.jpg'">
                                 </div>
-                                <span class="text-xs text-gray-500 underline cursor-pointer hover:text-black">12 Đánh giá</span>
+                            }
+                        </div>
+
+                        <div class="flex-1 bg-gray-100 rounded-2xl overflow-hidden relative aspect-square group">
+                            <img id="main-image"
+                                 src="~/img/sanpham/@Model.AnhDaiDien"
+                                 alt="@Model.TenSanPham"
+                                 class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                                 onerror="this.src='/img/no-image.jpg'">
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-4 space-y-8">
+
+                        <div>
+                            <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 leading-tight">@Model.TenSanPham</h1>
+                        </div>                     
+                        <div>
+                            <p class="text-gray-500 mt-2">@Model.LoaiSanPham?.TenLoai Nam</p>
+                            <p class="text-3xl font-extrabold text-black mt-4">
+                                @((Model.DonGia ?? 0).ToString("N0")) ₫
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-sm text-gray-900 mb-3">Chọn Màu Sắc</h3>
+                            <div class="flex gap-3">
+                                <div class="w-16 h-16 rounded-xl border-2 border-black p-0.5 cursor-pointer">
+                                    <img src="~/img/sanpham/@Model.AnhDaiDien" class="w-full h-full object-cover rounded-lg">
+                                </div>
+                                <div class="w-16 h-16 rounded-xl border border-gray-200 p-0.5 cursor-not-allowed opacity-50 grayscale">
+                                    <img src="~/img/sanpham/@Model.AnhDaiDien" class="w-full h-full object-cover rounded-lg">
+                                </div>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-black">
-                            @((Model.DonGia ?? 0).ToString("N0")) ₫
-                        </p>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-sm text-gray-900">Chọn Size</h3>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2" id="size-container">
+                                @if (Model.Ctsizes != null && Model.Ctsizes.Any())
+                                {
+                                    @foreach (var size in Model.Ctsizes.OrderBy(x => x.Size))
+                                    {
+                                        <label class="cursor-pointer w-full block">
+                                            <input type="radio" name="sizeId" value="@size.Id" class="peer sr-only" required>
+
+                                            <div class="size-btn h-12 flex items-center justify-center rounded-xl border border-gray-300 font-bold text-sm transition-all duration-200
+                                    hover:border-black hover:bg-black hover:text-white
+                                    peer-checked:bg-black peer-checked:text-white peer-checked:border-black">
+                                                @size.Size
+                                            </div>
+                                        </label>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="col-span-full text-red-500 text-sm italic">Hết size.</span>
+                                }
+                            </div>
+                            <p id="size-error" class="text-red-500 text-xs mt-2 hidden">Vui lòng chọn size.</p>
+                        </div>
+
+                        <div class="space-y-4 pt-2">
+                            <button type="submit" formaction="@Url.Action("ThemVaoGio", "GioHang")"
+                                    class="w-full py-4 rounded-full border border-black bg-white text-black font-bold text-sm hover:bg-gray-50 transition-all flex justify-center items-center gap-2">
+                                <i class="ph ph-shopping-cart text-lg"></i> Thêm vào giỏ hàng
+                            </button>
+                            <button type="submit" formaction="@Url.Action("MuaNgay", "GioHang")"
+                                    class="w-full py-4 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-all shadow-lg transform active:scale-[0.99]">
+                                Mua ngay
+                            </button>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-6">
+                            <div x-data="{ open: true }">
+                                <button type="button" class="flex w-full justify-between items-center text-left font-bold text-gray-900 hover:text-gray-600 transition" onclick="toggleDesc()">
+                                    <span>Mô tả sản phẩm</span>
+                                    <i id="desc-icon" class="ph ph-caret-down transition-transform"></i>
+                                </button>
+                                <div id="desc-content" class="hidden mt-4 text-gray-600 text-sm leading-relaxed space-y-2">
+                                    @Html.Raw(Model.MoTa?.Replace("\n", "<br>"))
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+            </div>
+        </form>
 
-                <hr class="border-gray-100">
-
+        <div class="bg-white rounded-[30px] p-6 lg:p-10 shadow-sm mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="font-bold text-sm uppercase tracking-wide text-gray-900">Chọn Size</h3>
-                        <a href="#" class="text-xs text-gray-500 underline hover:text-black">Hướng dẫn chọn size</a>
-                    </div>
-
-                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
-                        @if (Model.Ctsizes != null && Model.Ctsizes.Any())
-                        {
-                            @foreach (var size in Model.Ctsizes.OrderBy(x => x.Size))
-                            {
-                                <label class="cursor-pointer group relative">
-                                    <input type="radio" name="sizeId" value="@size.Id" class="peer sr-only" required>
-                                    <div class="h-12 w-full flex items-center justify-center rounded-xl border border-gray-200 bg-white font-bold text-sm text-gray-900 shadow-sm hover:border-black hover:shadow-md peer-checked:bg-black peer-checked:text-white peer-checked:border-black transition-all duration-200">
-                                        @size.Size
-                                    </div>
-                                </label>
-                            }
-                        }
-                        else
-                        {
-                            <span class="col-span-full text-red-500 text-sm italic">Sản phẩm đang tạm hết size.</span>
-                        }
-                    </div>
-                    <p id="size-error" class="text-red-500 text-xs mt-2 hidden">Vui lòng chọn size.</p>
-                </div>
-
-                <div class="space-y-4 pt-4">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center border border-gray-300 rounded-full h-14 w-32 px-4 bg-white hover:border-black transition">
-                            <button type="button" onclick="adjustQty(-1)" class="w-8 text-gray-500 hover:text-black text-xl">-</button>
-                            <input type="number" name="soLuong" id="qtyInput" value="1" min="1" class="flex-1 text-center border-none focus:ring-0 font-bold text-lg p-0 bg-transparent">
-                            <button type="button" onclick="adjustQty(1)" class="w-8 text-gray-500 hover:text-black text-xl">+</button>
+                    <h2 class="text-xl font-bold">Đánh giá sản phẩm</h2>
+                    <div class="flex items-center gap-2 mt-2">
+                        <div class="flex text-yellow-400 text-lg">
+                            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i>
                         </div>
-
-                        <button type="submit" class="flex-1 h-14 border-2 border-black bg-white text-black font-bold rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg">
-                            <i class="ph ph-shopping-cart text-xl"></i> Thêm vào giỏ
-                        </button>
+                        <span class="text-sm font-medium text-gray-600">(4.8/5 dựa trên 125 đánh giá)</span>
                     </div>
-
-                    <button type="submit" formaction="@Url.Action("MuaNgay", "GioHang")" class="w-full h-14 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition-all duration-300 shadow-lg transform active:scale-[0.99]">
-                        Mua Ngay
-                    </button>
                 </div>
+                <button class="px-6 py-2 border border-black rounded-full hover:bg-black hover:text-white transition text-sm font-bold">Viết bình luận</button>
+            </div>
 
-                <div class="border-t border-gray-100 pt-6">
-                    <div x-data="{ open: true }">
-                        <button type="button" class="flex w-full justify-between items-center text-left font-bold text-gray-900" onclick="toggleDesc()">
-                            <span>Mô tả sản phẩm</span>
-                            <i id="desc-icon" class="ph ph-caret-up transition-transform"></i>
-                        </button>
-                        <div id="desc-content" class="mt-4 text-gray-600 text-sm leading-relaxed space-y-2">
-                            @Html.Raw(Model.MoTa?.Replace("\n", "<br>"))
+            <div id="review-container" class="space-y-6">
+                <div class="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">N</div>
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-900">Nguyễn Văn A</h4>
+                        <div class="flex text-yellow-400 text-xs my-1">
+                            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
                         </div>
+                        <p class="text-gray-600 text-sm">Sản phẩm rất đẹp, giao hàng nhanh.</p>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 pt-4">
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
-                        <i class="ph ph-truck text-2xl text-black"></i>
-                        <span class="text-xs font-medium text-gray-600">Freeship đơn từ 500k</span>
-                    </div>
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
-                        <i class="ph ph-arrow-counter-clockwise text-2xl text-black"></i>
-                        <span class="text-xs font-medium text-gray-600">Đổi trả trong 30 ngày</span>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </form>
-
-    <div class="mt-24 grid grid-cols-1 lg:grid-cols-12 gap-12">
-
-        <div class="lg:col-span-8">
-            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                Đánh giá từ khách hàng
-                <span class="text-sm font-normal text-gray-500 px-3 py-1 bg-gray-100 rounded-full">125</span>
-            </h2>
-            <div id="review-container" class="space-y-4">
-                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                    <p class="text-gray-500 italic text-center">Đang tải đánh giá...</p>
                 </div>
             </div>
         </div>
 
-        <div class="lg:col-span-4">
-            <h2 class="text-xl font-bold mb-6">Có thể bạn thích</h2>
-            <div id="related-products-grid" class="grid grid-cols-2 gap-4">
+        <div>
+            <div class="flex justify-between items-end mb-8 px-2">
+                <h2 class="text-2xl font-bold">Sản phẩm liên quan</h2>
+                <a href="#" class="text-sm underline hover:text-gray-500">Xem tất cả</a>
+            </div>
+
+            <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white p-4 rounded-2xl shadow-sm">
+                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
+                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm">
+                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
+                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm">
+                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
+                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm">
+                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
+                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+                </div>
             </div>
         </div>
-    </div>
 
-</main>
+    </main>
+</div>
 
 @section Scripts {
     <script>
         // 1. Logic đổi ảnh
         function changeImage(element, src) {
             var mainImg = document.getElementById('main-image');
-
-            // Hiệu ứng mờ dần
-            mainImg.style.opacity = '0.2';
-
+            mainImg.style.opacity = '0.5';
             setTimeout(function() {
-                // Gán trực tiếp src vì ở View đã xử lý Url.Content rồi
                 mainImg.src = src;
                 mainImg.style.opacity = '1';
             }, 150);
 
-            // Xử lý viền (border) active
             var thumbs = document.querySelectorAll('#gallery-thumbs div');
             thumbs.forEach(t => {
                 t.classList.remove('border-black');
@@ -190,26 +210,20 @@
             element.classList.add('border-black');
         }
 
-        // 2. Logic số lượng gộp
-        function adjustQty(amount) {
-            var input = document.getElementById('qtyInput');
-            var current = parseInt(input.value);
-            if (current + amount >= 1) {
-                input.value = current + amount;
-            }
-        }
-
-        // 3. Toggle Mô tả
+        // 2. Logic Toggle Mô tả
         function toggleDesc() {
             var content = document.getElementById('desc-content');
             var icon = document.getElementById('desc-icon');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                icon.classList.remove('rotate-180');
-            } else {
-                content.style.display = 'none';
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
                 icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
             }
         }
+
+        // 3. (Tùy chọn) Logic Load Sản phẩm liên quan nếu bạn dùng JS
+        // Nếu bạn render từ Server thì không cần đoạn này
     </script>
 }
