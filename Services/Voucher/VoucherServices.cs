@@ -21,7 +21,8 @@ namespace WebBanGiayTheThao.Services
                 .ToListAsync();
         }
 
-        public async Task<Dictionary<string, string>> CreateAsync(Voucher voucher)
+        public async 
+            Task<Dictionary<string, string>> CreateAsync(Voucher voucher)
         {
             var errors = new Dictionary<string, string>();
 

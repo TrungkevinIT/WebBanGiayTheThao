@@ -1,19 +1,23 @@
 ﻿@model WebBanGiayTheThao.Models.WebSetting
 @{
     ViewData["Title"] = "Cấu hình Website";
-    Layout = "_LayoutAdmin"; // Đảm bảo đúng layout của bạn
+    Layout = "_LayoutAdmin";
 }
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
         <h4 class="mb-4 text-primary">Cấu hình thông tin Website</h4>
-
-        @if (TempData["Success"] != null)
+        @if (TempData["ThongBao"] != null)
         {
-            <div class="alert alert-success">@TempData["Success"]</div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+
+                @TempData["ThongBao"]
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
 
-        <form asp-action="Index" enctype="multipart/form-data">
+        <form asp-action="TrangQLWebSetting" method="post" enctype="multipart/form-data">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Logo" />
 
@@ -24,7 +28,7 @@
                         <div class="border p-2 bg-white rounded">
                             @if (!string.IsNullOrEmpty(Model.Logo))
                             {
-                                <img src="~/images/logo/@Model.Logo" style="max-width: 100%; height: auto;" />
+                                <img src="~/img/logo/@Model.Logo" style="max-width: 100%; height: auto;" />
                             }
                             else
                             {
@@ -34,36 +38,48 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="LogoUpload" class="form-label fw-bold"></label>
+                        <label class="form-label fw-bold">LogoUpload</label>
                         <input asp-for="LogoUpload" class="form-control" type="file" accept="image/*" />
+                        <span asp-validation-for="LogoUpload" class="text-danger"></span>
+
                     </div>
                 </div>
 
                 <div class="col-md-8">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label asp-for="Hotline" class="form-label fw-bold"></label>
+                            <label class="form-label fw-bold">Hotline</label>
                             <input asp-for="Hotline" class="form-control" />
+                            <span asp-validation-for="Hotline" class="text-danger"></span>
+
                         </div>
                         <div class="col-md-6">
-                            <label asp-for="EmailLienHe" class="form-label fw-bold"></label>
-                            <input asp-for="EmailLienHe" class="form-control" />
+                            <label class="form-label fw-bold">EmailLienHe</label>
+                            <input asp-for="EmailLienHe" class="form-control" type="email" />
+                            <span asp-validation-for="EmailLienHe" class="text-danger"></span>
+
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="DiaChi" class="form-label fw-bold"></label>
+                        <label class="form-label fw-bold">Địa chỉ</label>
                         <input asp-for="DiaChi" class="form-control" />
+                        <span asp-validation-for="DiaChi" class="text-danger"></span>
+
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Linkfacebook" class="form-label fw-bold"></label>
-                        <input asp-for="Linkfacebook" class="form-control" placeholder="https://facebook.com/..." />
+                        <label class="form-label fw-bold">Linkfacebook</label>
+                        <input asp-for="Linkfacebook" class="form-control" />
+                        <span asp-validation-for="Linkfacebook" class="text-danger"></span>
+
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Mota" class="form-label fw-bold"></label>
+                        <label class="form-label fw-bold">Mô tả</label>
                         <textarea asp-for="Mota" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Mota" class="text-danger"></span>
+
                     </div>
 
                     <button type="submit" class="btn btn-primary px-4">
