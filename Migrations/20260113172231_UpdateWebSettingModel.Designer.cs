@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanGiayTheThao.Data;
 
@@ -11,9 +12,11 @@ using WebBanGiayTheThao.Data;
 namespace WebBanGiayTheThao.Migrations
 {
     [DbContext(typeof(QuanLyWebBanGiayContext))]
-    partial class QuanLyWebBanGiayContextModelSnapshot : ModelSnapshot
+    [Migration("20260113172231_UpdateWebSettingModel")]
+    partial class UpdateWebSettingModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +45,6 @@ namespace WebBanGiayTheThao.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("Sao")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TrangThai")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -434,19 +434,6 @@ namespace WebBanGiayTheThao.Migrations
 
                     b.Property<decimal?>("DonToiThieu")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal?>("GiaTriGiamLuu")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<string>("MaCodeLuu")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("NgayBatDauLuu")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NgayKetThucLuu")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayNhan")
                         .ValueGeneratedOnAdd()
