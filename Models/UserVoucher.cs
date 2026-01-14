@@ -17,7 +17,7 @@ public partial class UserVoucher
     public int? VoucherId { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
-    public decimal? DonToiThieuLuu { get; set; }
+    public decimal? DonToiThieu { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? GiaTriGiamLuu { get; set; }
@@ -31,15 +31,9 @@ public partial class UserVoucher
     public DateTime? NgayKetThucLuu { get; set; }
 
     public bool? DaSuDung { get; set; }
-    [StringLength(50)]
-    public string? MaCodeLuu { get; set;}
-    [Column(TypeName = "decimal(18, 2)")]
-    public decimal? GiaTriGiamLuu { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime? NgayNhan { get; set; }
-    public DateTime? NgayBatDauLuu { get; set; }
-    public DateTime? NgayKetThucLuu { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("UserVouchers")]
