@@ -2,87 +2,50 @@
 using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
+using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class QuanLyWebSettingController : Controller
     {
-        private readonly QuanLyWebBanGiayContext _context;
+        private readonly IWebSettingService _webSettingService; 
         private readonly IWebHostEnvironment _webHostEnvironment; // Để lấy đường dẫn lưu ảnh
 
-        public QuanLyWebSettingController(QuanLyWebBanGiayContext context, IWebHostEnvironment webHostEnvironment)
+        public QuanLyWebSettingController(IWebSettingService webSettingService, IWebHostEnvironment webHostEnvironment)
         {
-            _context = context;
+            _webSettingService = webSettingService;
             _webHostEnvironment = webHostEnvironment;
         }
-
+        [HttpGet]
         public async Task<IActionResult> TrangQLWebSetting()
         {
-            // Vì chỉ có 1 cấu hình duy nhất, ta luôn lấy ID = 1
-            var webSetting = await _context.WebSettings.FirstOrDefaultAsync(m => m.Id == 1);
-
-            // Nếu chưa có (lần đầu chạy), tự tạo mới
-            if (webSetting == null)
-            {
-                webSetting = new WebSetting { Id = 1 };
-                _context.Add(webSetting);
-                await _context.SaveChangesAsync();
-            }
-
-            return View(webSetting);
+            var web=await _webSettingService.LayThongTinWeb();
+            return View(web);
         }
 
         [HttpPost]
-        public async Task<IActionResult> TrangQLWebSetting(int id, WebSetting webSetting)
+        public async Task<IActionResult> TrangQLWebSetting(WebSetting webSetting)
         {
-            if (id != webSetting.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
+                if (webSetting.LogoUpload!=null)
                 {
-                    // --- XỬ LÝ UPLOAD LOGO ---
-                    if (webSetting.LogoUpload != null)
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img/logo");
+                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + webSetting.LogoUpload.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        // 1. Định nghĩa thư mục lưu: wwwroot/images/logo
-                        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "logo");
-
-                        // Tạo thư mục nếu chưa có
-                        if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                        // 2. Tạo tên file độc nhất (tránh trùng lặp)
-                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + webSetting.LogoUpload.FileName;
-
-                        // 3. Đường dẫn file đầy đủ
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                        // 4. Copy file vào server
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await webSetting.LogoUpload.CopyToAsync(fileStream);
-                        }
-
-                        // 5. Gán tên file vào Model để lưu xuống SQL
-                        webSetting.Logo = uniqueFileName;
+                        await webSetting.LogoUpload.CopyToAsync(fileStream);
                     }
-                    else
-                    {
-                        // Nếu không upload ảnh mới, giữ nguyên tên ảnh cũ (Cần input hidden ở View)
-                        // webSetting.Logo = ... (Đã được binding từ input hidden)
-                    }
-                    // -------------------------
+                    webSetting.Logo = uniqueFileName;
+                }
 
-                    _context.Update(webSetting);
-                    await _context.SaveChangesAsync();
-                    TempData["Success"] = "Cập nhật cấu hình thành công!";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.WebSettings.Any(e => e.Id == webSetting.Id)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
+                    await _webSettingService.CapNhatWebSetting(webSetting);
+                    TempData["ThongBao"] = "Cập nhật cấu hình thành công!";
+                return RedirectToAction("TrangQLWebSetting");
             }
             return View(webSetting);
         }

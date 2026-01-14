@@ -14,6 +14,9 @@ builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBan
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
 // Đăng ký Service Loại Sản Phẩm
 builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBanGiayTheThao.Services.LoaiSanPhamService>();
+//dang ly Websetting
+// Đăng ký Service vào hệ thống
+builder.Services.AddScoped<IWebSettingService, WebSettingService>();
 // Ðãng kí service cho Auth
 builder.Services.AddScoped<AuthService>();
 // Ðãng kí session
