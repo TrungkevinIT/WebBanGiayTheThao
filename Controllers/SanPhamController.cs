@@ -36,10 +36,11 @@ namespace WebBanGiayTheThao.Controllers
         [HttpGet]
         public async Task<IActionResult> TrangChiTietSanPham(int id)
         {
-            if(id<0)
-                return NotFound();
+            if(id<0) return NotFound();
             var sp = await _sanPhamService.GetSanPhamById(id);
-            if(sp==null)
+            var cacMauKhac = await _sanPhamService.GetKieuDangAsync(sp.MaKieuDang);
+            ViewBag.CacMauKhac = cacMauKhac;
+            if (sp==null)
                 return NotFound();
             else
             {

@@ -104,6 +104,15 @@ namespace WebBanGiayTheThao.Services
                 .Include(x => x.ThuongHieu)
                 .FirstOrDefaultAsync(x=>x.Id==id);
         }
+        public async Task<List<SanPham>> GetKieuDangAsync(string maKieuDang)
+        {
+            //tạo ra một truy vấn để lấy danh sách sản phẩm theo mã kiểu dáng
+            return await _context.SanPhams.Where(x => x.MaKieuDang == maKieuDang && x.TrangThai == 1) .Select(x => new SanPham{       
+                Id = x.Id,
+                AnhDaiDien = x.AnhDaiDien,
+                TenSanPham = x.TenSanPham,
+            }).ToListAsync();
+        }
     }
 
 }

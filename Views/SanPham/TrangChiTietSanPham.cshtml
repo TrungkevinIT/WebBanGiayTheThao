@@ -3,14 +3,13 @@
 @{
     ViewData["Title"] = Model.TenSanPham;
 
-    // Logic lấy ảnh
+    // Tập hợp tất cả ảnh của sản phẩm: Ảnh đại diện + Ảnh chi tiết
     var allImages = new List<string>();
     if (!string.IsNullOrEmpty(Model.AnhDaiDien)) { allImages.Add(Model.AnhDaiDien); }
     if (Model.Ctanhs != null) { allImages.AddRange(Model.Ctanhs.Select(x => x.LinkAnh)); }
 }
-
 <div class="bg-gray-50 min-h-screen pb-20 font-sans">
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-20 max-w-[1440px]">
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 max-w-[1300px]">
 
         <nav class="flex text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap px-2">
             <a asp-controller="Home" asp-action="TrangChu" class="hover:text-black transition-colors">Trang chủ</a>
@@ -63,15 +62,34 @@
                         <div>
                             <h3 class="font-bold text-sm text-gray-900 mb-3">Chọn Màu Sắc</h3>
                             <div class="flex gap-3">
-                                <div class="w-16 h-16 rounded-xl border-2 border-black p-0.5 cursor-pointer">
-                                    <img src="~/img/sanpham/@Model.AnhDaiDien" class="w-full h-full object-cover rounded-lg">
-                                </div>
-                                <div class="w-16 h-16 rounded-xl border border-gray-200 p-0.5 cursor-not-allowed opacity-50 grayscale">
-                                    <img src="~/img/sanpham/@Model.AnhDaiDien" class="w-full h-full object-cover rounded-lg">
-                                </div>
+
+                                @if (ViewBag.CacMauKhac != null)
+                                {
+                                    @foreach (var item in ViewBag.CacMauKhac)
+                                    {
+                                        bool isActive = item.Id == Model.Id;
+
+                                        // Nếu là màu đang xem: Viền đen đậm. Nếu màu khác: Viền trong suốt, hover vào mới hiện viền
+                                        string borderClass = isActive
+                                        ? "border-black ring-1 ring-black"  // Active
+                                        : "border-transparent hover:border-gray-400"; // Inactive
+
+                                        // Tạo đường dẫn: Nếu bấm vào màu khác -> Chuyển sang trang chi tiết của ID đó
+                                        string url = isActive ? "javascript:void(0)" : Url.Action("TrangChiTietSanPham", "SanPham", new { id = item.Id });
+
+                                        <a href="@url"
+                                           class="block w-20 h-20 rounded-xl border-2 p-1 cursor-pointer transition-all duration-200 @borderClass"
+                                           title="@item.TenSanPham">
+
+                                            <img src="~/img/sanpham/@item.AnhDaiDien" asp-append-version="true"
+                                                 class="w-full h-full object-cover rounded-lg"
+                                                 onerror="this.src='/img/no-image.jpg'">
+                                        </a>
+                                    }
+                                }
                             </div>
                         </div>
-
+                       
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-bold text-sm text-gray-900">Chọn Size</h3>
@@ -102,11 +120,11 @@
                         </div>
 
                         <div class="space-y-4 pt-2">
-                            <button type="submit" formaction="@Url.Action("ThemVaoGio", "GioHang")"
+                            <button type="submit" 
                                     class="w-full py-4 rounded-full border border-black bg-white text-black font-bold text-sm hover:bg-gray-50 transition-all flex justify-center items-center gap-2">
                                 <i class="ph ph-shopping-cart text-lg"></i> Thêm vào giỏ hàng
                             </button>
-                            <button type="submit" formaction="@Url.Action("MuaNgay", "GioHang")"
+                            <button type="submit"
                                     class="w-full py-4 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-all shadow-lg transform active:scale-[0.99]">
                                 Mua ngay
                             </button>
@@ -114,12 +132,11 @@
 
                         <div class="border-t border-gray-100 pt-6">
                             <div x-data="{ open: true }">
-                                <button type="button" class="flex w-full justify-between items-center text-left font-bold text-gray-900 hover:text-gray-600 transition" onclick="toggleDesc()">
+                                <button  class="flex w-full justify-between items-center text-left font-bold text-gray-900 hover:text-gray-600 transition" >
                                     <span>Mô tả sản phẩm</span>
-                                    <i id="desc-icon" class="ph ph-caret-down transition-transform"></i>
                                 </button>
-                                <div id="desc-content" class="hidden mt-4 text-gray-600 text-sm leading-relaxed space-y-2">
-                                    @Html.Raw(Model.MoTa?.Replace("\n", "<br>"))
+                                <div>
+                                    @Model.MoTa
                                 </div>
                             </div>
                         </div>
@@ -192,38 +209,25 @@
 
 @section Scripts {
     <script>
-        // 1. Logic đổi ảnh
+        // Chọn các ảnh phụ để phóng to ở ảnh chính 
         function changeImage(element, src) {
-            var mainImg = document.getElementById('main-image');
-            mainImg.style.opacity = '0.5';
+            var mainImg = document.getElementById('main-image'); // lấy ảnh chính đang hiện
+            mainImg.style.opacity = '0.2'; // hiệu ứng mờ
             setTimeout(function() {
                 mainImg.src = src;
-                mainImg.style.opacity = '1';
-            }, 150);
+                mainImg.style.opacity = '0.5';
+            }, 200);// thười gian đổi ảnh
 
+            // xóa viền cũ màu đen và đổi màu thành trắng
             var thumbs = document.querySelectorAll('#gallery-thumbs div');
             thumbs.forEach(t => {
                 t.classList.remove('border-black');
                 t.classList.add('border-transparent');
             });
+
+            //thêm viền đen
             element.classList.remove('border-transparent');
             element.classList.add('border-black');
         }
-
-        // 2. Logic Toggle Mô tả
-        function toggleDesc() {
-            var content = document.getElementById('desc-content');
-            var icon = document.getElementById('desc-icon');
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                icon.classList.add('rotate-180');
-            } else {
-                content.classList.add('hidden');
-                icon.classList.remove('rotate-180');
-            }
-        }
-
-        // 3. (Tùy chọn) Logic Load Sản phẩm liên quan nếu bạn dùng JS
-        // Nếu bạn render từ Server thì không cần đoạn này
     </script>
 }
