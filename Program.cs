@@ -2,7 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Services.SanPham;
-using WebBanGiayTheThao.Services.SlideShow;
+using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
