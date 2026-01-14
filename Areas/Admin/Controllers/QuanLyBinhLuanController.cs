@@ -1,62 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebBanGiayTheThao.Data;
-using WebBanGiayTheThao.Filters;
+using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Controllers.Admin
 {
     [Area("Admin")]
-    [AdminAuthorize]
     public class QuanLyBinhLuanController : Controller
     {
-        private readonly QuanLyWebBanGiayContext _context;
+        private readonly BinhLuanService _service;
 
-        public QuanLyBinhLuanController(QuanLyWebBanGiayContext context)
+        public QuanLyBinhLuanController(BinhLuanService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // ================= DANH SÁCH + LỌC =================
-        public IActionResult TrangQuanLyBinhLuan(int? trangThai)
+        public IActionResult TrangQuanLyBinhLuan(int? trangThai, int page = 1)
         {
-            var query = _context.BinhLuans
-                .Include(x => x.User)
-                .Include(x => x.SanPham)
-                .OrderByDescending(x => x.NgayTao)
-                .AsQueryable();
-
-            if (trangThai.HasValue)
-            {
-                query = query.Where(x => x.TrangThai == trangThai);
-            }
-
-            ViewBag.TrangThai = trangThai;
-            return View(query.ToList());
+            var vm = _service.GetDanhSach(trangThai, page);
+            return View(vm);
         }
 
-        // ================= DUYỆT =================
         [HttpPost]
         public IActionResult Duyet(int id)
         {
-            var bl = _context.BinhLuans.Find(id);
-            if (bl == null) return NotFound();
-
-            bl.TrangThai = 1;
-            _context.SaveChanges();
-
+            _service.Duyet(id);
             return RedirectToAction(nameof(TrangQuanLyBinhLuan));
         }
 
-        // ================= ẨN =================
         [HttpPost]
         public IActionResult An(int id)
         {
-            var bl = _context.BinhLuans.Find(id);
-            if (bl == null) return NotFound();
-
-            bl.TrangThai = 2;
-            _context.SaveChanges();
-
+            _service.An(id);
             return RedirectToAction(nameof(TrangQuanLyBinhLuan));
         }
     }

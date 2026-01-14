@@ -20,6 +20,8 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddSession();
 // DuyKhang edit 20:14 11/01/2026 
 builder.Services.AddScoped<BaoCaoService>();
+// Duy Khang edit 14:19 14/01/2026 Dki service BinhLuan
+builder.Services.AddScoped<BinhLuanService>();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
   );
