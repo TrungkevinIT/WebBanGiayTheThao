@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Data;
-namespace WebBanGiayTheThao.Services.SlideShow
+using WebBanGiayTheThao.Service;
+namespace WebBanGiayTheThao.Services
 {
     public class SlideShowService: ISlideShowService
     {
@@ -9,7 +10,7 @@ namespace WebBanGiayTheThao.Services.SlideShow
         {
             _context = context;
         }
-         public async Task<IEnumerable<WebBanGiayTheThao.Models.SlideShow>> LoadDSSlideShow()
+         public async Task<List<WebBanGiayTheThao.Models.SlideShow>> LoadDSSlideShow()
         {
             var ds = await _context.SlideShows.ToListAsync();
             return (ds);
@@ -18,13 +19,15 @@ namespace WebBanGiayTheThao.Services.SlideShow
         {
             return await _context.SlideShows.FindAsync(id);
         }
-        public async Task UpdateSlideShow(WebBanGiayTheThao.Models.SlideShow slideShow) { 
+        public async Task UpdateSlideShow(WebBanGiayTheThao.Models.SlideShow slideShow) {
+            bool trunglink = _context.SlideShows.Any(x => x.Link == slideShow.Link && x.Id != slideShow.Id);
+            if (trunglink)
+            {
+                throw new Exception("Link này đã tồn tại");
+            }
             _context.SlideShows.Update(slideShow);
             await _context.SaveChangesAsync();
         }
-        public async Task<bool> KiemTraLinkDaTonTai(string link, int idHienTai)
-        {
-            return await _context.SlideShows.AnyAsync(x => x.Link == link && x.Id != idHienTai);
-        }
+
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Cryptography;
 using WebBanGiayTheThao.Data;
-using WebBanGiayTheThao.Services.SlideShow;
+using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.ViewComponents
 {
