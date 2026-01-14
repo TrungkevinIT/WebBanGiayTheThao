@@ -93,8 +93,16 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
         }
         public async Task<SanPham?> GetSanPhamById(int id)
+
         {
-            return await _context.SanPhams.Include(x=>x.Ctanhs).Include(x=>x.Ctsizes).FirstOrDefaultAsync(x=>x.Id==id);
+
+            return await _context.SanPhams
+                .Include(x=>x.Ctanhs)
+                .Include(x=>x.Ctsizes)
+                .Include(x=>x.BinhLuans)
+                .Include(x=>x.LoaiSanPham)
+                .Include(x => x.ThuongHieu)
+                .FirstOrDefaultAsync(x=>x.Id==id);
         }
     }
 

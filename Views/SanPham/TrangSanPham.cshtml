@@ -1,262 +1,92 @@
-﻿@section Scripts{
-<script>
-    // --- 1. CẤU HÌNH & DATA MẪU ---
-    const itemsPerPage = 8;
-    let currentPage = 1;
-
-    const sampleImages = [
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
-        "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=600&q=80",
-        "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?auto=format&fit=crop&w=600&q=80",
-        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80",
-        "https://images.unsplash.com/photo-1584735175315-9d5df23860e6?auto=format&fit=crop&w=600&q=80",
-        "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=600&q=80"
-    ];
-
-    const categories = ["Running", "Basketball", "Lifestyle"];
-    const brands = ["Nike", "Adidas", "Puma", "New Balance"];
-
-    // Tạo 40 sản phẩm giả lập
-    const allProducts = Array.from({ length: 40 }, (_, i) => {
-        const id = i + 1;
-        const price = Math.floor(Math.random() * (5000000 - 1000000) + 1000000);
-        const randomBrand = brands[Math.floor(Math.random() * brands.length)];
-        const randomCat = categories[Math.floor(Math.random() * categories.length)];
-
-        return {
-            id: id,
-            name: `${randomBrand} Air Model ${id}`,
-            category: randomCat,
-            brand: randomBrand,
-            price: price,
-            image: sampleImages[i % sampleImages.length]
-        };
-    });
-
-    let filteredProducts = [...allProducts];
-
-    // --- DOM ELEMENTS ---
-    const grid = document.getElementById('product-grid');
-    const paginationEl = document.getElementById('pagination');
-    const showingInfo = document.getElementById('showing-info');
-
-    const searchInput = document.getElementById('search-input');
-    const categoryFilter = document.getElementById('category-filter');
-    const brandFilter = document.getElementById('brand-filter');
-    const priceFilter = document.getElementById('price-filter'); // Thêm element Price Filter
-
-    function formatMoney(amount) {
-        return amount.toLocaleString('vi-VN') + ' ₫';
-    }
-
-    // --- 2. HÀM LỌC & SẮP XẾP SẢN PHẨM ---
-    function applyFilters() {
-        const keyword = searchInput.value.toLowerCase();
-        const selectedCat = categoryFilter.value;
-        const selectedBrand = brandFilter.value;
-        const selectedPriceSort = priceFilter.value;
-
-        // Bước 1: Lọc
-        filteredProducts = allProducts.filter(product => {
-            const matchesKeyword = product.name.toLowerCase().includes(keyword);
-            const matchesCat = selectedCat === "" || product.category === selectedCat;
-            const matchesBrand = selectedBrand === "" || product.brand === selectedBrand;
-            return matchesKeyword && matchesCat && matchesBrand;
-        });
-
-        // Bước 2: Sắp xếp theo giá
-        if (selectedPriceSort === 'asc') {
-            // Thấp đến cao
-            filteredProducts.sort((a, b) => a.price - b.price);
-        } else if (selectedPriceSort === 'desc') {
-            // Cao đến thấp
-            filteredProducts.sort((a, b) => b.price - a.price);
-        } else {
-            // Mặc định (Sắp xếp theo ID hoặc thứ tự ban đầu)
-            filteredProducts.sort((a, b) => a.id - b.id);
-        }
-
-        // Reset về trang 1
-        currentPage = 1;
-        renderProducts();
-        renderPagination();
-    }
-
-    // --- 3. RENDER SẢN PHẨM ---
-    function renderProducts() {
-        grid.innerHTML = '';
-
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginatedItems = filteredProducts.slice(start, end);
-
-        showingInfo.innerText = `${filteredProducts.length}`;
-
-        if (paginatedItems.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500">Không tìm thấy sản phẩm nào phù hợp.</div>`;
-            return;
-        }
-
-        paginatedItems.forEach(product => {
-            const productHTML = `
-            <div class="group flex flex-col fade-in">
-                <div class="w-full aspect-[4/5] bg-gray-100 rounded-2xl overflow-hidden relative liquid-glass">
-                    <img src="${product.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                    <div class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
-                        ${product.brand}
-                    </div>
-                    <div class="absolute bottom-4 right-4 translate-y-full group-hover:translate-y-0 transition duration-300">
-                        <button class="bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-black hover:text-white transition">
-                            <i class="ph ph-shopping-bag text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="mt-4 px-2">
-                    <a href="detail.html" class="block">
-                        <h3 class="text-base font-bold text-gray-900 group-hover:text-gray-600 transition cursor-pointer line-clamp-1">${product.name}</h3>
-                    </a>
-                    <p class="text-xs text-gray-500 uppercase tracking-wide mt-1">${product.category}</p>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span class="font-bold text-black">${formatMoney(product.price)}</span>
-                    </div>
-                </div>
-            </div>
-            `;
-            grid.innerHTML += productHTML;
-        });
-    }
-
-    // --- 4. RENDER PHÂN TRANG ---
-    function renderPagination() {
-        const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-        paginationEl.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        const prevBtn = document.createElement('button');
-        prevBtn.innerHTML = '<i class="ph ph-caret-left"></i>';
-        prevBtn.className = `w-10 h-10 flex items-center justify-center rounded-lg transition ${currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-black hover:text-white'}`;
-        prevBtn.onclick = () => { if(currentPage > 1) changePage(currentPage - 1); };
-        paginationEl.appendChild(prevBtn);
-
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement('button');
-            btn.innerText = i;
-            if (i === currentPage) {
-                btn.className = "w-10 h-10 flex items-center justify-center rounded-lg bg-black text-white font-bold shadow-lg transform scale-105";
-            } else {
-                btn.className = "w-10 h-10 flex items-center justify-center rounded-lg hover:bg-black hover:text-white transition text-gray-600";
-                btn.onclick = () => changePage(i);
-            }
-            paginationEl.appendChild(btn);
-        }
-
-        const nextBtn = document.createElement('button');
-        nextBtn.innerHTML = '<i class="ph ph-caret-right"></i>';
-        nextBtn.className = `w-10 h-10 flex items-center justify-center rounded-lg transition ${currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-black hover:text-white'}`;
-        nextBtn.onclick = () => { if(currentPage < totalPages) changePage(currentPage + 1); };
-        paginationEl.appendChild(nextBtn);
-    }
-
-    function changePage(page) {
-        currentPage = page;
-        renderProducts();
-        renderPagination();
-        document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // --- 5. HÀM RESET ---
-    function resetFilters() {
-        searchInput.value = '';
-        categoryFilter.value = '';
-        brandFilter.value = '';
-        priceFilter.value = 'default';
-        applyFilters();
-    }
-
-    // --- 6. EVENT LISTENERS ---
-    searchInput.addEventListener('input', applyFilters);
-    categoryFilter.addEventListener('change', applyFilters);
-    brandFilter.addEventListener('change', applyFilters);
-    priceFilter.addEventListener('change', applyFilters); // Thêm sự kiện cho giá
-
-    // Khởi chạy
-    applyFilters();
-
-</script>
-}
-
-<header class="mt-20 py-10 bg-gray-100/50">
-    <div class="container mx-auto px-6 text-center">
-        <h1 class="text-3xl font-bold uppercase tracking-wide">Cửa Hàng</h1>
-        <p class="text-gray-500 text-sm mt-2">Trang chủ / Sản phẩm</p>
-    </div>
-</header>
+﻿
+@model IEnumerable<WebBanGiayTheThao.Models.SanPham>
 
 <main class="container mx-auto px-6 py-8">
+    <form method="get" asp-action="Index">
+        <div class="mb-12 p-6 rounded-2xl liquid-glass bg-white shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
 
-    <div class="mb-12 p-6 rounded-2xl liquid-glass">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Tên sản phẩm</label>
+                    <div class="relative">
+                        <input type="text" name="search" value="@ViewBag.Search" placeholder="Tìm kiếm..." class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-black transition">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-lg"></i>
+                    </div>
+                </div>
 
-            <div class="md:col-span-3">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Tên sản phẩm</label>
-                <div class="relative">
-                    <input type="text" id="search-input" placeholder="Tìm kiếm..." class="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition placeholder-gray-400">
-                    <i class="ph ph-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-lg"></i>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Danh mục</label>
+                    <select name="loaispid" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-black cursor-pointer">
+                        <option value="">Tất cả</option>
+                        <option value="1" selected="@(ViewBag.LoaiSpId == 1)">Chạy bộ</option>
+                        <option value="2" selected="@(ViewBag.LoaiSpId == 2)">Bóng rổ</option>
+                        <option value="3" selected="@(ViewBag.LoaiSpId == 3)">Thời trang</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Thương hiệu</label>
+                    <select name="thuonghieuid" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-black cursor-pointer">
+                        <option value="">Tất cả</option>
+                        <option value="1" selected="@(ViewBag.ThuongHieuId == 1)">Nike</option>
+                        <option value="2" selected="@(ViewBag.ThuongHieuId == 2)">Adidas</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Sắp xếp giá</label>
+                    <select name="gia" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-black cursor-pointer">
+                        <option value="">Mặc định</option>
+                        <option value="gia_tang" selected="@(ViewBag.Gia == "gia_tang")">Giá: Thấp đến Cao</option>
+                        <option value="gia_giam" selected="@(ViewBag.Gia == "gia_giam")">Giá: Cao đến Thấp</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2">
+                    <button type="submit" class="w-full py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">
+                        Lọc ngay
+                    </button>
                 </div>
             </div>
-
-            <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Danh mục</label>
-                <select id="category-filter" class="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:border-black cursor-pointer text-gray-700">
-                    <option value="">Tất cả</option>
-                    <option value="Running">Chạy bộ</option>
-                    <option value="Basketball">Bóng rổ</option>
-                    <option value="Lifestyle">Thời trang</option>
-                </select>
-            </div>
-
-            <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Thương hiệu</label>
-                <select id="brand-filter" class="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:border-black cursor-pointer text-gray-700">
-                    <option value="">Tất cả</option>
-                    <option value="Nike">Nike</option>
-                    <option value="Adidas">Adidas</option>
-                    <option value="Puma">Puma</option>
-                    <option value="New Balance">New Balance</option>
-                </select>
-            </div>
-
-            <div class="md:col-span-3">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Sắp xếp giá</label>
-                <select id="price-filter" class="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:border-black cursor-pointer text-gray-700">
-                    <option value="default">Mặc định</option>
-                    <option value="asc">Giá: Thấp đến Cao</option>
-                    <option value="desc">Giá: Cao đến Thấp</option>
-                </select>
-            </div>
-
-            <div class="md:col-span-2">
-                <button type="button" onclick="resetFilters()" class="w-full py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 hover:shadow-lg transform active:scale-95 transition flex justify-center items-center gap-2">
-                    Lọc
-                </button>
-            </div>
         </div>
-    </div>
+    </form>
 
-    <div>
-        <div class="flex justify-between items-center mb-6 px-2">
-            <h2 class="text-xl font-bold">Danh sách sản phẩm</h2>
-            <span class="text-sm text-gray-500">Hiển thị <b class="text-black" id="showing-info">...</b> sản phẩm</span>
-        </div>
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        @foreach (var item in Model)
+        {
+            <div class="group relative bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
 
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        </div>
+                <div class="aspect-square rounded-xl overflow-hidden bg-gray-100 mb-4 relative">
+                    <a asp-controller="SanPham"
+                       asp-action="TrangChiTietSanPham"
+                       asp-route-id="@item.Id"
+                       class="block w-full h-full">
 
-        <div class="mt-16 flex justify-center">
-            <nav id="pagination" class="flex items-center gap-2 bg-white/50 p-2 rounded-xl liquid-glass">
-            </nav>
-        </div>
+                        <img src="~/images/@item.AnhDaiDien"
+                             alt="@item.TenSanPham"
+                             class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                    </a>
+                </div>
+
+                <div class="space-y-2">
+                    <p class="text-xs text-gray-500 font-bold uppercase">@item.LoaiSanPham?.TenLoai</p>
+
+                    <h3 class="font-bold text-gray-900 truncate">
+                        <a asp-controller="SanPham"
+                           asp-action="TrangChiTietSanPham"
+                           asp-route-id="@item.Id"
+                           class="hover:text-gray-600 transition-colors" title="@item.TenSanPham">
+                            @item.TenSanPham
+                        </a>
+                    </h3>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-black">
+                            @((item.DonGia ?? 0).ToString("N0")) đ
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </main>
-
