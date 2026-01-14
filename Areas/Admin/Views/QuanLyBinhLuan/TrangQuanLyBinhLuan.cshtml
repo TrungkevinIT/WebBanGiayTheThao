@@ -1,0 +1,92 @@
+﻿@model List<WebBanGiayTheThao.Models.BinhLuan>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý bình luận";
+}
+
+<h3 class="mb-3">🗨️ Quản lý bình luận</h3>
+
+<!-- FILTER -->
+<form asp-area="Admin"
+      asp-controller="QuanLyBinhLuan"
+      asp-action="TrangQuanLyBinhLuan"
+      method="get"
+      class="mb-3">
+    <select name="trangThai" class="form-select w-auto d-inline">
+        <option value="">-- Tất cả --</option>
+        <option value="0" selected="@(ViewBag.TrangThai?.ToString() == "0")">Chờ duyệt</option>
+        <option value="1" selected="@(ViewBag.TrangThai?.ToString() == "1")">Đã duyệt</option>
+        <option value="2" selected="@(ViewBag.TrangThai?.ToString() == "2")">Bị ẩn</option>
+    </select>
+    <button class="btn btn-primary ms-2">Lọc</button>
+</form>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Người dùng</th>
+            <th>Sản phẩm</th>
+            <th>Nội dung</th>
+            <th>Sao</th>
+            <th>Ngày</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.User?.Username</td>
+                <td>@item.SanPham?.TenSanPham</td>
+                <td style="max-width:300px">@item.NoiDung</td>
+                <td>@item.Sao ⭐</td>
+                <td>@item.NgayTao?.ToString("dd/MM/yyyy HH:mm")</td>
+
+                <td>
+                    @if (item.TrangThai == 0)
+                    {
+                        <span class="badge bg-warning">Chờ duyệt</span>
+                    }
+                    else if (item.TrangThai == 1)
+                    {
+                        <span class="badge bg-success">Đã duyệt</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Bị ẩn</span>
+                    }
+                </td>
+
+                <td>
+                    @if (item.TrangThai != 1)
+                    {
+                        <form asp-area="Admin"
+                              asp-controller="QuanLyBinhLuan"
+                              asp-action="Duyet"
+                              method="post"
+                              class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button class="btn btn-sm btn-success">Duyệt</button>
+                        </form>
+                    }
+
+                    @if (item.TrangThai != 2)
+                    {
+                        <form asp-area="Admin"
+                              asp-controller="QuanLyBinhLuan"
+                              asp-action="An"
+                              method="post"
+                              class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button class="btn btn-sm btn-danger">Ẩn</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
