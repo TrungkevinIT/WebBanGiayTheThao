@@ -18,9 +18,9 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
 
         public async Task<IActionResult> TongQuanDoiTuong()
         {
-            ViewBag.TongQuanSanPham = await _context.SanPhams.CountAsync();
-            ViewBag.TongDonHang=await _context.HoaDons.CountAsync();
-            ViewBag.TongKhachHang=await _context.Users.CountAsync();
+            ViewBag.TongSanPham = await _context.SanPhams.CountAsync();
+            ViewBag.TongDonHang=await _context.HoaDons.Where(x => x.TrangThai == 1).CountAsync();
+            ViewBag.TongKhachHang=await _context.Users.Where(x => x.VaiTro ==0).CountAsync();
             ViewBag.TongDoanhThu = await _context.HoaDons.Where(x=>x.TrangThai == 1).SumAsync(x=>x.TongTien);
             return View();
         }
