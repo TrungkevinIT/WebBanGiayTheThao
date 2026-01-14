@@ -21,7 +21,71 @@ namespace WebBanGiayTheThao.Services
                 .ToListAsync();
         }
 
-        public async Task<Dictionary<string, string>> CreateAsync(Voucher voucher)
+        public Task<List<Voucher>> GetActiveAsync()
+        {
+            var now = DateTime.Now;
+            return _context.Vouchers
+                .AsNoTracking()
+                .Where(v => v.TrangThai == 1 
+                && (v.NgayBatDau == null || v.NgayBatDau <= now)
+                && (v.NgayKetThuc == null || v.NgayKetThuc >= now))
+                .OrderByDescending(v => v.GiaTriGiam)
+                .ToListAsync();
+        }
+
+        public async Task<Dictionary<int, List<decimal>>> GetDaLuuInfoAsync(int userId)
+        {
+            var list = await _context.UserVouchers
+                .Where(uv => uv.UserId == userId)
+                .Select(uv => new { uv.VoucherId, uv.GiaTriGiamLuu })
+                .ToListAsync();
+
+            return list.GroupBy(x => x.VoucherId.GetValueOrDefault())
+                       .ToDictionary(g => g.Key, g => g.Select(x => x.GiaTriGiamLuu.GetValueOrDefault()).ToList());
+        }
+        public async Task<List<UserVoucher>> GetUserVouchersAvailableAsync(int userId)
+        {
+            return await _context.UserVouchers
+                .Include(uv => uv.Voucher)
+                .Where(uv => uv.UserId == userId && uv.DaSuDung == false)
+                .OrderByDescending(uv => uv.NgayNhan)
+                .ToListAsync();
+        }
+
+        public async Task<bool> LuuVoucherAsync(int userId, int voucherId)
+        {
+            var voucher = await _context.Vouchers.FindAsync(voucherId);
+            if (voucher == null|| voucher.SoLuong<1) return false;
+
+            bool DaLuuBanMoiNhat = await _context.UserVouchers 
+                .AnyAsync(uv => uv.UserId == userId 
+                && uv.VoucherId == voucherId
+                && uv.GiaTriGiamLuu == voucher.GiaTriGiam);
+
+            if (DaLuuBanMoiNhat) return false;
+
+            var userVoucher = new UserVoucher
+            {
+                UserId = userId,
+                VoucherId = voucherId,
+                NgayNhan = DateTime.Now,
+                DaSuDung = false,
+                MaCodeLuu = voucher.MaCode,
+                DonToiThieuLuu = voucher.GiaTriDonToiThieu,
+                GiaTriGiamLuu = voucher.GiaTriGiam,
+                NgayBatDauLuu = voucher.NgayBatDau,
+                NgayKetThucLuu = voucher.NgayKetThuc
+
+            };
+            _context.UserVouchers.Add(userVoucher);
+
+            voucher.SoLuong -= 1;
+            _context.Vouchers.Update(voucher);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Dictionary<string, string>?> CreateAsync(Voucher voucher)
         {
             var errors = new Dictionary<string, string>();
 

@@ -17,7 +17,18 @@ public partial class UserVoucher
     public int? VoucherId { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
-    public decimal? DonToiThieu { get; set; }
+    public decimal? DonToiThieuLuu { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? GiaTriGiamLuu { get; set; }
+
+    public string? MaCodeLuu { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? NgayBatDauLuu { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? NgayKetThucLuu { get; set; }
 
     public bool? DaSuDung { get; set; }
     [StringLength(50)]
