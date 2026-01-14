@@ -14,8 +14,7 @@ namespace WebBanGiayTheThao.Services
          );
         Task<SanPham?> GetSanPhamById(int id);
         Task CapNhatTrangThaiSanPham(int trangthai);
-        Task<bool> ThemSanPham(SanPham sp);
-        Task<bool> CapNhatSanPham(SanPham sp);
-        Task<bool> KiemTraTenTrung(string tenSanPham, int? idLoaiTru = null);
+        Task ThemSanPham(SanPham sp);
+        Task CapNhatSanPham(SanPham sp);
     }
 }

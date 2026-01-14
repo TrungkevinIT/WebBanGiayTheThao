@@ -15,9 +15,18 @@ public partial class WebSetting
     [StringLength(255)]
     public string? Logo { get; set; }
 
+    [NotMapped]
+    public IFormFile? LogoUpload { get; set; }
     [StringLength(50)]
     public string? Hotline { get; set; }
+    [StringLength(50)]
+    public string? DiaChi { get; set; }
 
     [StringLength(100)]
     public string? EmailLienHe { get; set; }
+
+    [StringLength(100)]
+    public string? Linkfacebook{ get; set; }
+    [StringLength(100)]
+    public string? Mota { get; set; }
 }

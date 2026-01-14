@@ -1,0 +1,265 @@
+﻿@model IEnumerable<WebBanGiayTheThao.ViewModels.DonHang.OrderHistoryVM>
+
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<div class="container-xl py-5">
+
+    <!-- ===== CARD TIÊU ĐỀ ===== -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body px-4 py-4">
+            <h2 class="fw-bold display-4 mb-2">Lịch sử đơn hàng</h2>
+            <p class="text-muted fs-5 mb-0">
+                Theo dõi các đơn hàng bạn đã đặt trên hệ thống
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ===== CARD TRA CỨU + TAB ===== -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body px-4 py-4">
+
+            <div class="row g-4 align-items-center">
+
+                <!-- SEARCH -->
+                <div class="col-lg-6">
+                    <div class="input-group input-group-lg">
+                        <input type="text"
+                               id="searchOrderInput"
+                               class="form-control rounded-start-pill px-4"
+                               placeholder="Nhập mã đơn hàng (VD: HD7)" />
+
+                        <button class="btn btn-dark rounded-end-pill px-4"
+                                id="searchBtn"
+                                type="button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STATUS TABS -->
+                <div class="col-lg-6 text-lg-end">
+                   
+                    <ul class="nav nav-pills justify-content-lg-end gap-2"
+                        id="orderStatusTabs">
+
+                        <li class="nav-item">
+                            <a class="nav-link active rounded-pill px-4 py-2"
+                               data-status="All">Tất cả</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link rounded-pill px-4 py-2"
+                               data-status="Approved">Đã duyệt</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link rounded-pill px-4 py-2"
+                               data-status="Completed">Hoàn thành</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link rounded-pill px-4 py-2"
+                               data-status="Canceled">Đã hủy</a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== DANH SÁCH ĐƠN ===== -->
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body text-center py-5">
+                <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
+                     width="120"
+                     class="mb-3" />
+                <h5 class="fw-bold">Bạn chưa có đơn hàng nào</h5>
+                <p class="text-muted mb-0">
+                    Hãy mua sắm để trải nghiệm dịch vụ của chúng tôi
+                </p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body px-5 py-4">
+
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle mb-0 table-lg">
+                        <thead class="table-light">
+                            <tr class="fs-5">
+                                <th class="py-3">Mã đơn</th>
+                                <th class="py-3">Ngày đặt</th>
+                                <th class="py-3">Tổng tiền</th>
+                                <th class="py-3">Trạng thái</th>
+                                <th class="py-3 text-end"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="orderTableBody" class="fs-5">
+                            @foreach (var order in Model)
+                            {
+                                <tr data-status="@order.Status"
+                                    data-ordercode="@order.OrderCode"
+                                    class="border-bottom">
+
+                                    <td class="fw-semibold py-4">
+                                        @order.OrderCode
+                                    </td>
+
+                                    <td class="py-4">
+                                        @order.OrderDate.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td class="fw-bold text-danger py-4">
+                                        @order.TotalAmount.ToString("N0") ₫
+                                    </td>
+
+                                    <td class="py-4">
+                                        @if (order.Status == "Approved")
+                                        {
+                                            <span class="badge bg-warning text-dark px-4 py-2 fs-6">
+                                                Đã duyệt
+                                            </span>
+                                        }
+                                        else if (order.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success px-4 py-2 fs-6">
+                                                Hoàn thành
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary px-4 py-2 fs-6">
+                                                Đã hủy
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end py-4">
+                                        <button class="btn btn-outline-dark btn-lg rounded-pill px-4"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#orderDetailModal"
+                                                data-orderid="@order.OrderId"
+                                                data-ordercode="@order.OrderCode"
+                                                data-status="@order.Status">
+                                            Xem chi tiết
+                                        </button>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    }
+
+</div>
+
+<!-- MODAL CHI TIẾT ĐƠN -->
+@Html.Partial("_ChiTietDonHangModal")
+
+<!-- STYLE -->
+<style>
+    #orderStatusTabs .nav-link {
+        cursor: pointer;
+        font-weight: 500;
+        transition: all .25s ease;
+    }
+
+        #orderStatusTabs .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.15);
+        }
+
+        #orderStatusTabs .nav-link.active {
+            box-shadow: 0 8px 20px rgba(0,0,0,.25);
+        }
+
+    table th {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+</style>
+
+<!-- SCRIPT (GIỮ NGUYÊN – KHÔNG ĐỤNG) -->
+<script>
+    const tabs = document.querySelectorAll('#orderStatusTabs .nav-link');
+    const rows = document.querySelectorAll('#orderTableBody tr');
+    const searchInput = document.getElementById('searchOrderInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    let currentStatus = "All";
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            currentStatus = this.dataset.status;
+
+            searchInput.value = "";
+            showByStatus();
+        });
+    });
+
+    searchBtn.addEventListener('click', function () {
+
+        const keyword = searchInput.value.trim().toLowerCase();
+
+        if (keyword === "") {
+            alert("Vui lòng nhập mã đơn hàng");
+            return;
+        }
+
+        let found = false;
+
+        rows.forEach(row => {
+            const orderCode = row.dataset.ordercode.toLowerCase();
+            const status = row.dataset.status;
+
+            const matchStatus =
+                currentStatus === "All" || status === currentStatus;
+
+            const matchKeyword = orderCode === keyword;
+
+            if (matchStatus && matchKeyword) {
+                row.style.display = "";
+                found = true;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        if (!found) {
+            alert(`Không có đơn hàng với mã "${searchInput.value}"`);
+        }
+    });
+
+    function showByStatus() {
+        rows.forEach(row => {
+            const status = row.dataset.status;
+            row.style.display =
+                (currentStatus === "All" || status === currentStatus)
+                    ? ""
+                    : "none";
+        });
+    }
+
+    showByStatus();
+</script>

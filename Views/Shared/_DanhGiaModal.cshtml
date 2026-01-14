@@ -1,0 +1,48 @@
+﻿<!-- MODAL ĐÁNH GIÁ SẢN PHẨM -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Đánh giá sản phẩm</h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="reviewProductId" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Số sao</label>
+                    <select id="reviewStar" class="form-select">
+                        <option value="5">⭐⭐⭐⭐⭐ - Rất tốt</option>
+                        <option value="4">⭐⭐⭐⭐ - Tốt</option>
+                        <option value="3">⭐⭐⭐ - Bình thường</option>
+                        <option value="2">⭐⭐ - Tệ</option>
+                        <option value="1">⭐ - Rất tệ</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Nội dung đánh giá</label>
+                    <textarea id="reviewContent"
+                              class="form-control"
+                              rows="4"
+                              placeholder="Nhập cảm nhận của bạn..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">
+                    Hủy
+                </button>
+                <button class="btn btn-dark"
+                        onclick="submitReview()">
+                    Gửi đánh giá
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

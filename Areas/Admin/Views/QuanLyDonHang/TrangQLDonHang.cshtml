@@ -8,11 +8,10 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Danh Sách Đơn Hàng</h6>
+            <h3 class="mb-0 text-primary text-uppercase" style="font-weight: 700;">Danh Sách Đơn Hàng</h3>
         </div>
 
         <form asp-area="Admin" asp-controller="QuanLyDonHang" asp-action="TrangQLDonHang" method="get" class="row g-3 mb-4">
-
             <div class="col-md-4">
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
@@ -26,9 +25,9 @@
             <div class="col-md-3">
                 <select class="form-select" name="trangThai" aria-label="Lọc trạng thái">
                     <option value="" selected="@(ViewBag.TrangThai == null)">-- Tất cả trạng thái --</option>
-                    <option value="1" selected="@(ViewBag.TrangThai == 1)">Đã duyệt</option>
-                    <option value="2" selected="@(ViewBag.TrangThai == 2)">Đã hoàn thành</option>
-                    <option value="3" selected="@(ViewBag.TrangThai == 3)">Đã hủy</option>
+                    <option value="0" selected="@(ViewBag.TrangThai == 0)">Đã duyệt</option>
+                    <option value="1" selected="@(ViewBag.TrangThai == 1)">Đã hoàn thành</option>
+                    <option value="2" selected="@(ViewBag.TrangThai == 2)">Đã hủy</option>
                 </select>
             </div>
 
@@ -39,7 +38,7 @@
             </div>
 
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100"><i class="fa fa-filter me-2"></i>Lọc</button>
+                <button type="submit" class="btn btn-primary w-100"><i class="fa fa-search me-1"></i>Tìm</button>
             </div>
         </form>
 
@@ -60,11 +59,11 @@
                     {
                         @foreach (var item in Model)
                         {
-                            
+
                             string mauNen = "";
-                            if (item.TrangThai == 1) { mauNen = "bg-warning text-dark"; }       
-                            else if (item.TrangThai == 2) { mauNen = "bg-success text-white"; } 
-                            else if (item.TrangThai == 3) { mauNen = "bg-danger text-white"; } 
+                            if (item.TrangThai == 0) { mauNen = "bg-warning text-dark"; }
+                            else if (item.TrangThai == 1) { mauNen = "bg-success text-white"; }
+                            else if (item.TrangThai == 2) { mauNen = "bg-danger text-white"; }
 
                             <tr>
                                 <td class="fw-bold">@item.Id</td>
@@ -75,21 +74,39 @@
                                 </td>
 
                                 <td>
-                                    <form asp-action="CapNhatTrangThai" method="post">
+                                    @if (item.TrangThai == 2)
+                                    {
 
-                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <div class="@mauNen rounded p-1 text-center fw-bold" style="font-size: 0.875rem;">
+                                            Đã hủy
+                                        </div>
+                                    }
+                                    else
+                                    {
 
-                                        <select name="trangThai"
-                                                data-original="@item.TrangThai"
-                                                class="form-select form-select-sm w-auto border-0 text-center rounded mx-auto @mauNen"
-                                                style="font-weight: 600; cursor: pointer; box-shadow: none;"
-                                                onchange="confirmStatusChange(this)">
+                                        <form asp-action="CapNhatTrangThai" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
 
-                                            <option value="1" class="bg-white text-dark" selected="@(item.TrangThai == 1)">Đã duyệt</option>
-                                            <option value="2" class="bg-white text-dark" selected="@(item.TrangThai == 2)">Đã hoàn thành</option>
-                                            <option value="3" class="bg-white text-dark" selected="@(item.TrangThai == 3)">Đã hủy</option>
-                                        </select>
-                                    </form>
+                                            <select name="trangThai"
+                                                    data-original="@item.TrangThai"
+                                                    class="form-select form-select-sm w-auto border-0 text-center rounded mx-auto @mauNen"
+                                                    style="font-weight: 600; cursor: pointer; box-shadow: none;"
+                                                    onchange="confirmStatusChange(this)">
+
+                                                @if (item.TrangThai == 0)
+                                                {
+                                                    <option value="0" class="bg-white text-dark" selected>Đã duyệt</option>
+                                                    <option value="1" class="bg-white text-dark">Đã hoàn thành</option>
+                                                    <option value="2" class="bg-white text-dark">Đã hủy</option>
+                                                }
+                                                else if (item.TrangThai == 1)
+                                                {
+                                                    <option value="1" class="bg-white text-dark" selected>Đã hoàn thành</option>
+                                                    <option value="2" class="bg-white text-dark">Đã hủy</option>
+                                                }
+                                            </select>
+                                        </form>
+                                    }
                                 </td>
 
                                 <td>
@@ -158,31 +175,25 @@
                            asp-route-searchSDT="@ViewBag.SearchSDT"
                            asp-route-trangThai="@ViewBag.TrangThai"
                            asp-route-ngayDat="@ViewBag.NgayDat">
-                           &raquo;
+                            &raquo;
                         </a>
                     </li>
                 </ul>
             </nav>
         </div>
+    </div>
 </div>
 
-    <script>
-        function confirmStatusChange(selectElement) {
-            // Lấy giá trị ban đầu (đã lưu trong data-original)
-            var originalValue = selectElement.getAttribute('data-original');
+<script>
+    function confirmStatusChange(selectElement) {
+        var originalValue = selectElement.getAttribute('data-original');
+        var newText = selectElement.options[selectElement.selectedIndex].text;
+        var message = "Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang '" + newText + "' không?";
 
-            // Lấy text của trạng thái mới để hiển thị trong thông báo cho rõ ràng (tùy chọn)
-            var newText = selectElement.options[selectElement.selectedIndex].text;
-
-            // Hiện hộp thoại xác nhận
-            var message = "Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang '" + newText + "' không?";
-
-            if (confirm(message)) {
-                // Nếu chọn OK -> Submit form
-                selectElement.form.submit();
-            } else {
-                // Nếu chọn Cancel -> Quay về giá trị cũ
-                selectElement.value = originalValue;
-            }
+        if (confirm(message)) {
+            selectElement.form.submit();
+        } else {
+            selectElement.value = originalValue;
         }
-    </script>
+    }
+</script>

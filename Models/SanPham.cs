@@ -22,7 +22,7 @@ public partial class SanPham
     public string? MaKieuDang { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
-    [Required(ErrorMessage = "Đon giá không được rỗng")]
+    [Required(ErrorMessage = "Đơn giá không được rỗng")]
     [Range(0, double.MaxValue,ErrorMessage ="đơn giá không được âm")]
     public decimal? DonGia { get; set; }
   
@@ -44,6 +44,7 @@ public partial class SanPham
 
     // 2. Hứng danh sách ảnh phụ từ Form (Nhiều file)
     [NotMapped]
+    [Required(ErrorMessage = "Danh sách ảnh không được rỗng")]
     public List<IFormFile>? ListAnhPhu { get; set; }
 
     // 3. Hứng danh sách Size nhập từ bảng (Dùng luôn class Ctsize có sẵn)

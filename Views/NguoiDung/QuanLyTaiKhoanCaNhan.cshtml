@@ -1,0 +1,115 @@
+﻿@model WebBanGiayTheThao.ViewModels.NguoiDung.UserProfileVM
+@using WebBanGiayTheThao.ViewModels.NguoiDung
+
+@{
+    ViewData["Title"] = "Tài khoản cá nhân";
+}
+
+<div class="max-w-6xl mx-auto px-4 py-10 fade-in">
+
+    <div class="alert alert-secondary fw-bold fs-2 rounded-3 mb-4">
+        Quản lý tài khoản cá nhân
+    </div>
+
+
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- LEFT -->
+        <div class="glass-card p-6 text-center">
+            <img src="https://via.placeholder.com/120"
+                 class="rounded-full mx-auto mb-4" />
+
+            <h5 class="font-bold text-lg">@Model.FullName</h5>
+            <p class="text-gray-500">@Model.Username</p>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="md:col-span-2 glass-card p-6">
+
+            <h5 class="font-semibold mb-4">Thông tin tài khoản</h5>
+
+            <div class="space-y-3">
+                <div class="flex">
+                    <span class="w-32 text-gray-500">Email</span>
+                    <span class="font-medium">@Model.Email</span>
+                </div>
+
+                <div class="flex">
+                    <span class="w-32 text-gray-500">SĐT</span>
+                    <span class="font-medium">@Model.Phone</span>
+                </div>
+
+                <div class="flex">
+                    <span class="w-32 text-gray-500">Địa chỉ</span>
+                    <span class="font-medium">@Model.Address</span>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button class="btn btn-outline-dark btn-pill"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editProfileModal">
+                    Cập nhật thông tin
+                </button>
+
+
+                <button class="btn btn-outline-dark btn-pill"
+                        data-bs-toggle="modal"
+                        data-bs-target="#changePasswordModal">
+                    Đổi mật khẩu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* ================== MODAL CẬP NHẬT THÔNG TIN ================== *@
+@{
+    var updateProfileModel =
+        ViewBag.UpdateProfileModel as UpdateProfileVM
+        ?? new UpdateProfileVM
+        {
+            FullName = Model.FullName,
+            Email = Model.Email,
+            Phone = Model.Phone,
+            Address = Model.Address
+        };
+}
+
+@* ================== MODAL ĐỔI MẬT KHẨU ================== *@
+@{
+    var changePasswordModel =
+        ViewBag.ChangePasswordModel as ChangePasswordVM
+        ?? new ChangePasswordVM();
+}
+
+@await Html.PartialAsync("_CapNhatThongTinModal", updateProfileModel)
+@await Html.PartialAsync("_CapNhatMatKhauModal", changePasswordModel)
+
+@* ================== TỰ MỞ MODAL KHI VALIDATE / LOGIC LỖI ================== *@
+@if (ViewBag.ShowUpdateModal == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new bootstrap.Modal(
+                document.getElementById('editProfileModal')
+            ).show();
+        });
+    </script>
+}
+
+@if (ViewBag.ShowChangePasswordModal == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new bootstrap.Modal(
+                document.getElementById('changePasswordModal')
+            ).show();
+        });
+    </script>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

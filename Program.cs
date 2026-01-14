@@ -20,6 +20,8 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddSession();
 // DuyKhang edit 20:14 11/01/2026 
 builder.Services.AddScoped<BaoCaoService>();
+// Duy Khang edit 14:19 14/01/2026 Dki service BinhLuan
+builder.Services.AddScoped<BinhLuanService>();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
   );
@@ -56,7 +58,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
       name: "areas",
-      pattern: "{area:exists}/{controller=QuanLySanPham}/{action=TrangQLSanPham}/{id?}"); 
+      pattern: "{area:exists}/{controller=TrangTongQuanAdmin}/{action=TongQuanDoiTuong}/{id?}"); 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=TrangChu}/{id?}");

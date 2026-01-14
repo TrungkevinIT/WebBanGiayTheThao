@@ -70,7 +70,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                     Directory.CreateDirectory(folder);
                 }
 
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(fileAnh.FileName);
+                string fileName = DateTime.Now.Ticks + "_" + Path.GetFileName(fileAnh.FileName);
                 string path = Path.Combine(folder, fileName);
 
                 using (var stream = new FileStream(path, FileMode.Create))
@@ -79,7 +79,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 }
                 model.HinhAnh = fileName;
             }
-
+            model.NgayCapNhat = DateTime.Now;
             await _slideShowService.UpdateSlideShow(model);
             TempData["ThongBao"] = "Cập nhật thành công";
             return RedirectToAction("TrangQLSlideShow");

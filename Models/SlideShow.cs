@@ -19,4 +19,5 @@ public partial class SlideShow
     [Required(ErrorMessage = "Vui lòng nhập đường dẫn (Link).")]
     [StringLength(255)]
     public string? Link { get; set; }
+    public DateTime? NgayCapNhat { get; set; }
 }

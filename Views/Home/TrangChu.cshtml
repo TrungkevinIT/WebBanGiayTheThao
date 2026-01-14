@@ -1,72 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Trang chủ";
 }
-
-@section Scripts {
-    <script>
-        const slideData = [
-            { img: "https://images.unsplash.com/photo-1556906781-9a412961d28c?auto=format&fit=crop&w=1600&q=80", link: "#", alt: "Giày chạy bộ" },
-            { img: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1600&q=80", link: "#", alt: "Giày đá bóng" },
-            { img: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=1600&q=80", link: "#", alt: "Giày thời trang" }
-        ];
-
-        let currentSlide = 0;
-        const sliderContainer = document.getElementById('slider-container');
-        const heroBtn = document.getElementById('hero-btn');
-
-        function initSlider() {
-            if(!sliderContainer) return;
-            sliderContainer.innerHTML = '';
-            slideData.forEach((slide, index) => {
-                const imgEl = document.createElement('img');
-                imgEl.src = slide.img;
-                imgEl.alt = slide.alt;
-                imgEl.className = `absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
-                imgEl.id = `slide-${index}`;
-                sliderContainer.appendChild(imgEl);
-            });
-        }
-
-        function nextSlide() {
-            if(!sliderContainer) return;
-            const currentEl = document.getElementById(`slide-${currentSlide}`);
-            if(currentEl) {
-                currentEl.classList.remove('opacity-100');
-                currentEl.classList.add('opacity-0');
-            }
-
-            currentSlide = (currentSlide + 1) % slideData.length;
-
-            const nextEl = document.getElementById(`slide-${currentSlide}`);
-            if(nextEl) {
-                nextEl.classList.remove('opacity-0');
-                nextEl.classList.add('opacity-100');
-            }
-            if(heroBtn) heroBtn.href = slideData[currentSlide].link;
-        }
-
-        initSlider();
-        setInterval(nextSlide, 3000);
-    </script>
-}
-
-<header class="relative w-full h-[600px] overflow-hidden flex items-center justify-center -mt-6">
-    <div id="slider-container" class="absolute inset-0 w-full h-full">
-    </div>
-
-    <div class="relative z-10 text-center px-4">
-        <h1 class="text-5xl md:text-7xl font-bold mb-4 drop-shadow-lg text-white">
-            JUST DO IT.
-        </h1>
-        <p class="text-xl text-gray-200 mb-8 font-light">Bộ sưu tập mùa hè 2026</p>
-
-        <a id="hero-btn" href="#" class="px-8 py-3 bg-white/20 backdrop-blur-md border border-white text-white rounded-full font-bold hover:bg-white hover:text-black transition transform hover:scale-105">
-            XEM SẢN PHẨM
-        </a>
-    </div>
-    <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-gray-50 to-transparent z-0"></div>
-</header>
-
+@await Component.InvokeAsync("SlideShow")
 <main class="container mx-auto px-6 py-12 space-y-20">
 
     <section>

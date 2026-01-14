@@ -1,0 +1,91 @@
+﻿@model WebBanGiayTheThao.Models.WebSetting
+
+<footer class="bg-gray-100 border-t border-gray-200 pt-16 pb-8 mt-auto">
+    <div class="container mx-auto px-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+
+            <!-- LOGO + MÔ TẢ -->
+            <div class="space-y-4">
+                @if (!string.IsNullOrEmpty(Model?.Logo))
+                {
+                    <img src="~/uploads/logo/@Model.Logo"
+                         alt="ShoesStore Logo"
+                         class="h-12 object-contain">
+                }
+
+                <p class="text-sm text-gray-500">
+                    @(Model?.Mota ?? "Trải nghiệm thể thao đỉnh cao.")
+                </p>
+            </div>
+
+            <!-- KHÁM PHÁ -->
+            <div>
+                <h4 class="font-bold mb-4">Khám phá</h4>
+                <ul class="space-y-2 text-sm text-gray-500">
+                    <li>
+                        <a href="/" class="hover:text-black">Trang chủ</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="GioiThieu">Về chúng tôi</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- HỖ TRỢ / LIÊN HỆ -->
+            <div>
+                <h4 class="font-bold mb-4">Hỗ trợ</h4>
+                <ul class="space-y-2 text-sm text-gray-500">
+
+                    @if (!string.IsNullOrEmpty(Model?.Hotline))
+                    {
+                        <li>
+                            📞 <span class="font-medium">Hotline:</span> @Model.Hotline
+                        </li>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model?.EmailLienHe))
+                    {
+                        <li>
+                            ✉️ <span class="font-medium">Email:</span> @Model.EmailLienHe
+                        </li>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model?.DiaChi))
+                    {
+                        <li>
+                            📍 <span class="font-medium">Địa chỉ:</span> @Model.DiaChi
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+            <!-- MẠNG XÃ HỘI -->
+            <div>
+                <h4 class="font-bold mb-4">Kết nối</h4>
+                <ul class="space-y-2 text-sm text-gray-500">
+
+                    @if (!string.IsNullOrEmpty(Model?.Linkfacebook))
+                    {
+                        <li>
+                            <a href="@Model.Linkfacebook"
+                               target="_blank"
+                               class="hover:text-black flex items-center gap-2">
+                                <i class="fab fa-facebook text-blue-600"></i>
+                                Facebook
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="mt-16 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
+            &copy; @DateTime.Now.Year ShoesStore. All Rights Reserved.
+        </div>
+
+    </div>
+</footer>

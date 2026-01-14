@@ -44,6 +44,9 @@ namespace WebBanGiayTheThao.Migrations
                     b.Property<int?>("Sao")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TrangThai")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -66,6 +69,7 @@ namespace WebBanGiayTheThao.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("LinkAnh")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SanPhamId")
@@ -152,9 +156,11 @@ namespace WebBanGiayTheThao.Migrations
                         .HasColumnType("int");
 
                     b.Property<double?>("Size")
+                        .IsRequired()
                         .HasColumnType("float");
 
                     b.Property<int?>("SoLuongTon")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
@@ -258,17 +264,20 @@ namespace WebBanGiayTheThao.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("DonGia")
+                        .IsRequired()
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<int?>("LoaiSanPhamId")
                         .HasColumnType("int");
 
                     b.Property<string>("MaKieuDang")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("MoTa")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenSanPham")
@@ -310,6 +319,9 @@ namespace WebBanGiayTheThao.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("NgayCapNhat")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id")
                         .HasName("PK__SlideSho__3214EC07E9487E13");
@@ -423,6 +435,19 @@ namespace WebBanGiayTheThao.Migrations
                     b.Property<decimal?>("DonToiThieu")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<decimal?>("GiaTriGiamLuu")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("MaCodeLuu")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("NgayBatDauLuu")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayKetThucLuu")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("NgayNhan")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
@@ -489,6 +514,10 @@ namespace WebBanGiayTheThao.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("DiaChi")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("EmailLienHe")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -497,9 +526,17 @@ namespace WebBanGiayTheThao.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Linkfacebook")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Logo")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Mota")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id")
                         .HasName("PK__WebSetti__3214EC079FCF25EB");
