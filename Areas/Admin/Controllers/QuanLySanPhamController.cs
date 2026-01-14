@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WebBanGiayTheThao.Filters; // Đảm bảo namespace đúng
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
+namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [AdminAuthorize]
