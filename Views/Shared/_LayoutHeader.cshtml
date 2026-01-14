@@ -10,15 +10,15 @@
         </a>
 
         <div class="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-wide">
-            <a asp-controller="Home" asp-action="Index" class="hover:text-gray-500 transition">Trang chủ</a>
-            <a asp-controller="SanPham" asp-action="Index" class="hover:text-gray-500 transition">Sản phẩm</a>
+            <a asp-controller="Home" asp-action="TrangChu" class="hover:text-gray-500 transition">Trang chủ</a>
+            <a asp-controller="SanPham" asp-action="TrangSanPham" class="hover:text-gray-500 transition">Sản phẩm</a>
         </div>
 
         <div class="flex items-center space-x-4">
 
             <!-- Giỏ hàng -->
             <a asp-controller="GioHang"
-               asp-action="Index"
+               asp-action="TrangGioHang"
                class="relative p-2 hover:bg-gray-200 rounded-full transition">
                 <i class="ph ph-shopping-cart text-xl"></i>
                 <span class="absolute top-0 right-0 h-4 w-4 bg-black text-white text-[10px]

@@ -1,14 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebBanGiayTheThao.Filters;
+using WebBanGiayTheThao.Models;
+using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Controllers
 {
     [SessionAuthorize]
     public class GioHangController : Controller
     {
-        public IActionResult TrangGioHang()
+        private readonly IGioHangService _service;
+        public GioHangController(IGioHangService service)
         {
-            return View();
+            _service = service;
+        }
+
+        public async Task<IActionResult> TrangGioHangAsync()
+        {
+            int UserId = HttpContext.Session.GetInt32("UserId").GetValueOrDefault();
+            var danhsach = await _service.GetAllAsync(UserId);
+            return View(danhsach);
         }
     }
 }
