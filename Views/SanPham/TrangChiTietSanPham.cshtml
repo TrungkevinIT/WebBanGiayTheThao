@@ -7,6 +7,15 @@
     var allImages = new List<string>();
     if (!string.IsNullOrEmpty(Model.AnhDaiDien)) { allImages.Add(Model.AnhDaiDien); }
     if (Model.Ctanhs != null) { allImages.AddRange(Model.Ctanhs.Select(x => x.LinkAnh)); }
+
+    int trangHienTai = 1;
+
+    //lấy url trang hiện tại từ query string
+    if (Context.Request.Query.ContainsKey("trang"))
+    {
+        //nếu có thì gán giá trị vào biến trangHienTai
+        int.TryParse(Context.Request.Query["trang"], out trangHienTai);
+    }
 }
 <div class="bg-gray-50 min-h-screen pb-20 font-sans">
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 max-w-[1300px]">
@@ -146,37 +155,9 @@
             </div>
         </form>
 
-        @await Component.InvokeAsync("BinhLuan", new { spId = Model.Id })
+        @await Component.InvokeAsync("BinhLuan", new { spId = Model.Id, trang = trangHienTai })
 
-        <div>
-            <div class="flex justify-between items-end mb-8 px-2">
-                <h2 class="text-2xl font-bold">Sản phẩm liên quan</h2>
-                <a href="#" class="text-sm underline hover:text-gray-500">Xem tất cả</a>
-            </div>
-
-            <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="bg-white p-4 rounded-2xl shadow-sm">
-                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
-                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm">
-                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
-                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm">
-                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
-                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm">
-                    <div class="aspect-square bg-gray-100 rounded-xl mb-3"></div>
-                    <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-100 rounded w-1/2"></div>
-                </div>
-            </div>
-        </div>
+        
 
     </main>
 </div>
