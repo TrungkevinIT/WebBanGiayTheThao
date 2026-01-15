@@ -60,6 +60,26 @@ namespace WebBanGiayTheThao.Services.GioHang
             return true;
 
         }
+        public async Task<(List<CtgioHang> List, int TotalCount, decimal TongTien)> GetGioHangPhanTrangAsync(int userId, int page, int pageSize)
+        {
+            var query = _context.CtgioHangs
+                .Where(x => x.UserId == userId)
+                .Include(x => x.SanPham)
+                .Include(x => x.Size)
+                .AsNoTracking();
+            int totalCount = await query.CountAsync();
+            decimal tongTien = 0;
+            if (totalCount > 0)
+            {
+                tongTien = await query.SumAsync(x => (decimal)(x.SoLuong ?? 0) * (x.SanPham.DonGia ?? 0));
+            }
+            var list = await query
+                .OrderByDescending(x => x.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            return (list, totalCount, tongTien);
+        }
 
     }
 }

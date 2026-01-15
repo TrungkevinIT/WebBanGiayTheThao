@@ -94,10 +94,11 @@
                     }
                 </div>
                 <div class="mt-8 flex justify-center">
-                    <div id="cart-pagination" class="flex items-center gap-2 bg-white/50 p-2 rounded-xl liquid-glass">
-                    </div>
+                    @if (Convert.ToInt32(ViewData["TotalPages"]) > 1)
+                    {
+                        <partial name="~/Areas/Admin/Views/Shared/_Pager.cshtml" />
+                    }
                 </div>
-
                 <div class="pt-4">
                     <a asp-controller="SanPham" asp-action="TrangSanPham" class="inline-flex items-center gap-2 text-gray-500 hover:text-black font-medium transition">
                         <i class="ph ph-arrow-left"></i> Tiếp tục mua sắm
@@ -112,7 +113,7 @@
                         <div class="flex justify-between text-gray-600">
                             <span> Tổng Tiền</span>
                             <span id="sub-total" data-value="0" class="font-medium text-black">
-                                @((Model?.Sum(x => (x.SoLuong ?? 0) * (x.SanPham.DonGia ?? 0)) ?? 0).ToString("#,##0")) ₫
+                                @(((decimal)(ViewBag.TongTienCaGio ?? 0)).ToString("#,##0")) ₫
                             </span>
                         </div>
                     </div>

@@ -14,11 +14,18 @@ namespace WebBanGiayTheThao.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> TrangGioHangAsync()
+        public async Task<IActionResult> TrangGioHang(int page = 1)
         {
             int UserId = HttpContext.Session.GetInt32("UserId").GetValueOrDefault();
-            var danhsach = await _service.GetAllAsync(UserId);
-            return View(danhsach);
+            int pageSize = 10;
+
+            var data = await _service.GetGioHangPhanTrangAsync(UserId, page, pageSize);
+            int totalPages = (int)Math.Ceiling((double)data.TotalCount / pageSize);
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = totalPages;
+            ViewData["ActionName"] = "TrangGioHang"; 
+            ViewBag.TongTienCaGio = data.TongTien;
+            return View(data.List);
         }
 
         public async Task<IActionResult> XoaItem(int id)

@@ -8,5 +8,6 @@ namespace WebBanGiayTheThao.Services
         Task<bool> XoaItemAsync(int id, int UserId);
         Task<bool> XoaFullAsync(int UserId);
         Task<bool> CapNhatSoLuongAsync(int Id, int ThayDoi, int UserId);
+        Task<(List<CtgioHang> List, int TotalCount, decimal TongTien)> GetGioHangPhanTrangAsync(int userId, int page, int pageSize);
     }
 }
