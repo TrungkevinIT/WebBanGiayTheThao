@@ -6,5 +6,6 @@ namespace WebBanGiayTheThao.Services
     {
         Task<List<CtgioHang>> GetAllAsync(int UserId);
         Task<bool> XoaItemAsync(int id, int UserId);
+        Task<bool> XoaFullAsync(int UserId);
     }
 }

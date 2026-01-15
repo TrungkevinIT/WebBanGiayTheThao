@@ -3,9 +3,16 @@
 <main class="container mx-auto px-6 py-12 mt-20">
     <div class="flex justify-between items-end mb-10">
         <h1 class="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
-        <button id="btn-clear-cart" class="text-red-500 hover:text-red-700 font-bold text-sm underline flex items-center gap-2 hover:bg-red-50 px-3 py-2 rounded-lg transition">
-            <i class="ph ph-trash text-lg"></i> Xóa tất cả
-        </button>
+        @if (Model.Any())
+        {
+            <a asp-controller="GioHang"
+               asp-action="XoaFull"
+               class="text-red-500 hover:text-red-700 font-bold text-sm underline flex items-center gap-2 hover:bg-red-50 px-3 py-2 rounded-lg transition cursor-pointer"
+               onclick="return confirm('CẢNH BÁO: Bạn có chắc muốn xóa sạch giỏ hàng không?');">
+
+                <i class="ph ph-trash text-lg"></i> Xóa tất cả
+            </a>
+        }
     </div>
 
     @if (TempData["GioHangThongBao"] != null)

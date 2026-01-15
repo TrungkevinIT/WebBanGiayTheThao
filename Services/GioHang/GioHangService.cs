@@ -12,7 +12,7 @@ namespace WebBanGiayTheThao.Services.GioHang
             _context = context;
         }
 
-        public Task<List<CtgioHang>> GetAllAsync (int UserId)
+        public Task<List<CtgioHang>> GetAllAsync(int UserId)
         {
             return _context.CtgioHangs
                 .Where(x => x.UserId == UserId)
@@ -23,7 +23,7 @@ namespace WebBanGiayTheThao.Services.GioHang
                 .ToListAsync();
         }
 
-        public async Task<bool> XoaItemAsync (int id, int UserId)
+        public async Task<bool> XoaItemAsync(int id, int UserId)
         {
             var item = await _context.CtgioHangs.FindAsync(id);
             if (item == null || item.UserId != UserId)
@@ -31,6 +31,20 @@ namespace WebBanGiayTheThao.Services.GioHang
                 return false;
             }
             _context.CtgioHangs.Remove(item);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> XoaFullAsync(int UserId)
+        {
+            var item = await _context.CtgioHangs 
+                .Where(x=>x.UserId == UserId)
+                .ToListAsync();
+            if(!item.Any())
+            {
+                return false;
+            }
+            _context.CtgioHangs.RemoveRange(item);
             await _context.SaveChangesAsync();
             return true;
         }

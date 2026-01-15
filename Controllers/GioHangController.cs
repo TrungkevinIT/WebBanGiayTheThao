@@ -40,6 +40,23 @@ namespace WebBanGiayTheThao.Controllers
             return RedirectToAction("TrangGioHang");
         }
 
-
+        public async Task<IActionResult> XoaFull(int id)
+        {
+            int userId = HttpContext.Session.GetInt32("UserId").GetValueOrDefault();
+            if (userId == 0)
+            {
+                return RedirectToAction("DangNhap", "TaiKhoan");
+            }
+            bool ketqua = await _service.XoaFullAsync(userId);
+            if (ketqua)
+            {
+                TempData["GioHangThongBao"] = "Đã xóa tất cả sản phẩm trong giỏ hàng!";
+            }
+            else
+            {
+                TempData["GioHangLoi"] = "Giỏ hàng của bạn đang trống!";
+            }
+            return RedirectToAction("TrangGioHang");
+        }
     }
 }

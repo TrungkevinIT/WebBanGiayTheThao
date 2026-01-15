@@ -3,11 +3,14 @@
     var vaiTro = Context.Session.GetInt32("VaiTro");
 }
 
-@using WebBanGiayTheThao.Models @using System.Linq
-@inject WebBanGiayTheThao.Services.IVoucherServices _voucherService
+@using WebBanGiayTheThao.Models 
+@using System.Linq
+@using Microsoft.AspNetCore.Http
+@inject WebBanGiayTheThao.Services.IGioHangService _gioHangService
 
 @{
-    var listVoucher = await _voucherService.GetAllAsync();
+    int UserId = Context.Session.GetInt32("UserId").GetValueOrDefault();
+    var listVoucher = await _gioHangService.GetAllAsync(UserId);
     int TongSoGioHang = listVoucher.Count;
 }
 
