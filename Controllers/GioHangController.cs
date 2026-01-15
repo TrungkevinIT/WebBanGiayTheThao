@@ -20,5 +20,26 @@ namespace WebBanGiayTheThao.Controllers
             var danhsach = await _service.GetAllAsync(UserId);
             return View(danhsach);
         }
+
+        public async Task<IActionResult> XoaItem(int id)
+        {
+            int userId = HttpContext.Session.GetInt32("UserId").GetValueOrDefault();
+            if (userId == 0)
+            {
+                return RedirectToAction("DangNhap", "TaiKhoan");
+            }
+            bool ketqua = await _service.XoaItemAsync(id, userId);
+            if (ketqua)
+            {
+                TempData["GioHangThongBao"] = "Đã xóa sản phẩm thành công!";
+            }
+            else
+            {
+                TempData["GioHangLoi"] = "Không thể xóa sản phẩm này!";
+            }
+            return RedirectToAction("TrangGioHang");
+        }
+
+
     }
 }

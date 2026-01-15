@@ -23,5 +23,17 @@ namespace WebBanGiayTheThao.Services.GioHang
                 .ToListAsync();
         }
 
+        public async Task<bool> XoaItemAsync (int id, int UserId)
+        {
+            var item = await _context.CtgioHangs.FindAsync(id);
+            if (item == null || item.UserId != UserId)
+            {
+                return false;
+            }
+            _context.CtgioHangs.Remove(item);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

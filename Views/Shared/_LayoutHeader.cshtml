@@ -3,6 +3,14 @@
     var vaiTro = Context.Session.GetInt32("VaiTro");
 }
 
+@using WebBanGiayTheThao.Models @using System.Linq
+@inject WebBanGiayTheThao.Services.IVoucherServices _voucherService
+
+@{
+    var listVoucher = await _voucherService.GetAllAsync();
+    int TongSoGioHang = listVoucher.Count;
+}
+
 <nav class="fixed top-0 w-full z-50 liquid-glass transition-all duration-300">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="/" class="text-2xl font-bold tracking-tighter">
@@ -23,7 +31,7 @@
                 <i class="ph ph-shopping-cart text-xl"></i>
                 <span class="absolute top-0 right-0 h-4 w-4 bg-black text-white text-[10px]
                              flex items-center justify-center rounded-full">
-                    0
+                    @TongSoGioHang
                 </span>
             </a>
 
