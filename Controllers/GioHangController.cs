@@ -58,5 +58,12 @@ namespace WebBanGiayTheThao.Controllers
             }
             return RedirectToAction("TrangGioHang");
         }
+
+        public async Task<IActionResult> CapNhatSoLuong(int Id, int ThayDoi)
+        {
+            int userId = HttpContext.Session.GetInt32("UserId").GetValueOrDefault();
+            await _service.CapNhatSoLuongAsync(Id, ThayDoi, userId);
+            return RedirectToAction("TrangGioHang");
+        }
     }
 }

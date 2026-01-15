@@ -49,5 +49,17 @@ namespace WebBanGiayTheThao.Services.GioHang
             return true;
         }
 
+        public async Task<bool> CapNhatSoLuongAsync(int Id, int ThayDoi, int UserId)
+        {
+            var item = await _context.CtgioHangs.FirstOrDefaultAsync(x => x.UserId == UserId);
+            if (item == null) return false;
+            item.SoLuong += ThayDoi;
+            if(item.SoLuong < 1) item.SoLuong = 1;
+            _context.CtgioHangs.Update(item);
+            await _context.SaveChangesAsync();
+            return true;
+
+        }
+
     }
 }
