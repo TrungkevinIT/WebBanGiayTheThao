@@ -1,0 +1,80 @@
+﻿@model IEnumerable<WebBanGiayTheThao.Models.BinhLuan>
+
+@{
+    // 1. Tính toán thống kê
+    int tongDanhgia = Model.Count();
+    double diemTb = tongDanhgia > 0 ? (double)Model.Average(x => x.Sao) : 0;
+}
+
+<div class="bg-white rounded-[30px] p-6 lg:p-10 shadow-sm mb-12">
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-xl font-bold">Đánh giá sản phẩm</h2>
+            <div class="flex items-center gap-2 mt-2">
+                <div class="flex text-yellow-400 text-lg">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Math.Round(diemTb))
+                        {
+                            <i class="ph-fill ph-star"></i>
+                        }
+                        else
+                        {
+                            <i class="ph ph-star text-gray-300"></i>
+                        }
+                    }
+                </div>
+                <span class="text-sm font-medium text-gray-600">
+                    (@diemTb.ToString("0.0")/5 dựa trên @tongDanhgia đánh giá)
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="review-container" class="space-y-6">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                var userName = item.User.HoTen;
+                // Lấy chữ cái đầu làm Avatar
+                var firstLetter = !string.IsNullOrEmpty(userName) ? userName.Substring(0, 1).ToUpper() : "K";
+
+                <div class="flex gap-4 p-4 bg-gray-50 rounded-2xl">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                        @firstLetter
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="font-bold text-sm text-gray-900">@userName</h4>
+                            <span class="text-xs text-gray-400">@item.NgayTao.Value.ToString("dd/MM/yyyy")</span>
+                        </div>
+
+                        <div class="flex text-yellow-400 text-xs my-1">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= item.Sao)
+                                {
+                                    <i class="ph-fill ph-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="ph-fill ph-star text-gray-300"></i>
+                                }
+                            }
+                        </div>
+
+                        <p class="text-gray-600 text-sm">@item.NoiDung</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center text-gray-500 italic py-4">Chưa có đánh giá nào.</p>
+        }
+    </div>
+</div>
+    
