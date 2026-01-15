@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
+using WebBanGiayTheThao.ViewModels;
 
 namespace WebBanGiayTheThao.Services
 {
@@ -90,7 +91,18 @@ namespace WebBanGiayTheThao.Services
                 await _context.SaveChangesAsync();
             
         }
-
+       
+        public async Task<List<LoaiSanPhamVM>> GetDanhMucNoiBatAsync()
+        {
+            return await _context.LoaiSanPhams
+                .Select(loai => new LoaiSanPhamVM
+                {
+                    Id = loai.Id,
+                    TenLoai = loai.TenLoai,
+                    AnhHienThi = loai.SanPhams.Where(loai => loai.TrangThai == 1).OrderByDescending(sp => sp.Id).Select(sp => sp.AnhDaiDien).FirstOrDefault()
+                })
+                .ToListAsync();
+        }
     }
 }
 

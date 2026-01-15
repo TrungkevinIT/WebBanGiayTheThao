@@ -1,6 +1,7 @@
 using WebBanGiayTheThao.Models;
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebBanGiayTheThao.ViewModels;
 
 namespace WebBanGiayTheThao.Services
 {
@@ -12,5 +13,7 @@ namespace WebBanGiayTheThao.Services
         Task CapNhatLoaiSanPhamAsync(LoaiSanPham loaiSanPham);
         Task<bool> CapNhatTrangThaiAsync(int id, int trangThai);
         Task ThemLoaiSanPhamAsync(LoaiSanPham loaiSanPham);
+        //trung 10:07 15/1
+        Task<List<LoaiSanPhamVM>> GetDanhMucNoiBatAsync();
     }
 }
