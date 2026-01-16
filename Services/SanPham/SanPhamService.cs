@@ -96,6 +96,27 @@ namespace WebBanGiayTheThao.Services
         {
             return await _context.SanPhams.Include(x=>x.Ctanhs).Include(x=>x.Ctsizes).FirstOrDefaultAsync(x=>x.Id==id);
         }
+        public async Task<List<SanPham>> SanPhamBanChay()
+        {
+            return await _context.SanPhams
+            .Include(sp => sp.LoaiSanPham)
+            .Where(sp => sp.TrangThai == 1)
+            .OrderByDescending(sp => sp.CthoaDons.Sum(ct => ct.SoLuong))
+            .Take(4)
+
+        .ToListAsync();
+        }
+
+        public async Task<List<SanPham>> SanPhamMoi()
+        {
+            return await _context.SanPhams
+                .Include(sp => sp.LoaiSanPham)
+                .Include(sp => sp.ThuongHieu)
+                .Where(sp => sp.TrangThai == 1 && sp.LoaiSanPham.TrangThai == 1 && sp.ThuongHieu.TrangThai == 1)
+                .OrderByDescending(sp => sp.Id)
+                .Take(2)
+                .ToListAsync();
+        }
     }
 
 }

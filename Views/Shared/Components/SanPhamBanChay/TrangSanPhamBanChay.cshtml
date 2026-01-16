@@ -1,0 +1,43 @@
+﻿@model IEnumerable<WebBanGiayTheThao.Models.SanPham>
+
+<section class="py-10">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-end mb-8">
+            <h2 class="text-3xl font-bold">Bán Chạy Nhất</h2>
+            <a href="/SanPhams" class="text-sm underline hover:text-gray-500">Xem tất cả</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            @foreach (var item in Model)
+            {
+                <div class="group relative">
+                    <div class="w-full h-80 bg-gray-200 rounded-3xl overflow-hidden relative liquid-glass">
+                        <a href="/SanPham/TrangChiTietSanPham?id=@item.Id">
+                            <img src="/img/sanpham/item.AnhDaiDien"
+                                 alt="@item.TenSanPham"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                 onerror="this.src='/images/default-product.jpg'">
+                        </a>
+
+                        <button class="absolute bottom-4 right-4 bg-white text-black p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i class="ph ph-plus font-bold"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold">
+                            <a href="/SanPhams/TrangChiTietSanPham?id=@item.Id" class="hover:text-blue-600">
+                                @item.TenSanPham
+                            </a>
+                        </h3>
+                        <p class="text-gray-500">@item.LoaiSanPham.TenLoai</p>
+
+                        <p class="mt-1 font-bold text-black">
+                            @item.DonGia.Value.ToString("#,##0") đ
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -13,7 +13,7 @@ namespace WebBanGiayTheThao.ViewComponents
             _context = context;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             var setting = _context.WebSettings.FirstOrDefault();
             return View(setting);

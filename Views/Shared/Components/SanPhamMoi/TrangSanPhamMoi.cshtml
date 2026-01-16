@@ -1,0 +1,21 @@
+﻿@model IEnumerable<SanPham> 
+
+<section class="py-10 border-t border-gray-200">
+    <h2 class="text-3xl font-bold mb-8 text-center">Sản Phẩm Mới</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        @foreach (var item in Model)
+        {
+            <div class="relative rounded-3xl overflow-hidden h-96 group liquid-glass">
+                <img src="/img/sanpham/@item.AnhDaiDien" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                    <h3 class="text-2xl text-white font-bold">@item.TenSanPham</h3>
+                    <h3 class="text-2xl text-white font-bold">@item.LoaiSanPham.TenLoai</h3>
+                    <p class="text-xl text-white font-bold">@item.DonGia?.ToString("#,##0") đ</p>
+                    <a href="#" class="inline-block w-max text-white border-b border-white pb-1">Xem chi tiết &rarr;</a>
+                </div>
+            </div>
+        }
+       
+    </div>
+</section>
