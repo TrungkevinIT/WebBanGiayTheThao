@@ -174,7 +174,7 @@
 
         @await Component.InvokeAsync("BinhLuan", new { spId = Model.Id, trang = trangHienTai })
 
-        
+        @await Component.InvokeAsync("SanPhamLienQuan", new { loaiSpId = Model.LoaiSanPhamId, sanPhamId = Model.Id })
 
     </main>
 </div>

@@ -5,10 +5,10 @@ using WebBanGiayTheThao.Models;
 
 namespace WebBanGiayTheThao.ViewComponents
 {
-    public class SanPhamLienQuanComponent : ViewComponent
+    public class SanPhamLienQuanViewComponent : ViewComponent
     {
         private readonly QuanLyWebBanGiayContext _context;
-        public SanPhamLienQuanComponent(QuanLyWebBanGiayContext context)
+        public SanPhamLienQuanViewComponent(QuanLyWebBanGiayContext context)
         {
             _context = context;
         }
@@ -20,9 +20,9 @@ namespace WebBanGiayTheThao.ViewComponents
                 .Take(4)
                 .ToListAsync();
 
-            return View(sp);
+            return View("SanPhamLienQuan", sp);
         }
 
-        
+
     }
 }
