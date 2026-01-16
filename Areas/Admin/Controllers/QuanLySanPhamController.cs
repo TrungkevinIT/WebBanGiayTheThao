@@ -75,9 +75,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         public async Task<IActionResult> TrangThemSanPham()
         {
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            var thuongHieuActive = dsthuonghieu.Where(x => x.TrangThai == 1).ToList();
-            ViewBag.DanhSachThuongHieu = new SelectList(thuongHieuActive, "Id", "TenThuongHieu");
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
+            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu");
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai");
             return View();
         }
@@ -85,11 +84,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> TrangThemSanPham(SanPham sp)
         {
-            // 2. Kiểm tra ảnh bắt buộc (Thủ công)
-            if (sp.ImageFile == null)
-            {
-                ModelState.AddModelError("ImageFile", "Vui lòng chọn ảnh đại diện (Bắt buộc)");
-            }
+            //// 2. Kiểm tra ảnh bắt buộc (Thủ công)
+            //if (sp.ImageFile == null)
+            //{
+            //    ModelState.AddModelError("ImageFile", "Vui lòng chọn ảnh đại diện (Bắt buộc)");
+            //}
 
             if (ModelState.IsValid)
             {
@@ -152,9 +151,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
 
 
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            var thuongHieuActive = dsthuonghieu.Where(x => x.TrangThai == 1).ToList();
-            ViewBag.DanhSachThuongHieu = new SelectList(thuongHieuActive, "Id", "TenThuongHieu");
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
+            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu");
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai");
             return View(sp);
         }
@@ -204,7 +202,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", sp.ThuongHieuId);
 
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
 
             return View(sp);
@@ -319,7 +317,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
    
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", sp.ThuongHieuId);
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
            
             var sanPhamCu = await _sp.GetSanPhamById(sp.Id);
