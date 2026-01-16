@@ -34,18 +34,29 @@ namespace WebBanGiayTheThao.Controllers
             return View(products);
         }
         [HttpGet]
-        public async Task<IActionResult> TrangChiTietSanPham(int id)
+        public async Task<IActionResult> TrangChiTietSanPham(int id,int? sizeId)
         {
             if(id<0) return NotFound();
-            var sp = await _sanPhamService.GetSanPhamById(id);
+            var sp = await _sanPhamService
+                .GetSanPhamById(id);
+            if (sp == null) return NotFound();
+
             var cacMauKhac = await _sanPhamService.GetKieuDangAsync(sp.MaKieuDang);
             ViewBag.CacMauKhac = cacMauKhac;
-            if (sp==null)
-                return NotFound();
-            else
-            {
-                return View(sp);
-            }    
+            
+          // Tìm size đó 
+            if (sp.Ctsizes != null)
+                {
+                    var sizeDangChon = sp.Ctsizes.FirstOrDefault(x => x.Id == sizeId);
+
+                    if (sizeDangChon != null)
+                    {
+                        ViewBag.SoLuongTon = sizeDangChon.SoLuongTon;
+                        ViewBag.SizeIdDangChon = sizeId;
+                    }
+                }
+            
+            return View(sp);
         }
     }
 }
