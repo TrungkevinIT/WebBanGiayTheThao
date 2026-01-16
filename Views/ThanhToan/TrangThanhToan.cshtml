@@ -1,4 +1,7 @@
-﻿<main class="container mx-auto px-0 md:px-6 py-12 mt-4 md:mt-10">
+﻿@using WebBanGiayTheThao.Models
+@model IEnumerable<WebBanGiayTheThao.Models.CtgioHang>
+
+<main class="container mx-auto px-0 md:px-6 py-12 mt-4 md:mt-10">
     <form id="checkout-form" onsubmit="handleOrder(event)">
         <div class="flex flex-col lg:flex-row gap-8">
 
@@ -104,27 +107,19 @@
                     <h2 class="text-xl font-bold">Đơn hàng của bạn</h2>
 
                     <div class="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                        <div class="flex gap-4 items-center group">
-                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-sm line-clamp-1">Nike Air Zoom Pegasus 39</h4>
-                                <p class="text-xs text-gray-500">Size: 40 | x1</p>
-                            </div>
-                            <span class="font-bold text-sm">3.527.199₫</span>
-                        </div>
-
-                        <div class="flex gap-4 items-center group">
-                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                                <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-sm line-clamp-1">Nike Air Green</h4>
-                                <p class="text-xs text-gray-500">Size: 41 | x1</p>
-                            </div>
-                            <span class="font-bold text-sm">3.500.000₫</span>
-                        </div>
+                        @foreach(var item in Model)
+                            {
+                                <div class="flex gap-4 items-center group">
+                                    <div class="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                                        <img src="@item.SanPham.AnhDaiDien" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-sm line-clamp-1">@item.SanPham.TenSanPham</h4>
+                                        <p class="text-xs text-gray-500">Size: @item.Size.Size | x @item.SoLuong</p>
+                                    </div>
+                                    <span class="font-bold text-sm">@((item.SanPham.DonGia ?? 0).ToString("#,##0"))₫</span>
+                                </div>
+                            }                    
                     </div>
 
                     <div class="space-y-3 pt-2 border-t border-dashed border-gray-300">
