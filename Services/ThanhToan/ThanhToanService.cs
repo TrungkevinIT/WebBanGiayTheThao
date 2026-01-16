@@ -20,5 +20,18 @@ namespace WebBanGiayTheThao.Services.ThanhToan
                 .Where(c => c.UserId == id)
                 .ToListAsync();
         }
+
+        public async Task<List<UserVoucher>> GetVoucherByUserAsync(int UserId)
+        {
+            var now = DateTime.Now;
+            return await _context.UserVouchers
+                .Include(uv => uv.Voucher)
+                .Where(uv => uv.UserId == UserId &&
+                             uv.DaSuDung == false &&
+                             uv.NgayKetThucLuu >= now)
+                .OrderByDescending(uv=>uv.GiaTriGiamLuu)
+                .ToListAsync();
+
+        }
     }
 }

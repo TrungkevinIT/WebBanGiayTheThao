@@ -21,6 +21,7 @@ namespace WebBanGiayTheThao.Controllers
                 TempData["GioHangloi"] = "Giỏ Hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.";
                 return RedirectToAction("TrangGioHang", "GioHang");
             }
+            ViewBag.MyVouchers = _service.GetVoucherByUserAsync(UserId).Result;
             return View(cartItems);
         }
     }
