@@ -1,426 +1,128 @@
-﻿@section Scripts {
-    <script>
-        // --- DATA & CONFIG ---
-        const userVouchers = [
-            { id: 'v1', code: 'WELCOME', discount: 50000, minOrder: 1000000, description: 'Giảm 50k cho đơn từ 1 triệu' },
-            { id: 'v2', code: 'SHOESLOVER', discount: 100000, minOrder: 3000000, description: 'Giảm 100k cho thành viên thân thiết' },
-            { id: 'v3', code: 'BIGSALE', discount: 500000, minOrder: 5000000, description: 'Giảm 500k cho đơn hàng lớn' },
-            { id: 'v4', code: 'LUXURY', discount: 1000000, minOrder: 10000000, description: 'Giảm 1 triệu cho đơn từ 10 triệu' }
-        ];
-
-        const itemsPerPage = 5; // Cấu hình 5 sản phẩm/trang
-        let currentPage = 1;
-
-        // --- DOM Elements ---
-        const subTotalEl = document.getElementById('sub-total');
-        const finalTotalEl = document.getElementById('final-total');
-        const discountRow = document.getElementById('discount-row');
-        const discountAmountEl = document.getElementById('discount-amount');
-        const cartCountEl = document.getElementById('cart-count');
-        const cartItemsContainer = document.getElementById('cart-items-container');
-        const paginationContainer = document.getElementById('cart-pagination');
-
-        // Modal Elements
-        const modal = document.getElementById('voucher-modal');
-        const voucherListEl = document.getElementById('voucher-list');
-        const btnOpenModal = document.getElementById('open-voucher-modal');
-        const btnRemoveVoucher = document.getElementById('remove-voucher');
-        const selectedVoucherText = document.getElementById('selected-voucher-text');
-
-        // State
-        let currentSubTotal = 0;
-        let currentDiscount = 0;
-        let selectedVoucher = null;
-
-        function formatCurrency(amount) {
-            return amount.toLocaleString('vi-VN') + ' ₫';
-        }
-
-        // --- 1. LOGIC PHÂN TRANG (MỚI) ---
-        function renderCartPage() {
-            // Lấy tất cả các item hiện có trong DOM
-            const allItems = Array.from(document.querySelectorAll('.cart-item'));
-            const totalItems = allItems.length;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-            // Kiểm tra nếu trang hiện tại lớn hơn tổng trang (do xóa sản phẩm)
-            if (currentPage > totalPages && totalPages > 0) {
-                currentPage = totalPages;
-            } else if (totalPages === 0) {
-                currentPage = 1; // Giỏ hàng trống
-            }
-
-            // Hiển thị/Ẩn items
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-
-            allItems.forEach((item, index) => {
-                if (index >= startIndex && index < endIndex) {
-                    item.classList.remove('hidden-item');
-                } else {
-                    item.classList.add('hidden-item');
-                }
-            });
-
-            // Render nút phân trang
-            renderPaginationControls(totalPages);
-        }
-
-        function renderPaginationControls(totalPages) {
-            paginationContainer.innerHTML = '';
-
-            if (totalPages <= 1) return; // Không cần phân trang nếu <= 1 trang
-
-            // Nút Prev
-            const prevBtn = document.createElement('button');
-            prevBtn.innerHTML = '<i class="ph ph-caret-left"></i>';
-            prevBtn.className = `w-8 h-8 flex items-center justify-center rounded-lg transition ${currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-black hover:text-white'}`;
-            prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; renderCartPage(); window.scrollTo(0,0); } };
-            paginationContainer.appendChild(prevBtn);
-
-            // Các nút số
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.innerText = i;
-                if (i === currentPage) {
-                    btn.className = "w-8 h-8 flex items-center justify-center rounded-lg bg-black text-white font-bold shadow-md";
-                } else {
-                    btn.className = "w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black hover:text-white transition text-gray-600";
-                    btn.onclick = () => { currentPage = i; renderCartPage(); window.scrollTo(0,0); };
-                }
-                paginationContainer.appendChild(btn);
-            }
-
-            // Nút Next
-            const nextBtn = document.createElement('button');
-            nextBtn.innerHTML = '<i class="ph ph-caret-right"></i>';
-            nextBtn.className = `w-8 h-8 flex items-center justify-center rounded-lg transition ${currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-black hover:text-white'}`;
-            nextBtn.onclick = () => { if(currentPage < totalPages) { currentPage++; renderCartPage(); window.scrollTo(0,0); } };
-            paginationContainer.appendChild(nextBtn);
-        }
-
-        // --- 2. LOGIC TÍNH TỔNG TIỀN (CẬP NHẬT) ---
-        // Lưu ý: Tính tổng tiền phải dựa trên TẤT CẢ item, kể cả item bị ẩn do phân trang
-        function updateCartTotals() {
-            const allItems = document.querySelectorAll('.cart-item');
-            let tempTotal = 0;
-            let totalQty = 0;
-
-            allItems.forEach(item => {
-                const price = parseInt(item.getAttribute('data-price'));
-                const qty = parseInt(item.querySelector('.qty-display').innerText);
-                tempTotal += price * qty;
-                totalQty += qty;
-            });
-
-            currentSubTotal = tempTotal;
-            subTotalEl.setAttribute('data-value', currentSubTotal);
-            subTotalEl.innerText = formatCurrency(currentSubTotal);
-            cartCountEl.innerText = totalQty;
-
-            // Kiểm tra Voucher
-            if (selectedVoucher) {
-                if (currentSubTotal < selectedVoucher.minOrder) {
-                    removeVoucherLogic();
-                    alert(`Voucher ${selectedVoucher.code} đã bị hủy do đơn hàng không đủ điều kiện.`);
-                } else {
-                    currentDiscount = selectedVoucher.discount;
-                }
-            }
-
-            const finalTotal = currentSubTotal - currentDiscount;
-            finalTotalEl.innerText = formatCurrency(finalTotal > 0 ? finalTotal : 0);
-
-            if (allItems.length === 0) {
-                cartItemsContainer.innerHTML = '<p class="text-center text-gray-500 py-10">Giỏ hàng của bạn đang trống.</p>';
-                paginationContainer.innerHTML = '';
-            }
-        }
-
-        // --- 3. INIT ACTIONS (XỬ LÝ SỰ KIỆN) ---
-        function initCartActions() {
-            // Sử dụng Event Delegation để xử lý cho cả item có sẵn và item thêm mới (nếu có)
-            // Tuy nhiên ở đây code tĩnh nên ta querySelectorAll là đủ
-            const cartItems = document.querySelectorAll('.cart-item');
-
-            cartItems.forEach(item => {
-                const btnDecrease = item.querySelector('.btn-decrease');
-                const btnIncrease = item.querySelector('.btn-increase');
-                const btnRemove = item.querySelector('.btn-remove');
-                const qtyDisplay = item.querySelector('.qty-display');
-
-                btnDecrease.addEventListener('click', () => {
-                    let qty = parseInt(qtyDisplay.innerText);
-                    if (qty > 1) {
-                        qty--;
-                        qtyDisplay.innerText = qty;
-                        updateCartTotals();
-                    }
-                });
-
-                btnIncrease.addEventListener('click', () => {
-                    let qty = parseInt(qtyDisplay.innerText);
-                    qty++;
-                    qtyDisplay.innerText = qty;
-                    updateCartTotals();
-                });
-
-                btnRemove.addEventListener('click', () => {
-                    if(confirm("Bạn có chắc muốn xóa sản phẩm này?")) {
-                        item.remove();
-                        // Sau khi xóa: Phải render lại trang và cập nhật tiền
-                        renderCartPage();
-                        updateCartTotals();
-                    }
-                });
-            });
-        }
-
-        // --- 4. LOGIC XÓA TẤT CẢ ---
-        const btnClearCart = document.getElementById('btn-clear-cart');
-
-        if (btnClearCart) {
-            btnClearCart.addEventListener('click', function() {
-                // Kiểm tra xem giỏ hàng có sản phẩm không
-                const allItems = document.querySelectorAll('.cart-item');
-                if (allItems.length === 0) {
-                    alert("Giỏ hàng của bạn đang trống!");
-                    return;
-                }
-
-                // Xác nhận người dùng trước khi xóa
-                if (confirm("Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng?")) {
-
-                    // 1. Xóa toàn bộ các thẻ HTML sản phẩm
-                    allItems.forEach(item => item.remove());
-
-                    // 2. Xóa dữ liệu trong LocalStorage (Để đồng bộ với site.js và không bị hiện lại khi F5)
-                    localStorage.removeItem('shoes_cart');
-
-                    // 3. Reset Voucher (Nếu đang áp dụng voucher thì phải hủy bỏ)
-                    if (selectedVoucher) {
-                        removeVoucherLogic();
-                    }
-
-                    // 4. Cập nhật lại giao diện và tổng tiền
-                    // Hàm updateCartTotals cũ của bạn đã có logic: nếu item = 0 thì hiện thông báo trống
-                    updateCartTotals();
-
-                    // 5. Reset phân trang về trang 1
-                    currentPage = 1;
-                    renderCartPage();
-
-                    // 6. Cập nhật số lượng trên icon giỏ hàng ở Header (Nếu site.js đã chạy)
-                    if (typeof CartManager !== 'undefined') {
-                        CartManager.updateBadge();
-                    }
-                }
-            });
-        }
-
-        // --- VOUCHER LOGIC ---
-        function openModal() { modal.classList.remove('hidden'); renderVouchers(); }
-        function closeModal() { modal.classList.add('hidden'); }
-        btnOpenModal.addEventListener('click', openModal);
-
-        function renderVouchers() {
-            voucherListEl.innerHTML = '';
-            const sortedVouchers = userVouchers.sort((a, b) => {
-                const aEligible = currentSubTotal >= a.minOrder;
-                const bEligible = currentSubTotal >= b.minOrder;
-                return bEligible - aEligible;
-            });
-            sortedVouchers.forEach(voucher => {
-                const isEligible = currentSubTotal >= voucher.minOrder;
-                const div = document.createElement('div');
-                div.className = `p-4 rounded-xl border-2 flex items-center justify-between cursor-pointer group transition relative overflow-hidden ${isEligible ? 'border-gray-100 bg-white hover:border-black' : 'border-gray-100 bg-gray-100 opacity-60 cursor-not-allowed grayscale'}`;
-                if (isEligible) div.onclick = () => applyVoucher(voucher);
-                div.innerHTML = `<div class="flex items-center gap-4 z-10"><div class="w-12 h-12 bg-black text-white flex items-center justify-center rounded-lg font-bold text-xs">%</div><div><p class="font-bold text-sm">${voucher.code}</p><p class="text-xs text-gray-500 line-clamp-1">${voucher.description}</p><p class="text-[10px] text-gray-400 mt-1">Đơn tối thiểu: ${formatCurrency(voucher.minOrder)}</p></div></div>${isEligible ? '<div class="w-4 h-4 rounded-full border border-gray-300 group-hover:bg-black group-hover:border-black transition"></div>' : '<span class="text-[10px] font-bold text-red-500 bg-red-100 px-2 py-1 rounded">Chưa đủ ĐK</span>'}`;
-                voucherListEl.appendChild(div);
-            });
-        }
-
-        function applyVoucher(voucher) {
-            selectedVoucher = voucher;
-            currentDiscount = voucher.discount;
-            discountRow.classList.remove('hidden');
-            discountAmountEl.innerText = `-${formatCurrency(currentDiscount)}`;
-            selectedVoucherText.innerText = `Đã dùng: ${voucher.code}`;
-            selectedVoucherText.classList.add('font-bold', 'text-black');
-            selectedVoucherText.classList.remove('text-gray-500');
-            btnRemoveVoucher.classList.remove('hidden');
-            closeModal();
-            updateCartTotals();
-        }
-
-        function removeVoucherLogic() {
-            selectedVoucher = null;
-            currentDiscount = 0;
-            discountRow.classList.add('hidden');
-            selectedVoucherText.innerText = "Chọn Voucher của bạn";
-            selectedVoucherText.classList.remove('font-bold', 'text-black');
-            selectedVoucherText.classList.add('text-gray-500');
-            btnRemoveVoucher.classList.add('hidden');
-            updateCartTotals();
-        }
-        btnRemoveVoucher.addEventListener('click', removeVoucherLogic);
-
-        // --- MAIN INIT ---
-        initCartActions(); // Gán sự kiện cho các nút
-        renderCartPage();  // Phân trang lần đầu
-        updateCartTotals(); // Tính tiền lần đầu
-
-    </script>
-}
+﻿@model IEnumerable<WebBanGiayTheThao.Models.CtgioHang>
 
 <main class="container mx-auto px-6 py-12 mt-20">
     <div class="flex justify-between items-end mb-10">
         <h1 class="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
-        <button id="btn-clear-cart" class="text-red-500 hover:text-red-700 font-bold text-sm underline flex items-center gap-2 hover:bg-red-50 px-3 py-2 rounded-lg transition">
-            <i class="ph ph-trash text-lg"></i> Xóa tất cả
-        </button>
+        @if (Model.Any())
+        {
+            <a asp-controller="GioHang"
+               asp-action="XoaFull"
+               class="text-red-500 hover:text-red-700 font-bold text-sm underline flex items-center gap-2 hover:bg-red-50 px-3 py-2 rounded-lg transition cursor-pointer"
+               onclick="return confirm('CẢNH BÁO: Bạn có chắc muốn xóa sạch giỏ hàng không?');">
+
+                <i class="ph ph-trash text-lg"></i> Xóa tất cả
+            </a>
+        }
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
-
-        <div class="w-full lg:w-2/3">
-            <div id="cart-items-container" class="space-y-4 min-h-[500px]">
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="3500000" data-id="1">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Air Zoom</h3><p class="text-gray-500 text-sm">Size: 40</p><p class="font-bold mt-1">3.500.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="2800000" data-id="2">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Air Green</h3><p class="text-gray-500 text-sm">Size: 41</p><p class="font-bold mt-1">2.800.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="4200000" data-id="3">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Air Max</h3><p class="text-gray-500 text-sm">Size: 42</p><p class="font-bold mt-1">4.200.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="3100000" data-id="4">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Jordan Low</h3><p class="text-gray-500 text-sm">Size: 39</p><p class="font-bold mt-1">3.100.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="5000000" data-id="5">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1584735175315-9d5df23860e6?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Dunk High</h3><p class="text-gray-500 text-sm">Size: 43</p><p class="font-bold mt-1">5.000.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="2500000" data-id="6">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Training</h3><p class="text-gray-500 text-sm">Size: 40</p><p class="font-bold mt-1">2.500.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-
-                <div class="cart-item liquid-glass p-6 rounded-3xl flex flex-col sm:flex-row items-center gap-6" data-price="3800000" data-id="7">
-                    <div class="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1514989940723-e8875ea6ab7d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover"></div>
-                    <div class="flex-1 text-center sm:text-left"><h3 class="font-bold">Nike Limited</h3><p class="text-gray-500 text-sm">Size: 42</p><p class="font-bold mt-1">3.800.000 ₫</p></div>
-                    <div class="flex items-center gap-4 bg-white/50 rounded-full px-3 py-1 border border-gray-200"><button class="btn-decrease hover:text-gray-400"><i class="ph ph-minus"></i></button><span class="qty-display font-bold w-4 text-center">1</span><button class="btn-increase hover:text-gray-400"><i class="ph ph-plus"></i></button></div>
-                    <button class="btn-remove p-2 text-gray-400 hover:text-red-500"><i class="ph ph-trash text-xl"></i></button>
-                </div>
-            </div>
-
-            <div class="mt-8 flex justify-center">
-                <div id="cart-pagination" class="flex items-center gap-2 bg-white/50 p-2 rounded-xl liquid-glass">
-                </div>
-            </div>
-
-            <div class="pt-4">
-                <a href="products.html" class="inline-flex items-center gap-2 text-gray-500 hover:text-black font-medium transition">
-                    <i class="ph ph-arrow-left"></i> Tiếp tục mua sắm
-                </a>
-            </div>
+    @if (TempData["GioHangThongBao"] != null)
+    {
+        <div id="alert-box" class="mb-6 p-4 rounded-xl bg-green-100 text-green-700 border border-green-200 flex items-center gap-2 shadow-sm">
+            <i class="ph-fill ph-check-circle text-xl"></i>
+            <span class="font-bold">@TempData["GioHangThongBao"]</span>
         </div>
+    }
+    @if (TempData["GioHangLoi"] != null)
+    {
+        <div id="alert-box" class="mb-6 p-4 rounded-xl bg-red-100 text-red-700 border border-red-200 flex items-center gap-2 shadow-sm">
+            <i class="ph-fill ph-warning-circle text-xl"></i>
+            <span class="font-bold">@TempData["GioHangLoi"]</span>
+        </div>
+    }
 
-        <div class="w-full lg:w-1/3">
-            <div class="liquid-glass p-8 rounded-3xl sticky top-24 space-y-6">
-                <h2 class="text-xl font-bold">Tóm tắt đơn hàng</h2>
+    @if (!Model.Any())
+    {
+        <div class="text-center py-20 bg-gray-50 rounded-3xl">
+            <i class="ph ph-shopping-cart text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg">Giỏ hàng của bạn đang trống</p>
+            <a asp-controller="SanPham" asp-action="TrangSanPham" class="text-black font-bold mt-4 inline-block hover:underline">Mua sắm ngay</a>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-col lg:flex-row gap-8">
+            <div class="w-full lg:w-2/3">
+                <div id="cart-items-container" class="space-y-4 min-h-[500px]">
+                    @foreach (var item in Model)
+                    {
+                        <div class="bg-white rounded-[2.5rem] p-4 flex flex-col sm:flex-row items-center justify-between shadow-sm border border-gray-100 mx-auto max-w-4xl gap-6 sm:gap-0">
 
-                <div class="space-y-4 border-b border-gray-200 pb-6">
-                    <div class="flex justify-between text-gray-600">
-                        <span>Tạm tính</span>
-                        <span id="sub-total" data-value="0" class="font-medium text-black">0 ₫</span>
-                    </div>
-                    <div class="flex justify-between text-gray-600">
-                        <span>Phí vận chuyển</span>
-                        <span class="font-medium text-black">Miễn phí</span>
-                    </div>
-                    <div id="discount-row" class="hidden flex justify-between text-red-500">
-                        <span>Giảm giá Voucher</span>
-                        <span id="discount-amount" class="font-bold">-0 ₫</span>
-                    </div>
-                </div>
+                            <div class="w-32 h-32 rounded-3xl overflow-hidden shrink-0 sm:ml-2 border border-gray-50 shadow-sm relative group">
+                                <img src="@item.SanPham.AnhDaiDien"
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                     alt="@item.SanPham.TenSanPham">
+                            </div>
 
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label class="text-xs font-bold uppercase text-gray-500 ml-1">Mã ưu đãi</label>
-                        <button id="remove-voucher" class="hidden text-xs text-red-500 hover:underline">Gỡ bỏ</button>
-                    </div>
-                    <button id="open-voucher-modal" class="w-full flex items-center justify-between px-4 py-3 bg-white/50 border border-gray-200 rounded-xl hover:border-black transition group text-left">
-                        <span id="selected-voucher-text" class="text-gray-500 group-hover:text-black">Chọn Voucher của bạn</span>
-                        <i class="ph ph-ticket text-xl text-gray-400 group-hover:text-black"></i>
-                    </button>
-                </div>
+                            <div class="flex-1 flex flex-col items-center justify-center px-4 space-y-1 text-center">
+                                <h3 class="font-bold text-xl text-gray-900 line-clamp-1">
+                                    @item.SanPham.TenSanPham
+                                </h3>
+                                <p class="text-gray-500 text-sm">
+                                    Size: <span class="font-medium text-gray-700">@(item.Size?.Size.ToString() ?? "N/A")</span>
+                                </p>
+                                <p class="font-bold text-lg text-gray-900 mt-2">
+                                    @((item.SanPham.DonGia ?? 0).ToString("#,##0")) <span class="underline decoration-2 underline-offset-2">đ</span>
+                                </p>
+                            </div>
 
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-gray-500 ml-1">Phương thức thanh toán</label>
-                    <div class="flex items-center p-3 border border-black bg-white/50 rounded-xl cursor-pointer hover:bg-white transition shadow-sm">
-                        <div class="w-5 h-5 rounded-full border-2 border-black flex items-center justify-center mr-3">
-                            <div class="w-2.5 h-2.5 bg-black rounded-full"></div>
+                            <div class="flex items-center gap-6 sm:mr-6">
+                                <div class="flex items-center justify-between border-2 border-gray-200 rounded-full px-4 py-2 w-32 bg-white">
+                                    <a asp-controller="GioHang"
+                                       asp-action="CapNhatSoLuong"
+                                       asp-route-id="@item.Id"
+                                       asp-route-thayDoi="-1"
+                                       class="text-gray-600 hover:text-black transition active:scale-75 p-1 cursor-pointer">
+                                        <i class="ph-bold ph-minus text-lg"></i>
+                                    </a>
+                                    <span class="font-bold text-lg text-gray-900 select-none">@item.SoLuong</span>
+                                    <a asp-controller="GioHang"
+                                       asp-action="CapNhatSoLuong"
+                                       asp-route-id="@item.Id"
+                                       asp-route-thayDoi="1"
+                                       class="text-gray-600 hover:text-black transition active:scale-75 p-1 cursor-pointer">
+                                        <i class="ph-bold ph-plus text-lg"></i>
+                                    </a>
+                                </div>
+
+                                <a asp-controller="GioHang" asp-action="XoaItem" asp-route-id="@item.Id"
+                                   class="text-gray-400 hover:text-red-500 transition p-2 hover:bg-red-50 rounded-full cursor-pointer"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này không?');">
+                                    <i class="ph ph-trash text-2xl"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <p class="font-bold text-sm">Thanh toán khi nhận hàng (COD)</p>
-                            <p class="text-xs text-gray-500">Kiểm tra hàng trước khi thanh toán</p>
+                    }
+                </div>
+                <div class="mt-8 flex justify-center">
+                    @if (Convert.ToInt32(ViewData["TotalPages"]) > 1)
+                    {
+                        <partial name="~/Areas/Admin/Views/Shared/_Pager.cshtml" />
+                    }
+                </div>
+                <div class="pt-4">
+                    <a asp-controller="SanPham" asp-action="TrangSanPham" class="inline-flex items-center gap-2 text-gray-500 hover:text-black font-medium transition">
+                        <i class="ph ph-arrow-left"></i> Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+            <div class="w-full lg:w-1/3">
+                <div class="liquid-glass p-8 rounded-3xl sticky top-24 space-y-6">
+                    <h2 class="text-xl font-bold">Thông tin đơn hàng</h2>
+
+                    <div class="space-y-4 border-b border-gray-200 pb-6">
+                        <div class="flex justify-between text-gray-600">
+                            <span> Tổng Tiền</span>
+                            <span id="sub-total" data-value="0" class="font-medium text-black">
+                                @(((decimal)(ViewBag.TongTienCaGio ?? 0)).ToString("#,##0")) ₫
+                            </span>
                         </div>
-                        <i class="ph ph-hand-coins text-2xl text-gray-700"></i>
                     </div>
-                </div>
-
-                <div class="flex justify-between items-end pt-2 border-t border-gray-200 mt-4">
-                    <span class="font-bold text-lg pt-4">Tổng cộng</span>
-                    <div class="text-right pt-4">
-                        <p id="final-total" class="text-2xl font-black text-black">0 ₫</p>
-                        <p class="text-xs text-gray-400">(Đã bao gồm VAT)</p>
-                    </div>
-                </div>
-
-                <a asp-controller="ThanhToan" asp-action="TrangThanhToan" class="block w-full">
-                    <button class="w-full py-4 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition transform active:scale-95 shadow-xl flex items-center justify-center gap-3">
+                    <a asp-controller="ThanhToan" asp-action="TrangThanhToan" class="block w-full py-4 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition transform active:scale-95 shadow-xl flex items-center justify-center gap-3">
                         ĐẶT HÀNG NGAY <i class="ph ph-arrow-right text-xl"></i>
-                    </button>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </main>
 
-<div id="voucher-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 modal-overlay" onclick="closeModal()"></div>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
-        <div class="liquid-glass bg-white/90 rounded-3xl p-6 shadow-2xl animate-[fadeIn_0.3s_ease-out]">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold">Chọn Voucher</h3>
-                <button onclick="closeModal()" class="p-2 hover:bg-gray-200 rounded-full transition"><i class="ph ph-x text-lg"></i></button>
-            </div>
-            <div id="voucher-list" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar"></div>
-            <div class="mt-6 pt-4 border-t border-gray-200 text-center">
-                <button onclick="closeModal()" class="text-sm font-semibold text-gray-500 hover:text-black">Đóng lại</button>
-            </div>
-        </div>
-    </div>
-</div>

@@ -12,6 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBanGiayTheThao.Services.ThuongHieuService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
+builder.Services.AddScoped<WebBanGiayTheThao.Services.IGioHangService, WebBanGiayTheThao.Services.GioHang.GioHangService>();
 // Đăng ký Service Loại Sản Phẩm
 builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBanGiayTheThao.Services.LoaiSanPhamService>();
 //dang ly Websetting

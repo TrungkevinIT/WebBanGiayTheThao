@@ -1,39 +1,10 @@
-﻿@section Scripts{
-    <script>
-        function handleOrder(e) {
-            e.preventDefault(); // Ngăn form reload trang
-
-            const btn = document.getElementById('btn-submit');
-            const originalText = btn.innerHTML;
-
-            // 1. Hiệu ứng Loading
-            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-xl"></i> Đang xử lý...';
-            btn.disabled = true;
-            btn.classList.add('opacity-70', 'cursor-not-allowed');
-
-            // 2. Giả lập gửi dữ liệu lên server (delay 1.5s)
-            setTimeout(() => {
-                // Ẩn loading
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.classList.remove('opacity-70', 'cursor-not-allowed');
-
-                // Hiện Modal thành công
-                document.getElementById('success-modal').classList.remove('hidden');
-
-                // (Tùy chọn) Xóa giỏ hàng trong LocalStorage nếu có
-                // localStorage.removeItem('cart');
-            }, 1500);
-        }
-    </script>
-}
-
-<main class="container mx-auto px-6 py-12 mt-20">
+﻿<main class="container mx-auto px-0 md:px-6 py-12 mt-4 md:mt-10">
     <form id="checkout-form" onsubmit="handleOrder(event)">
         <div class="flex flex-col lg:flex-row gap-8">
 
             <div class="w-full lg:w-2/3 space-y-6">
-                <div class="liquid-glass p-8 rounded-3xl">
+
+                <div class="liquid-glass p-6 md:p-8 rounded-3xl">
                     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
                         <i class="ph ph-map-pin-line text-2xl"></i> Thông tin giao hàng
                     </h2>
@@ -65,28 +36,77 @@
                     </div>
                 </div>
 
-                <div class="liquid-glass p-8 rounded-3xl">
+                <div class="liquid-glass p-6 md:p-8 rounded-3xl">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <i class="ph ph-credit-card text-2xl"></i> Phương thức thanh toán
                     </h2>
-                    <div class="flex items-center p-4 border border-black bg-black/5 rounded-xl">
-                        <i class="ph-fill ph-check-circle text-2xl text-black mr-3"></i>
-                        <div class="flex-1">
-                            <p class="font-bold text-sm">Thanh toán khi nhận hàng (COD)</p>
-                            <p class="text-xs text-gray-500">Bạn sẽ thanh toán tiền mặt cho shipper khi nhận hàng.</p>
-                        </div>
+
+                    <div class="space-y-3">
+                        <label class="relative block cursor-pointer group">
+                            <input type="radio" name="payment_method" value="cod" class="peer sr-only" checked>
+                            <div class="flex items-start p-4 border border-gray-200 rounded-xl transition-all peer-checked:border-black peer-checked:bg-black/5 peer-checked:shadow-md hover:bg-gray-50">
+                                <div class="mt-1 mr-3">
+                                    <i class="ph-fill ph-circle text-2xl text-gray-300 peer-checked:hidden"></i>
+                                    <i class="ph-fill ph-check-circle text-2xl text-black hidden peer-checked:block"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-sm">Thanh toán khi nhận hàng (COD)</p>
+                                        <i class="ph ph-package text-xl text-gray-400"></i>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Bạn sẽ thanh toán tiền mặt cho shipper khi nhận hàng.</p>
+                                </div>
+                            </div>
+                            <div class="absolute inset-0 border-2 border-black rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none transition"></div>
+                        </label>
+
+                        <label class="relative block cursor-pointer group">
+                            <input type="radio" name="payment_method" value="banking" class="peer sr-only">
+                            <div class="flex items-start p-4 border border-gray-200 rounded-xl transition-all peer-checked:border-black peer-checked:bg-black/5 peer-checked:shadow-md hover:bg-gray-50">
+                                <div class="mt-1 mr-3">
+                                    <i class="ph-fill ph-circle text-2xl text-gray-300 peer-checked:hidden"></i>
+                                    <i class="ph-fill ph-check-circle text-2xl text-black hidden peer-checked:block"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-sm">Chuyển khoản Ngân hàng (VietQR)</p>
+                                        <i class="ph ph-qr-code text-xl text-gray-400"></i>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Quét mã QR để thanh toán nhanh chóng.</p>
+                                </div>
+                            </div>
+                            <div class="absolute inset-0 border-2 border-black rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none transition"></div>
+                        </label>
+
+                        <label class="relative block cursor-pointer group">
+                            <input type="radio" name="payment_method" value="momo" class="peer sr-only">
+                            <div class="flex items-start p-4 border border-gray-200 rounded-xl transition-all peer-checked:border-black peer-checked:bg-pink-50 peer-checked:shadow-md hover:bg-gray-50">
+                                <div class="mt-1 mr-3">
+                                    <i class="ph-fill ph-circle text-2xl text-gray-300 peer-checked:hidden"></i>
+                                    <i class="ph-fill ph-check-circle text-2xl text-pink-600 hidden peer-checked:block"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-sm group-hover:text-pink-600 transition">Ví MoMo</p>
+                                        <i class="ph ph-wallet text-xl text-pink-500"></i>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Thanh toán qua ứng dụng ví điện tử MoMo.</p>
+                                </div>
+                            </div>
+                            <div class="absolute inset-0 border-2 border-pink-600 rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none transition"></div>
+                        </label>
                     </div>
                 </div>
             </div>
 
             <div class="w-full lg:w-1/3">
-                <div class="liquid-glass p-8 rounded-3xl sticky top-24 space-y-6">
+                <div class="liquid-glass p-6 md:p-8 rounded-3xl sticky top-24 space-y-6">
                     <h2 class="text-xl font-bold">Đơn hàng của bạn</h2>
 
                     <div class="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                        <div class="flex gap-4 items-center">
-                            <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover">
+                        <div class="flex gap-4 items-center group">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                             </div>
                             <div class="flex-1">
                                 <h4 class="font-bold text-sm line-clamp-1">Nike Air Zoom Pegasus 39</h4>
@@ -95,15 +115,65 @@
                             <span class="font-bold text-sm">3.527.199₫</span>
                         </div>
 
-                        <div class="flex gap-4 items-center">
-                            <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover">
+                        <div class="flex gap-4 items-center group">
+                            <div class="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                                <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                             </div>
                             <div class="flex-1">
                                 <h4 class="font-bold text-sm line-clamp-1">Nike Air Green</h4>
                                 <p class="text-xs text-gray-500">Size: 41 | x1</p>
                             </div>
                             <span class="font-bold text-sm">3.500.000₫</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-2 border-t border-dashed border-gray-300">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold uppercase text-gray-500">Mã ưu đãi</label>
+                            <span class="text-xs text-green-600 font-bold hidden" id="voucher-msg">Đã áp dụng!</span>
+                        </div>
+
+                        <div class="relative group">
+                            <select onchange="document.getElementById('voucher-input').value = this.value"
+                                    class="input-glass w-full pl-4 pr-10 py-2 rounded-xl text-sm appearance-none cursor-pointer text-gray-700 font-medium hover:bg-white/80 transition focus:ring-2 focus:ring-black/20">
+                                <option value="">-- Chọn mã khuyến mãi có sẵn --</option>
+                                <option value="WELCOME">🎉 WELCOME - Giảm 50.000₫</option>
+                                <option value="FREESHIP">🚚 FREESHIP - Miễn phí vận chuyển</option>
+                                <option value="TET2024">🧧 TET2024 - Lì xì 100.000₫</option>
+                            </select>
+                            <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500">
+                                <i class="ph-bold ph-caret-down"></i>
+                            </div>
+                        </div>
+
+                        <div class="relative flex gap-2">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="ph ph-tag text-gray-400"></i>
+                                </div>
+                                <input type="text"
+                                       id="voucher-input"
+                                       placeholder="Hoặc nhập mã của bạn"
+                                       class="input-glass w-full pl-9 pr-4 py-3 rounded-xl text-sm transition focus:ring-2 focus:ring-black/20 focus:border-black uppercase placeholder:normal-case font-bold text-black">
+                            </div>
+                            <button type="button" onclick="applyVoucher()" class="bg-gray-900 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-black transition shadow-lg active:scale-95 whitespace-nowrap">
+                                Áp dụng
+                            </button>
+                        </div>
+
+                        <div id="active-voucher" class="hidden flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-xl">
+                            <div class="flex items-center gap-2">
+                                <div class="bg-green-100 p-1 rounded-full">
+                                    <i class="ph-fill ph-ticket text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-green-700" id="voucher-code-display">CODE</p>
+                                    <p class="text-[10px] text-green-600">Áp dụng thành công</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeVoucher()" class="text-gray-400 hover:text-red-500 transition p-1">
+                                <i class="ph-bold ph-x"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -116,22 +186,22 @@
                             <span>Phí vận chuyển</span>
                             <span class="text-green-600 font-bold">Miễn phí</span>
                         </div>
-                        <div class="flex justify-between text-sm text-red-500">
-                            <span>Voucher (WELCOME)</span>
-                            <span>-50.000 ₫</span>
+                        <div class="hidden flex justify-between text-sm text-red-500">
+                            <span>Voucher</span>
+                            <span>-0 ₫</span>
                         </div>
                     </div>
 
                     <div class="flex justify-between items-end pt-4 border-t border-gray-200">
                         <span class="font-bold text-lg">Tổng thanh toán</span>
                         <div class="text-right">
-                            <p class="text-2xl font-black text-black">6.977.199 ₫</p>
+                            <p class="text-2xl font-black text-black">7.027.199 ₫</p>
                             <p class="text-xs text-gray-400">(Đã bao gồm VAT)</p>
                         </div>
                     </div>
 
                     <button type="submit" id="btn-submit" class="w-full py-4 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition transform active:scale-95 shadow-xl flex items-center justify-center gap-3">
-                        HOÀN TẤT ĐẶT HÀNG
+                        HOÀN TẤT ĐẶT HÀNG <i class="ph-bold ph-arrow-right"></i>
                     </button>
                 </div>
             </div>
@@ -150,13 +220,53 @@
             <p class="text-gray-500 text-sm mb-6">Cảm ơn bạn đã mua sắm. Mã đơn hàng của bạn là <span class="font-bold text-black">#SHOE8829</span></p>
 
             <div class="space-y-3">
-                <a href="index.html" class="block w-full py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition">
+                <a href="#" class="block w-full py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition">
                     Về trang chủ
                 </a>
-                <a href="products.html" class="block w-full py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition">
+                <a href="#" class="block w-full py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition">
                     Tiếp tục mua sắm
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // 1. Xử lý Voucher (Chọn select -> điền input -> bấm áp dụng)
+    function applyVoucher() {
+        const input = document.getElementById('voucher-input');
+        const display = document.getElementById('active-voucher');
+        const codeDisplay = document.getElementById('voucher-code-display');
+
+        if(input.value.trim() !== "") {
+            display.classList.remove('hidden');
+            codeDisplay.innerText = input.value.toUpperCase();
+            input.disabled = true;
+            input.parentElement.classList.add('opacity-50');
+        }
+    }
+
+    function removeVoucher() {
+        const input = document.getElementById('voucher-input');
+        const display = document.getElementById('active-voucher');
+        display.classList.add('hidden');
+        input.value = "";
+        input.disabled = false;
+        input.parentElement.classList.remove('opacity-50');
+    }
+
+    // 2. Xử lý Submit Form & Modal
+    function handleOrder(event) {
+        event.preventDefault();
+        const btn = document.getElementById('btn-submit');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-xl"></i> Đang xử lý...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            document.getElementById('success-modal').classList.remove('hidden');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 1500);
+    }
+</script>

@@ -10,6 +10,17 @@
     int tongSoVoucherHienThi = listVoucher.Count;
 }
 
+@using WebBanGiayTheThao.Models 
+@using System.Linq
+@using Microsoft.AspNetCore.Http
+@inject WebBanGiayTheThao.Services.IGioHangService _gioHangService
+
+@{
+    int UserId = Context.Session.GetInt32("UserId").GetValueOrDefault();
+    var listGiohang = await _gioHangService.GetAllAsync(UserId);
+    int TongSoGioHang = listGiohang.Count;
+}
+
 <nav class="fixed top-0 w-full z-50 liquid-glass transition-all duration-300">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="/" class="text-2xl font-bold tracking-tighter">
@@ -18,8 +29,8 @@
 
         <div class="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-wide">
 
-            <a asp-controller="Home" asp-action="Index" class="hover:text-gray-500 transition">Trang chủ</a>
-            <a asp-controller="SanPham" asp-action="Index" class="hover:text-gray-500 transition">Sản phẩm</a>
+            <a asp-controller="Home" asp-action="TrangChu" class="hover:text-gray-500 transition">Trang chủ</a>
+            <a asp-controller="SanPham" asp-action="TrangSanPham" class="hover:text-gray-500 transition">Sản phẩm</a>
             <a asp-controller="LienHe" asp-action="Index" class="hover:text-gray-500 transition">Liên hệ</a>
             <a asp-controller="Home" asp-action="GioiThieu" class="hover:text-gray-500 transition">Giới thiệu</a>
 
@@ -34,7 +45,7 @@
                 <i class="ph ph-shopping-cart text-xl"></i>
                 <span class="absolute top-0 right-0 h-4 w-4 bg-black text-white text-[10px]
                              flex items-center justify-center rounded-full">
-                    0
+                    @TongSoGioHang
                 </span>
             </a>
 

@@ -3,7 +3,7 @@ using WebBanGiayTheThao.Filters;
 
 namespace WebBanGiayTheThao.Controllers
 {
-    [SessionAuthorize]
+    //[SessionAuthorize]
     public class ThanhToanController : Controller
     {
         public IActionResult TrangThanhToan()
