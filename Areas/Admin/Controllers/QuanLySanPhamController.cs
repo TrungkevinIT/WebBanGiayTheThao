@@ -33,12 +33,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             base.OnActionExecuting(context);
         }
 
-        public async Task<IActionResult> TrangQLSanPham(string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1)
+        public async Task<IActionResult> TrangQLSanPham(string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1, bool isAdmin = false)
         {
-            if (!trangThai.HasValue) trangThai = 1;
             int pagesize = 10;
 
-            var sp = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pagesize);
+            var sp = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pagesize,isAdmin: true);
             int totalPages = (int)Math.Ceiling((double)sp.totalCount / pagesize);
 
             ViewBag.TotalPages = totalPages;
@@ -50,7 +49,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
 
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", thuongHieuId);
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", loaiId);
 
             return View(sp.products);

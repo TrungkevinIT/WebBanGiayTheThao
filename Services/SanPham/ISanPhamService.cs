@@ -10,7 +10,8 @@ namespace WebBanGiayTheThao.Services
          string? gia,
          int? trangthai,
          int page,
-         int pagesize
+         int pagesize,
+         bool isAdmin = false
          );
         Task<SanPham?> GetSanPhamById(int id);
         Task CapNhatTrangThaiSanPham(int trangthai);

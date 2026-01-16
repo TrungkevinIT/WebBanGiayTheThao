@@ -25,12 +25,13 @@ namespace WebBanGiayTheThao.Controllers
             ViewBag.Search = search;
             ViewBag.SortOrder = sortOrder;
             ViewBag.TrangThai = trangThai;
-            var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", thuongHieuId);
+            var allThuongHieu = await _thuonghieu.GetAllAsync(null);
+            var activeThuongHieu = allThuongHieu.Where(x => x.TrangThai == 1);
+            ViewBag.DanhSachThuongHieu = new SelectList(activeThuongHieu, "Id", "TenThuongHieu", thuongHieuId);
             var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", loaiId);
             int pageSize = 8;
-            var item = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pageSize);
+            var item = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pageSize, isAdmin: false);
             return View(item);
         }
         public IActionResult TrangChiTietSanPham(int id)

@@ -13,10 +13,14 @@ namespace WebBanGiayTheThao.Services
         }
 
         public async Task<(List<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
-         string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize
+         string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize, bool isAdmin = false
          )
         {
-            var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).Where(sp=>sp.LoaiSanPham.TrangThai==1 && sp.ThuongHieu.TrangThai==1).AsQueryable();
+            var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).AsQueryable();
+            if (!isAdmin)
+            {
+                query = query.Where(sp => sp.LoaiSanPham.TrangThai == 1 && sp.ThuongHieu.TrangThai == 1);
+            }
             if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(sp=>sp.TenSanPham != null && sp.TenSanPham.Contains(search)
