@@ -19,6 +19,9 @@ builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBa
 builder.Services.AddScoped<IWebSettingService, WebSettingService>();
 // Ðãng kí service cho Auth
 builder.Services.AddScoped<AuthService>();
+//trung 8:51 16/1
+//dang ky tạo ra một công cụ giúp  móc nối vào dữ liệu của người dùng hiện tại.
+builder.Services.AddHttpContextAccessor();
 // Ðãng kí session
 builder.Services.AddSession();
 // DuyKhang edit 20:14 11/01/2026 

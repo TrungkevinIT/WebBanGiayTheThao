@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using WebBanGiayTheThao.Filters;
+using WebBanGiayTheThao.Models;
 using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Controllers
@@ -7,14 +11,26 @@ namespace WebBanGiayTheThao.Controllers
     public class SanPhamController : Controller
     {
         private readonly ISanPhamService _sp;
-        public SanPhamController(ISanPhamService sp)
+        private readonly ILoaiSanPhamService _lsp;
+        private readonly IThuongHieuService _thuonghieu;
+        public SanPhamController(ISanPhamService sp, ILoaiSanPhamService lsp, IThuongHieuService thuonghieu)
         {
             _sp = sp;
+            _lsp = lsp;
+            _thuonghieu = thuonghieu;
         }
-        public async Task<IActionResult> TrangSanPham(string? search, int? loaispid, int? thuonghieuid, string? gia, int page=1)
+        public async Task<IActionResult> TrangSanPham(string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1)
         {
+           
+            ViewBag.Search = search;
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.TrangThai = trangThai;
+            var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
+            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", thuongHieuId);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
+            ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", loaiId);
             int pageSize = 8;
-            var item = await _sp.LoadDSSanPham(search, loaispid, thuonghieuid, gia,1, page, pageSize);
+            var item = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pageSize);
             return View(item);
         }
         public IActionResult TrangChiTietSanPham(int id)
