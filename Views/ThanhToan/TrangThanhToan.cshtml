@@ -1,102 +1,79 @@
 ﻿@using WebBanGiayTheThao.Models
 @model IEnumerable<WebBanGiayTheThao.Models.CtgioHang>
 
-<main class="container mx-auto px-0 md:px-6 py-12 mt-4 md:mt-10">
-    <form id="checkout-form" onsubmit="handleOrder(event)">
-        <div class="flex flex-col lg:flex-row gap-8">
+<main class="container mx-auto px-4 md:px-6 py-12 mt-4 md:mt-10">
+
+
+    @if (TempData["LoiThanhToan"] != null)
+    {
+        <div class="mb-6 mx-auto max-w-4xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3 animate-bounce">
+            <i class="ph-fill ph-warning-circle text-2xl"></i>
+            <div>
+                <p class="font-bold">Thông báo</p>
+                <p class="text-sm">@TempData["LoiThanhToan"]</p>
+            </div>
+        </div>
+    }
+
+    <form asp-controller="ThanhToan" asp-action="DatHang" method="post">
+
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
 
             <div class="w-full lg:w-2/3 space-y-6">
 
-                <div class="liquid-glass p-6 md:p-8 rounded-3xl">
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
                     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
                         <i class="ph ph-map-pin-line text-2xl"></i> Thông tin giao hàng
                     </h2>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1">
-                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Họ và tên</label>
-                            <input type="text" required placeholder="Ví dụ: Nguyễn Văn A" class="input-glass w-full px-4 py-3 rounded-xl transition">
+                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Họ và tên *</label>
+                            <input type="text"
+                                   name="HoTenNguoiNhan"
+                                   required
+                                   class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition"
+                                   placeholder="Nguyễn Văn A">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Số điện thoại</label>
-                            <input type="tel" required placeholder="Ví dụ: 0987..." class="input-glass w-full px-4 py-3 rounded-xl transition">
+                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Số điện thoại *</label>
+                            <input type="tel"
+                                   name="Sdtnhan"
+                                   required
+                                   class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition"
+                                   placeholder="098...">
                         </div>
                         <div class="space-y-1 md:col-span-2">
-                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Email (Để nhận hóa đơn)</label>
-                            <input type="email" required placeholder="email@example.com" class="input-glass w-full px-4 py-3 rounded-xl transition">
+                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Địa chỉ nhận hàng *</label>
+                            <input type="text"
+                                   name="DiaChiNhan"
+                                   required
+                                   class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition"
+                                   placeholder="Số nhà, đường...">
                         </div>
-                    </div>
-
-                    <div class="mt-6 space-y-4">
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Địa chỉ cụ thể</label>
-                            <input type="text" required placeholder="Số nhà, tên đường..." class="input-glass w-full px-4 py-3 rounded-xl transition">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Ghi chú (Tùy chọn)</label>
-                            <textarea rows="2" placeholder="Ví dụ: Giao hàng giờ hành chính..." class="input-glass w-full px-4 py-3 rounded-xl transition"></textarea>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold uppercase text-gray-500 ml-1">Ghi chú</label>
+                            <textarea name="GhiChu"
+                                      rows="2"
+                                      placeholder="Ví dụ: Giao giờ hành chính..."
+                                      class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition"></textarea>
                         </div>
                     </div>
                 </div>
 
-                <div class="liquid-glass p-6 md:p-8 rounded-3xl">
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <i class="ph ph-credit-card text-2xl"></i> Phương thức thanh toán
                     </h2>
-
                     <div class="space-y-3">
-                        <label class="relative block cursor-pointer group">
-                            <input type="radio" name="payment_method" value="cod" class="peer sr-only" checked>
-                            <div class="flex items-start p-4 border border-gray-200 rounded-xl transition-all peer-checked:border-black peer-checked:bg-black/5 peer-checked:shadow-md hover:bg-gray-50">
-                                <div class="mt-1 mr-3">
-                                    <i class="ph-fill ph-circle text-2xl text-gray-300 peer-checked:hidden"></i>
-                                    <i class="ph-fill ph-check-circle text-2xl text-black hidden peer-checked:block"></i>
-                                </div>
+                        <label class="relative block cursor-pointer group select-none">
+                            <input type="radio" name="PhuongThucThanhToan" value="1" class="peer sr-only" checked>
+                            <div class="flex items-start p-4 border-2 border-black bg-gray-50 rounded-xl transition-all peer-checked:bg-black/5 peer-checked:shadow-sm">
+                                <div class="mt-1 mr-3"><i class="ph-fill ph-check-circle text-2xl text-black"></i></div>
                                 <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <p class="font-bold text-sm">Thanh toán khi nhận hàng (COD)</p>
-                                        <i class="ph ph-package text-xl text-gray-400"></i>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-1">Bạn sẽ thanh toán tiền mặt cho shipper khi nhận hàng.</p>
+                                    <p class="font-bold text-sm text-black">Thanh toán khi nhận hàng (COD)</p>
+                                    <p class="text-xs text-gray-500 mt-1">Thanh toán tiền mặt cho shipper khi nhận hàng.</p>
                                 </div>
                             </div>
-                            <div class="absolute inset-0 border-2 border-black rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none transition"></div>
-                        </label>
-
-                        <label class="relative block cursor-pointer group">
-                            <input type="radio" name="payment_method" value="banking" class="peer sr-only">
-                            <div class="flex items-start p-4 border border-gray-200 rounded-xl transition-all peer-checked:border-black peer-checked:bg-black/5 peer-checked:shadow-md hover:bg-gray-50">
-                                <div class="mt-1 mr-3">
-                                    <i class="ph-fill ph-circle text-2xl text-gray-300 peer-checked:hidden"></i>
-                                    <i class="ph-fill ph-check-circle text-2xl text-black hidden peer-checked:block"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <p class="font-bold text-sm">Chuyển khoản Ngân hàng (VietQR)</p>
-                                        <i class="ph ph-qr-code text-xl text-gray-400"></i>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-1">Quét mã QR để thanh toán nhanh chóng.</p>
-                                </div>
-                            </div>
-                            <div class="absolute inset-0 border-2 border-black rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none transition"></div>
-                        </label>
-
-                        <label class="relative block cursor-pointer group">
-                            <input type="radio" name="payment_method" value="momo" class="peer sr-only">
-                            <div class="flex items-start p-4 border border-gray-200 rounded-xl transition-all peer-checked:border-black peer-checked:bg-pink-50 peer-checked:shadow-md hover:bg-gray-50">
-                                <div class="mt-1 mr-3">
-                                    <i class="ph-fill ph-circle text-2xl text-gray-300 peer-checked:hidden"></i>
-                                    <i class="ph-fill ph-check-circle text-2xl text-pink-600 hidden peer-checked:block"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <p class="font-bold text-sm group-hover:text-pink-600 transition">Ví MoMo</p>
-                                        <i class="ph ph-wallet text-xl text-pink-500"></i>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-1">Thanh toán qua ứng dụng ví điện tử MoMo.</p>
-                                </div>
-                            </div>
-                            <div class="absolute inset-0 border-2 border-pink-600 rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none transition"></div>
                         </label>
                     </div>
                 </div>
@@ -104,36 +81,42 @@
 
             <div class="w-full lg:w-1/3">
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-gray-200 h-fit relative z-10">
-                    <h2 class="text-xl font-bold">Đơn hàng của bạn</h2>
+                    <h2 class="text-xl font-bold mb-6">Đơn hàng của bạn</h2>
 
-                    <div class="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                        @foreach(var item in Model)
-                            {
-                                <div class="flex gap-4 items-center group">
-                                    <div class="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                                        <img src="@item.SanPham.AnhDaiDien" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                                    </div>
-                                    <div class="flex-1">
-                                        <h4 class="font-bold text-sm line-clamp-1">@item.SanPham.TenSanPham</h4>
-                                        <p class="text-xs text-gray-500">Size: @item.Size.Size | x @item.SoLuong</p>
-                                    </div>
-                                    <span class="font-bold text-sm">@((item.SanPham.DonGia ?? 0).ToString("#,##0"))₫</span>
+                    <div class="space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar mb-6">
+                        @foreach (var item in Model)
+                        {
+                            <div class="flex gap-4 items-center py-2 border-b border-gray-50 last:border-0">
+                                <div class="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                                    <img src="@(item.SanPham?.AnhDaiDien ?? "")" class="w-full h-full object-cover">
                                 </div>
-                            }                    
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-bold text-sm text-gray-900 line-clamp-1">@(item.SanPham?.TenSanPham ?? "Sản phẩm")</h4>
+                                    <p class="text-xs text-gray-500">Size: @(item.Size?.Size.ToString() ?? "-") | x @item.SoLuong</p>
+                                </div>
+                                <span class="font-bold text-sm whitespace-nowrap">@((item.SanPham?.DonGia ?? 0).ToString("#,##0"))₫</span>
+                            </div>
+                        }
                     </div>
 
                     <div class="space-y-3 pt-4 border-t border-dashed border-gray-300">
                         <label class="text-xs font-bold uppercase text-gray-500">Mã ưu đãi</label>
 
                         <div class="relative group">
-                            <select onchange="document.getElementById('voucher-input').value = this.value"
-                                    class="input-glass w-full pl-4 pr-10 py-2 rounded-xl text-sm appearance-none cursor-pointer text-gray-700 font-medium hover:bg-white/80 transition focus:ring-2 focus:ring-black/20 border border-gray-200">
-                                <option value="">-- Chọn mã trong ví --</option>
+                            <select id="voucher-select" onchange="updatePrice(this)"
+                                    class="w-full pl-4 pr-10 py-2.5 rounded-xl text-sm appearance-none cursor-pointer bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 transition focus:ring-2 focus:ring-black border border-gray-200 outline-none">
+
+                                <option value="" data-giam="0" data-min="0">-- Chọn mã trong ví --</option>
+
                                 @if (ViewBag.MyVouchers != null)
                                 {
                                     foreach (var v in (List<UserVoucher>)ViewBag.MyVouchers)
                                     {
-                                        <option value="@v.MaCodeLuu">@v.MaCodeLuu (Giảm @v.GiaTriGiamLuu?.ToString("#,##0")₫)</option>
+                                        <option value="@v.MaCodeLuu"
+                                                data-giam="@(v.GiaTriGiamLuu ?? 0)"
+                                                data-min="@(v.DonToiThieuLuu ?? 0)">
+                                            @v.MaCodeLuu (Giảm @(v.GiaTriGiamLuu?.ToString("#,##0") ?? "0")₫)
+                                        </option>
                                     }
                                 }
                             </select>
@@ -151,55 +134,73 @@
                                    id="voucher-input"
                                    value="@TempData["VoucherOld"]"
                                    placeholder="Hoặc nhập mã..."
-                                   class="input-glass w-full pl-9 pr-4 py-3 rounded-xl text-sm transition focus:ring-2 focus:ring-black/20 focus:border-black uppercase placeholder:normal-case font-bold text-black border border-gray-200">
-                        </div>
-                        <p class="text-[10px] text-gray-400 italic">* Hệ thống sẽ kiểm tra và trừ tiền sau khi bấm Hoàn tất.</p>
-                    </div>
-
-                        <div id="active-voucher" class="hidden flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-xl">
-                            <div class="flex items-center gap-2">
-                                <div class="bg-green-100 p-1 rounded-full">
-                                    <i class="ph-fill ph-ticket text-green-600"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-700" id="voucher-code-display">CODE</p>
-                                    <p class="text-[10px] text-green-600">Áp dụng thành công</p>
-                                </div>
-                            </div>
-                            <button type="button" onclick="removeVoucher()" class="text-gray-400 hover:text-red-500 transition p-1">
-                                <i class="ph-bold ph-x"></i>
-                            </button>
+                                   class="w-full pl-9 pr-4 py-3 rounded-xl text-sm bg-gray-50 transition focus:ring-2 focus:ring-black focus:bg-white border border-gray-200 uppercase placeholder:normal-case font-bold text-black outline-none"
+                                   readonly>
                         </div>
                     </div>
 
-                    <div class="border-t border-gray-200 pt-4 space-y-3">
+                    <div class="pt-6 mt-2 border-t border-gray-200 space-y-2">
                         <div class="flex justify-between text-sm text-gray-600">
                             <span>Tạm tính</span>
-                            <span>7.027.199 ₫</span>
+                            <span>@(((decimal)ViewBag.TongGoc).ToString("#,##0")) ₫</span>
                         </div>
-                        <div class="flex justify-between text-sm text-gray-600">
-                            <span>Phí vận chuyển</span>
-                            <span class="text-green-600 font-bold">Miễn phí</span>
+
+                        <div class="flex justify-between text-sm text-green-600 font-medium">
+                            <span>Giảm giá</span>
+                            <span id="discount-display">- @(((decimal)ViewBag.GiamGia).ToString("#,##0")) ₫</span>
                         </div>
-                        <div class="hidden flex justify-between text-sm text-red-500">
-                            <span>Voucher</span>
-                            <span>-0 ₫</span>
+
+                        <div class="flex justify-between items-end pt-2 border-t border-gray-100">
+                            <span class="font-bold text-lg text-gray-900">Tổng thanh toán</span>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-black leading-none" id="final-total-display">@(((decimal)ViewBag.TongThanhToan).ToString("#,##0")) ₫</p>
+                                <p class="text-[10px] text-gray-400 italic mt-1">(Đã bao gồm VAT)</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-end pt-4 border-t border-gray-200">
-                        <span class="font-bold text-lg">Tổng thanh toán</span>
-                        <div class="text-right">
-                            <p class="text-2xl font-black text-black">7.027.199 ₫</p>
-                            <p class="text-xs text-gray-400">(Đã bao gồm VAT)</p>
-                        </div>
-                    </div>
-
-                <button type="submit" class="w-full py-4 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2">
-                    HOÀN TẤT ĐẶT HÀNG <i class="ph-bold ph-arrow-right"></i>
-                </button>
+                    <button type="submit" class="w-full mt-6 py-4 bg-black text-white font-bold rounded-2xl hover:bg-gray-900 transition shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2">
+                        HOÀN TẤT ĐẶT HÀNG <i class="ph-bold ph-arrow-right"></i>
+                    </button>
                 </div>
             </div>
+        </div>
     </form>
 </main>
 
+<script>
+    const baseTotal = @ViewBag.TongGoc;
+
+    function updatePrice(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        const discountAmount = parseFloat(selectedOption.getAttribute('data-giam')) || 0;
+        const minOrder = parseFloat(selectedOption.getAttribute('data-min')) || 0;
+        const code = selectedOption.value;
+
+        document.getElementById('voucher-input').value = code;
+
+        let actualDiscount = 0;
+        const discountLabel = document.getElementById('discount-display');
+
+        if (baseTotal >= minOrder) {
+            actualDiscount = discountAmount;
+            if (actualDiscount > baseTotal) actualDiscount = baseTotal;
+        } else {
+            actualDiscount = 0;
+        }
+
+        const finalTotal = baseTotal - actualDiscount;
+
+        const fmt = new Intl.NumberFormat('vi-VN');
+
+        discountLabel.innerText = `- ${fmt.format(actualDiscount)} ₫`;
+        document.getElementById('final-total-display').innerText = `${fmt.format(finalTotal)} ₫`;
+
+        if(actualDiscount > 0) {
+            discountLabel.classList.add('font-bold');
+        } else {
+            discountLabel.classList.remove('font-bold');
+        }
+    }
+</script>
