@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    int? userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("VaiTro");
+    bool isAdmin = (userRoleId.HasValue && userRoleId.Value == 1);
+}
+<form action="" method="get">
+    <div class="row g-2">
+        <div class="col-md-2">
+            <label class="form-label text-muted small">Từ khóa</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control border-start-0" placeholder="Tìm kiếm...">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label text-muted small">Thương hiệu</label>
+            <select name="thuongHieuId" class="form-select" asp-items="ViewBag.DanhSachThuongHieu">
+                <option value="">Tất cả</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label text-muted small">Loại SP</label>
+            <select name="loaiId" class="form-select" asp-items="ViewBag.DanhSachLoaiSanPham">
+                <option value="">Tất cả</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label text-muted small">Sắp xếp giá</label>
+            <select name="sortOrder" class="form-select">
+                <option value="">Mặc định</option>
+                <option value="gia_tang">Thấp đến cao</option>
+                <option value="gia_giam">Cao xuống thấp</option>
+            </select>
+        </div>
+        @if (isAdmin)
+        {
+            <div class="col-md-2">
+                <label class="form-label text-muted small">Trạng Thái</label>
+                <select name="trangThai" class="form-select" onchange="this.form.submit()">
+                    <option value="">Tất cả</option>
+                    <option value="1" selected="@(ViewBag.TrangThai == 1)">Hoạt động</option>
+                    <option value="0" selected="@(ViewBag.TrangThai == 0)">Ngừng hoạt động</option>
+                </select>
+            </div>
+        }
+        else
+        {
+            <input type="hidden" name="trangThai" value="1" />
+            <div class="col-md-2"></div>
+        }
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-search me-1"></i> Tìm
+            </button>
+        </div>
+    </div>
+</form>
