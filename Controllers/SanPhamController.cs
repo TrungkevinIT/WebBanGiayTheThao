@@ -21,7 +21,12 @@ namespace WebBanGiayTheThao.Controllers
         }
         public async Task<IActionResult> TrangSanPham(string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1)
         {
-           
+            int pageSize = 8;
+            var item = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pageSize);
+            int totalPages = (int)Math.Ceiling((double)item.totalCount / pageSize);
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
             ViewBag.Search = search;
             ViewBag.SortOrder = sortOrder;
             ViewBag.TrangThai = trangThai;
@@ -29,8 +34,7 @@ namespace WebBanGiayTheThao.Controllers
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", thuongHieuId);
             var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", loaiId);
-            int pageSize = 8;
-            var item = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pageSize);
+            ViewData["ActionName"] = "TrangSanPham";
             return View(item);
         }
         public IActionResult TrangChiTietSanPham(int id)
