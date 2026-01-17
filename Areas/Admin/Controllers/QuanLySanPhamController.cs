@@ -84,11 +84,6 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> TrangThemSanPham(SanPham sp)
         {
-            //// 2. Kiểm tra ảnh bắt buộc (Thủ công)
-            //if (sp.ImageFile == null)
-            //{
-            //    ModelState.AddModelError("ImageFile", "Vui lòng chọn ảnh đại diện (Bắt buộc)");
-            //}
 
             if (ModelState.IsValid)
             {
