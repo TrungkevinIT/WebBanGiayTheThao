@@ -17,5 +17,6 @@ namespace WebBanGiayTheThao.Services
         Task ThemSanPham(SanPham sp);
         Task CapNhatSanPham(SanPham sp);
         Task<List<SanPham>> GetKieuDangAsync(string maKieuDang);
+        
     }
 }

@@ -15,6 +15,11 @@ namespace WebBanGiayTheThao.Controllers
         }
 
         // ================== ĐĂNG NHẬP ==================
+        [HttpGet] 
+        public IActionResult DangNhap()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> DangNhap(DangNhapVM model)
         {

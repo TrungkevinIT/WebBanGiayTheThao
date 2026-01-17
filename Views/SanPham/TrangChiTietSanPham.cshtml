@@ -3,20 +3,24 @@
 @{
     ViewData["Title"] = Model.TenSanPham;
 
-    // Tập hợp tất cả ảnh của sản phẩm: Ảnh đại diện + Ảnh chi tiết
+    // Tập hợp ảnh
     var allImages = new List<string>();
     if (!string.IsNullOrEmpty(Model.AnhDaiDien)) { allImages.Add(Model.AnhDaiDien); }
     if (Model.Ctanhs != null) { allImages.AddRange(Model.Ctanhs.Select(x => x.LinkAnh)); }
 
     int trangHienTai = 1;
-
-    //lấy url trang hiện tại từ query string
     if (Context.Request.Query.ContainsKey("trang"))
     {
-        //nếu có thì gán giá trị vào biến trangHienTai
         int.TryParse(Context.Request.Query["trang"], out trangHienTai);
     }
+
+    int maxStock = 1;
+    if (ViewBag.SoLuongTon != null && (int)ViewBag.SoLuongTon > 0)
+    {
+        maxStock = (int)ViewBag.SoLuongTon;
+    }
 }
+
 <div class="bg-gray-50 min-h-screen pb-20 font-sans">
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 max-w-[1300px]">
 
@@ -28,15 +32,14 @@
             <span class="text-black font-medium truncate">@Model.TenSanPham</span>
         </nav>
 
-        <form asp-controller="GioHang" method="post">
-            <input type="hidden" name="productId" value="@Model.Id" />
-            <input type="hidden" name="soLuong" value="1" />
+        
 
+        <div>
             <div class="bg-white rounded-[40px] p-8 lg:p-16 shadow-lg mb-12">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20 items-start">
+
                     
                     <div class="lg:col-span-8 flex flex-col-reverse lg:flex-row gap-4">
-                        @* ảnh phụ *@
                         <div id="gallery-thumbs" class="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:w-20 lg:h-[500px] no-scrollbar py-1">
                             @foreach (var img in allImages)
                             {
@@ -46,68 +49,51 @@
                                 </div>
                             }
                         </div>
-                        @* ảnh chính ne *@
                         <div class="flex-1 bg-gray-100 rounded-2xl overflow-hidden relative aspect-square group">
-                            <img id="main-image"
-                                 src="~/img/sanpham/@Model.AnhDaiDien"
-                                 alt="@Model.TenSanPham"
+                            <img id="main-image" src="~/img/sanpham/@Model.AnhDaiDien" alt="@Model.TenSanPham"
                                  class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                                  onerror="this.src='/img/no-image.jpg'">
                         </div>
                     </div>
 
+                    
                     <div class="lg:col-span-4 space-y-8">
-
                         <div>
                             <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 leading-tight">@Model.TenSanPham</h1>
-                        </div>                     
+                        </div>
                         <div>
                             <p class="text-gray-500 mt-2">@Model.LoaiSanPham?.TenLoai Nam</p>
-                            <p class="text-3xl font-extrabold text-black mt-4">
-                                @((Model.DonGia ?? 0).ToString("N0")) ₫
-                            </p>
+                            <p class="text-3xl font-extrabold text-black mt-4">@((Model.DonGia ?? 0).ToString("N0")) ₫</p>
                         </div>
-                        @* các màu cùng loại giày *@
+
+                        @* Chọn Màu *@
                         <div>
                             <h3 class="font-bold text-sm text-gray-900 mb-3">Chọn Màu Sắc</h3>
                             <div class="flex gap-3">
-
                                 @if (ViewBag.CacMauKhac != null)
                                 {
                                     @foreach (var item in ViewBag.CacMauKhac)
                                     {
                                         bool isActive = item.Id == Model.Id;
-
-                                        // Nếu là màu đang xem: Viền đen đậm. Nếu màu khác: Viền trong suốt, hover vào mới hiện viền
-                                        string borderClass = isActive
-                                        ? "border-black ring-1 ring-black"  // Active
-                                        : "border-transparent hover:border-gray-400"; // Inactive
-
-                                        // Tạo đường dẫn: Nếu bấm vào màu khác -> Chuyển sang trang chi tiết của ID đó
+                                        string borderClass = isActive ? "border-black ring-1 ring-black" : "border-transparent hover:border-gray-400";
                                         string url = isActive ? "javascript:void(0)" : Url.Action("TrangChiTietSanPham", "SanPham", new { id = item.Id });
 
-                                        <a href="@url"
-                                           class="block w-20 h-20 rounded-xl border-2 p-1 cursor-pointer transition-all duration-200 @borderClass"
-                                           title="@item.TenSanPham">
-
-                                            <img src="~/img/sanpham/@item.AnhDaiDien" asp-append-version="true"
-                                                 class="w-full h-full object-cover rounded-lg"
-                                                 onerror="this.src='/img/no-image.jpg'">
+                                        <a href="@url" class="block w-20 h-20 rounded-xl border-2 p-1 cursor-pointer transition-all duration-200 @borderClass" title="@item.TenSanPham">
+                                            <img src="~/img/sanpham/@item.AnhDaiDien" asp-append-version="true" class="w-full h-full object-cover rounded-lg" onerror="this.src='/img/no-image.jpg'">
                                         </a>
                                     }
                                 }
                             </div>
                         </div>
-                        @* size của giày *@
+
+                        @* Chọn Size *@
                         <div class="grid grid-cols-3 gap-2" id="size-container">
                             @if (Model.Ctsizes != null && Model.Ctsizes.Any())
                             {
                                 @foreach (var size in Model.Ctsizes.OrderBy(x => x.Size))
                                 {
                                     bool isSelected = ViewBag.SizeIdDangChon != null && (int)ViewBag.SizeIdDangChon == size.Id;
-                                    string activeClass = isSelected
-                                    ? "bg-black text-white border-black" 
-                                    : "bg-white text-gray-900 border-gray-300 hover:border-black"; 
+                                    string activeClass = isSelected ? "bg-black text-white border-black" : "bg-white text-gray-900 border-gray-300 hover:border-black";
 
                                     <a href="@Url.Action("TrangChiTietSanPham", new { id = Model.Id, sizeId = size.Id })"
                                        class="h-12 flex items-center justify-center rounded-xl border font-bold text-sm transition-all duration-200 cursor-pointer @activeClass">
@@ -120,57 +106,81 @@
                                 <span class="col-span-full text-red-500 text-sm italic">Hết size.</span>
                             }
                         </div>
-                        @* số lượng sản phẩm *@
+
+                        @* Thông báo tồn kho *@
                         <div class="mt-4 mb-2">
                             @if (ViewBag.SoLuongTon != null)
                             {
                                 int tonKho = (int)ViewBag.SoLuongTon;
                                 if (tonKho > 0)
                                 {
-                                    <p class="flex items-center gap-2 text-black-600 font-medium">
-                                        Còn lại @tonKho sản phẩm
-                                    </p>
+                                    <p class="flex items-center gap-2 text-black-600 font-medium">Còn lại @tonKho sản phẩm</p>
                                 }
                                 else
                                 {
-                                    <p class="flex items-center gap-2 text-black-500 font-bold">
-                                        hết hàng
-                                    </p>
+
+                                    <p class="flex items-center gap-2 text-black-500 font-bold">Hết hàng</p>
                                 }
                             }
                             else
                             {
-                                <p class="text-gray-500 italic text-sm">
-                                    Vui lòng chọn Size ạ
-                                </p>
+                                <p class="text-gray-500 italic text-sm">Vui lòng chọn Size ạ</p>
                             }
                         </div>
-                        <div>
-                            <form action="/GioHang/ThemVaoGio" method="post" class="mt-4 border-t border-gray-100 pt-4">
-                                <input type="hidden" name="productId" value="1" />
-                                <input type="hidden" name="sizeId" value="10" />
 
-                                <div class="flex items-end gap-4">
-                                    <button type="submit" class="flex-1 py-3 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-all shadow-lg h-[50px]">
-                                        Thêm vào giỏ hàng
-                                    </button>
+                       
+                        <div class="mt-6 border-t border-gray-100 pt-6">
+                            <form asp-controller="SanPham" asp-action="ThemVaoGioHang" method="post">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <input type="hidden" name="sizeId" value="@(ViewBag.SizeIdDangChon ?? "")" />
+
+                                <div class="flex flex-col gap-4">
+                                    <div class="flex items-center gap-4">
+                                        <span class="font-bold text-gray-900 text-sm">Số lượng:</span>
+                                        <div class="flex items-center border border-gray-300 rounded-full h-10 w-fit overflow-hidden">
+                                            <button type="button" onclick="updateQuantity(-1)" class="w-10 h-full flex items-center justify-center hover:bg-gray-100 transition text-gray-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                            </button>
+
+                                            <input type="number" id="soLuongInput" name="soLuong" value="1" min="1" max="@maxStock" class="w-12 h-full text-center border-x border-gray-300 outline-none font-medium text-sm appearance-none m-0" readonly />
+
+                                            <button type="button" onclick="updateQuantity(1)" class="w-10 h-full flex items-center justify-center hover:bg-gray-100 transition text-gray-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-end gap-4 mt-2">
+                                        @if (ViewBag.SoLuongTon != null && (int)ViewBag.SoLuongTon > 0)
+                                        {
+                                            <button type="submit" class="flex-1 py-3 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 transition-all shadow-lg h-[50px]">
+                                                Thêm vào giỏ hàng
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" disabled class="flex-1 py-3 rounded-full bg-gray-300 text-gray-500 font-bold text-sm h-[50px] cursor-not-allowed">
+                                                @(ViewBag.SoLuongTon == null ? "Vui lòng chọn Size" : "Hết hàng")
+                                            </button>
+                                        }
+                                    </div>
                                 </div>
                             </form>
                         </div>
+
+                        @* Mô tả *@
                         <div class="border-t border-gray-100 pt-6">
                             <div x-data="{ open: true }">
-                                <button  class="flex w-full justify-between items-center text-left font-bold text-gray-900 hover:text-gray-600 transition" >
+                                <button class="flex w-full justify-between items-center text-left font-bold text-gray-900 hover:text-gray-600 transition">
                                     <span>Mô tả sản phẩm</span>
                                 </button>
-                                <div>
-                                    @Model.MoTa
-                                </div>
+                                <div>@Model.MoTa</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div> 
 
         @await Component.InvokeAsync("BinhLuan", new { spId = Model.Id, trang = trangHienTai })
 
@@ -181,25 +191,31 @@
 
 @section Scripts {
     <script>
-        // Chọn các ảnh phụ để phóng to ở ảnh chính 
         function changeImage(element, src) {
-            var mainImg = document.getElementById('main-image'); // lấy ảnh chính đang hiện
-            mainImg.style.opacity = '0.5'; // hiệu ứng mờ
+            var mainImg = document.getElementById('main-image');
+            mainImg.style.opacity = '0.5';
             setTimeout(function() {
                 mainImg.src = src;
                 mainImg.style.opacity = '1';
-            }, 200);// thười gian đổi ảnh
-
-            // xóa viền cũ màu đen và đổi màu thành trắng
+            }, 200);
             var thumbs = document.querySelectorAll('#gallery-thumbs div');
             thumbs.forEach(t => {
                 t.classList.remove('border-black');
                 t.classList.add('border-transparent');
             });
-
-            //thêm viền đen
             element.classList.remove('border-transparent');
             element.classList.add('border-black');
+        }
+        function updateQuantity(change) {
+            var input = document.getElementById('soLuongInput');
+            var currentVal = parseInt(input.value);
+            var maxVal = parseInt(input.getAttribute('max'));
+            var newVal = currentVal + change;
+            if (newVal >= 1 && newVal <= maxVal) {
+                input.value = newVal;
+            } else {
+                if(newVal > maxVal) alert("Bạn chỉ có thể mua tối đa " + maxVal + " sản phẩm.");
+            }
         }
     </script>
 }

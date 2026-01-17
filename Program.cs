@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Services.DonHang;
+using WebBanGiayTheThao.Services.GioHang;
 using WebBanGiayTheThao.Services.SlideShow;
 using WebBanGiayTheThao.Services.User;
 var builder = WebApplication.CreateBuilder(args);
@@ -26,10 +27,10 @@ builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
 builder.Services.AddScoped<ISanPhamService,SanPhamService>();
 builder.Services.AddScoped<ISlideShowService,SlideShowService>();
 
-builder.Services.AddScoped<ILoaiSanPhamService, LoaiSanPhamService>();
 //khoi nguyen
+builder.Services.AddScoped<ILoaiSanPhamService, LoaiSanPhamService>();
 builder.Services.AddScoped<IDonHangService, DonHangService>();
-
+builder.Services.AddScoped<IGioHangService, GioHangService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

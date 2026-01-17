@@ -13,8 +13,8 @@ namespace WebBanGiayTheThao.Filters
             if (!userId.HasValue)
             {
                 context.Result = new RedirectToActionResult(
-                    "TrangChu",
-                    "Home",
+                    "DangNhap",
+                    "NguoiDung",
                     null
                 );
                 return;

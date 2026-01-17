@@ -2,17 +2,21 @@
 using System;
 using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Filters;
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Services;
+using WebBanGiayTheThao.Services.GioHang;
 
 namespace WebBanGiayTheThao.Controllers
 {
+    
     public class SanPhamController : Controller
     {
         private readonly ISanPhamService _sanPhamService;
-
-        public SanPhamController(ISanPhamService sanPhamService)
+        private readonly IGioHangService _gioHangService;
+        public SanPhamController(ISanPhamService sanPhamService, IGioHangService gioHang)
         {
             _sanPhamService = sanPhamService;
+            _gioHangService = gioHang;
         }
         public async Task<IActionResult> TrangSanPham(string? search, int? loaispid, int? thuonghieuid, string? gia, int page = 1)
         {
@@ -58,5 +62,25 @@ namespace WebBanGiayTheThao.Controllers
             
             return View(sp);
         }
+        [HttpPost]
+        [SessionAuthorize]
+        public async Task<IActionResult> ThemVaoGioHang(int productId, int sizeId, int soLuong = 1)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId").Value;
+
+            try
+            {
+                await _gioHangService.ThemSanPhamVaoGioHangAsync(userId, productId, sizeId, soLuong);
+
+                TempData["Message"] = "Đã thêm vào giỏ hàng thành công!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi: " + ex.Message;
+            }
+
+            return RedirectToAction("TrangChiTietSanPham", new { id = productId, sizeId = sizeId });
+        }
+
     }
 }
