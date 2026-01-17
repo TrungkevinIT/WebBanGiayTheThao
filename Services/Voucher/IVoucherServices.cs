@@ -5,6 +5,7 @@ namespace WebBanGiayTheThao.Services
     public interface IVoucherServices
     {
         Task<List<Voucher>> GetAllAsync();
+        Task<bool> LuuVoucherAsync(int userId, int voucherId);
         Task<Dictionary<string, string>?> CreateAsync(Voucher voucher);
         Task<Voucher?> GetByIdAsync(int id);
         Task UpdateAsync (Voucher voucher);

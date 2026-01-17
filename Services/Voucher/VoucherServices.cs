@@ -21,7 +21,33 @@ namespace WebBanGiayTheThao.Services
                 .ToListAsync();
         }
 
-        public async Task<Dictionary<string, string>> CreateAsync(Voucher voucher)
+        public async Task<bool> LuuVoucherAsync(int userId, int voucherId)
+        {
+            var voucher = await _context.Vouchers.FindAsync(voucherId);
+            if (voucher == null|| voucher.SoLuong<1) return false;
+
+            bool daco = await _context.UserVouchers 
+                .AnyAsync(uv => uv.UserId == userId && uv.VoucherId == voucherId);
+
+            if (daco) return false;
+
+            var userVoucher = new UserVoucher
+            {
+                UserId = userId,
+                VoucherId = voucherId,
+                NgayNhan = DateTime.Now,
+                DaSuDung = false,
+                DonToiThieu = voucher.GiaTriDonToiThieu
+            };
+            _context.UserVouchers.Add(userVoucher);
+
+            voucher.SoLuong -= 1;
+            _context.Vouchers.Update(voucher);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Dictionary<string, string>?> CreateAsync(Voucher voucher)
         {
             var errors = new Dictionary<string, string>();
 

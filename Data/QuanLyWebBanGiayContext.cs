@@ -44,6 +44,8 @@ public partial class QuanLyWebBanGiayContext : DbContext
 
     public virtual DbSet<WebSetting> WebSettings { get; set; }
 
+    public  virtual DbSet<LienHe> LienHes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
