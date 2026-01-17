@@ -11,11 +11,20 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         public QuanLyLienHeController(ILienHeService service)
         {
             _service = service;
-        }   
+        }  
+       
         public async Task<IActionResult> TrangQLLienHe()
         {
             var danhsach = await _service.GetAllLienHe();
             return View(danhsach);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai (int id , int TrangThai)
+        {
+            await _service.CapNhatTrangThaiAsync(id, TrangThai);
+            return RedirectToAction("TrangQLLienHe");
+        }
+
     }
 }

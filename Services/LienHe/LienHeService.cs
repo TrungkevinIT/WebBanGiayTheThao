@@ -24,5 +24,16 @@ namespace WebBanGiayTheThao.Services
             return await _context.LienHes.OrderByDescending(x => x.Id).ToListAsync();
         }
 
+        public async Task CapNhatTrangThaiAsync(int Id, int TrangThaiMoi)
+        {
+            var lienhe = await _context.LienHes.FindAsync(Id);
+            if (lienhe != null)
+            {
+                lienhe.TrangThai = TrangThaiMoi;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
     }
 }

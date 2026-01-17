@@ -51,13 +51,26 @@
                             <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
 
                             <td>
-                                <select class="form-select form-select-sm bg-success text-white border-0 text-center fw-bold" style="width: 140px; margin: 0 auto;">
-                                    <option value="0">Mới gửi</option>
-                                    <option value="1">Đang xử lý</option>
-                                    <option value="2">Đã xong</option>
-                                </select>
+                               <form asp-action="CapNhatTrangThai" method="post">
+                                   <input type="hidden" name="id" value="@item.Id" />
+    
+                                    <select name="trangThai" onchange="this.form.submit()" 
+                                            class="form-select form-select-sm border-0 text-center fw-bold rounded-pill mx-auto 
+                                                   @(item.TrangThai switch { 
+                                                       0 => "bg-danger text-white", 
+                                                       1 => "bg-warning text-dark", 
+                                                       2 => "bg-secondary text-white", 
+                                                       _ => "bg-light text-dark" 
+                                                   })"
+                                            style="width: 140px; cursor: pointer;">
+        
+                                        <option value="0" selected="@(item.TrangThai == 0 ? "selected" : null)">Mới gửi</option>
+                                        <option value="1" selected="@(item.TrangThai == 1 ? "selected" : null)">Đang xử lý</option>
+                                        <option value="2" selected="@(item.TrangThai == 2 ? "selected" : null)">Đã xong</option>
+        
+                                    </select>
+                                </form>
                             </td>
-
                             <td>
                                 <button class="btn btn-outline-danger rounded-circle p-2 lh-1 ms-1" style="width: 35px; height: 35px;" title="Xóa" onclick="return confirm('Xóa liên hệ này?')">
                                     <i class="bi bi-trash-fill"></i>

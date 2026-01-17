@@ -6,5 +6,6 @@ namespace WebBanGiayTheThao.Services
     {
         Task AddAsync(LienHe lienhe);
         Task<List<LienHe>> GetAllLienHe();
+        Task CapNhatTrangThaiAsync(int Id, int TrangThaiMoi);
     }
 }
