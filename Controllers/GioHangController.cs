@@ -5,7 +5,6 @@ using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.Controllers
 {
-    [SessionAuthorize]
     public class GioHangController : Controller
     {
         private readonly IGioHangService _service;

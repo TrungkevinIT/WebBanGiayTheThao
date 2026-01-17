@@ -17,8 +17,8 @@
 
 @{
     int UserId = Context.Session.GetInt32("UserId").GetValueOrDefault();
-    var listGiohang = await _gioHangService.GetAllAsync(UserId);
-    int TongSoGioHang = listGiohang.Count;
+    var listGioHang = await _gioHangService.GetAllAsync(UserId);
+    int TongSoGioHang = listGioHang.Count;
 }
 
 <nav class="fixed top-0 w-full z-50 liquid-glass transition-all duration-300">

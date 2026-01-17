@@ -1,0 +1,30 @@
+﻿@model int
+
+<div class="min-h-[70vh] flex items-center justify-center bg-gray-50 py-12 px-4">
+    <div class="max-w-md w-full bg-white p-10 rounded-[2.5rem] shadow-xl text-center relative overflow-hidden">
+
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
+
+        <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600 animate-bounce">
+            <i class="ph-fill ph-check-circle text-6xl"></i>
+        </div>
+
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Đặt hàng thành công!</h2>
+
+        <p class="text-gray-500 mb-8">
+            Cảm ơn bạn đã mua sắm. Đơn hàng đang được xử lý.
+            <br />
+            Mã đơn hàng: <span class="font-black text-2xl text-black block mt-2">#@Model</span>
+        </p>
+
+        <div class="space-y-3">
+            <a asp-controller="SanPham" asp-action="TrangSanPham" class="block w-full py-4 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">
+                Tiếp tục mua sắm
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" class="block w-full py-4 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">
+                Về trang chủ
+            </a>
+        </div>
+    </div>
+</div>
