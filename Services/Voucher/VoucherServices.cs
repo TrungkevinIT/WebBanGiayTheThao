@@ -56,14 +56,16 @@ namespace WebBanGiayTheThao.Services
         {
             var voucher = await _context.Vouchers.FindAsync(voucherId);
             if (voucher == null|| voucher.SoLuong<1) return false;
-
             bool DaLuuBanMoiNhat = await _context.UserVouchers 
                 .AnyAsync(uv => uv.UserId == userId 
                 && uv.VoucherId == voucherId
                 && uv.GiaTriGiamLuu == voucher.GiaTriGiam);
 
             if (DaLuuBanMoiNhat) return false;
+            bool daco = await _context.UserVouchers 
+                .AnyAsync(uv => uv.UserId == userId && uv.VoucherId == voucherId);
 
+            if (daco) return false;
             var userVoucher = new UserVoucher
             {
                 UserId = userId,
@@ -75,7 +77,7 @@ namespace WebBanGiayTheThao.Services
                 GiaTriGiamLuu = voucher.GiaTriGiam,
                 NgayBatDauLuu = voucher.NgayBatDau,
                 NgayKetThucLuu = voucher.NgayKetThuc
-
+               
             };
             _context.UserVouchers.Add(userVoucher);
 
@@ -84,8 +86,6 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
-
         public async Task<Dictionary<string, string>?> CreateAsync(Voucher voucher)
         {
             var errors = new Dictionary<string, string>();

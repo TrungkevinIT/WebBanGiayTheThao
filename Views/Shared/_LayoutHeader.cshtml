@@ -2,6 +2,7 @@
     var username = Context.Session.GetString("Username");
     var vaiTro = Context.Session.GetInt32("VaiTro");
 }
+<<<<<<< HEAD
 @using WebBanGiayTheThao.Models @using System.Linq
 @inject WebBanGiayTheThao.Services.IVoucherServices _voucherService
 
@@ -31,9 +32,8 @@
 
             <a asp-controller="Home" asp-action="TrangChu" class="hover:text-gray-500 transition">Trang chủ</a>
             <a asp-controller="SanPham" asp-action="TrangSanPham" class="hover:text-gray-500 transition">Sản phẩm</a>
-            <a asp-controller="LienHe" asp-action="Index" class="hover:text-gray-500 transition">Liên hệ</a>
             <a asp-controller="Home" asp-action="GioiThieu" class="hover:text-gray-500 transition">Giới thiệu</a>
-
+            <a asp-controller="LienHe" asp-action="TrangLienHe" class="hover:text-gray-500 transition">Liên Hệ</a>
         </div>
 
         <div class="flex items-center space-x-4">
@@ -48,7 +48,6 @@
                     @TongSoGioHang
                 </span>
             </a>
-
             <a asp-controller="Voucher"
                asp-action="TrangVoucher"
                class="relative p-2 hover:bg-gray-200 rounded-full transition"
@@ -58,7 +57,6 @@
                     @tongSoVoucherHienThi
                     </span>
             </a>
-
 
             @* ===== CHƯA ĐĂNG NHẬP ===== *@
             @if (string.IsNullOrEmpty(username))

@@ -5,6 +5,7 @@ using WebBanGiayTheThao.Service;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Services.DonHang;
 using WebBanGiayTheThao.Services.User;
+
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -14,6 +15,7 @@ builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBan
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IGioHangService, WebBanGiayTheThao.Services.GioHang.GioHangService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThanhToanService, WebBanGiayTheThao.Services.ThanhToan.ThanhToanService>();
+builder.Services.AddScoped<WebBanGiayTheThao.Services.ILienHeService, WebBanGiayTheThao.Services.LienHeService>();
 // Đăng ký Service Loại Sản Phẩm
 builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBanGiayTheThao.Services.LoaiSanPhamService>();
 //dang ly Websetting

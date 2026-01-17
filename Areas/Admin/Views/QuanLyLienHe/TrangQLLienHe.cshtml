@@ -1,0 +1,95 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model List<WebBanGiayTheThao.Models.LienHe>
+
+<div class="container bg-white p-4 rounded-3 shadow-sm my-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-primary m-0 text-uppercase">Danh sách Liên hệ Khách hàng</h4>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th class="py-3">STT</th>
+                    <th class="py-3">Khách hàng</th>
+                    <th class="py-3">Thông tin liên hệ</th>
+                    <th class="py-3" style="width: 30%;">Nội dung</th>
+                    <th class="py-3">Ngày gửi</th>
+                    <th class="py-3">Trạng thái</th>
+                    <th class="py-3">Hành động</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if(Model != null && Model.Any())
+                {
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold text-secondary">@item.Id</td>
+                            <td>
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                                    @item.HoTen
+                                </span>
+                            </td>
+
+                            <td class="text-start ps-4">
+                                <div class="fw-bold text-danger">@item.Sdt</div>
+                                <div class="small text-secondary">@item.Email</div>
+                            </td>
+
+                            <td class="text-start">
+                                <span class="d-inline-block text-truncate" style="max-width: 250px;">
+                                    @item.NoiDung
+                                </span>
+                            </td>
+
+                            <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+
+                            <td>
+                               <form asp-action="CapNhatTrangThai" method="post">
+                                   <input type="hidden" name="id" value="@item.Id" />
+    
+                                    <select name="trangThai" onchange="this.form.submit()" 
+                                            class="form-select form-select-sm border-0 text-center fw-bold rounded-pill mx-auto 
+                                                   @(item.TrangThai switch { 
+                                                       0 => "bg-danger text-white", 
+                                                       1 => "bg-warning text-dark", 
+                                                       2 => "bg-secondary text-white", 
+                                                       _ => "bg-light text-dark" 
+                                                   })"
+                                            style="width: 140px; cursor: pointer;">
+        
+                                        <option value="0" selected="@(item.TrangThai == 0 ? "selected" : null)">Mới gửi</option>
+                                        <option value="1" selected="@(item.TrangThai == 1 ? "selected" : null)">Đang xử lý</option>
+                                        <option value="2" selected="@(item.TrangThai == 2 ? "selected" : null)">Đã xong</option>
+        
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <form asp-action="Xoa" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa liên hệ này không?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-outline-danger rounded-circle p-2 lh-1 ms-1">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">Chưa có liên hệ nào.</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
