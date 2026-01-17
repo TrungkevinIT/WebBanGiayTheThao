@@ -26,6 +26,7 @@ namespace WebBanGiayTheThao.Models
         public string? NoiDung { get; set; }
 
         public DateTime NgayTao { get; set; } = DateTime.Now;
+        public int TrangThai { get; set; } = 0;
 
 
 

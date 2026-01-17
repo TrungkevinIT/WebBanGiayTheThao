@@ -1,4 +1,5 @@
-﻿using WebBanGiayTheThao.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Models;
 
 namespace WebBanGiayTheThao.Services
@@ -11,11 +12,17 @@ namespace WebBanGiayTheThao.Services
             _context = context;
         }
 
-    public async Task AddAsync(LienHe lienhe)
+        public async Task AddAsync(LienHe lienhe)
         {
             lienhe.NgayTao = DateTime.Now;
             _context.LienHes.Add(lienhe);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<LienHe>> GetAllLienHe()
+        {
+            return await _context.LienHes.OrderByDescending(x => x.Id).ToListAsync();
+        }
+
     }
 }
