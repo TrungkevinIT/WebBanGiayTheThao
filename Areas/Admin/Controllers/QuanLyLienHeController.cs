@@ -26,5 +26,12 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             return RedirectToAction("TrangQLLienHe");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Xoa (int id)
+        {
+            await _service.XoaLienHeAsync(id);
+            return RedirectToAction("TrangQLLienHe");
+        }
+
     }
 }

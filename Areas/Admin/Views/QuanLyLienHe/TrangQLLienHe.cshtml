@@ -72,9 +72,12 @@
                                 </form>
                             </td>
                             <td>
-                                <button class="btn btn-outline-danger rounded-circle p-2 lh-1 ms-1" style="width: 35px; height: 35px;" title="Xóa" onclick="return confirm('Xóa liên hệ này?')">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
+                                <form asp-action="Xoa" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa liên hệ này không?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-outline-danger rounded-circle p-2 lh-1 ms-1">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                </form>
                             </td>
                         </tr>
                     }

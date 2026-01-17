@@ -34,6 +34,14 @@ namespace WebBanGiayTheThao.Services
             }
         }
 
-
+        public async Task XoaLienHeAsync(int id)
+        {
+            var lienhe = await _context.LienHes.FindAsync(id);
+            if (lienhe != null)
+            {
+                _context.LienHes.Remove(lienhe);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
