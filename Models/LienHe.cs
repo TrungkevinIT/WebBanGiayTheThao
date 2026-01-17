@@ -19,7 +19,7 @@ namespace WebBanGiayTheThao.Models
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
-        [StringLength(15)]
+        [StringLength(10)]
         public string? Sdt { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập nội dung liên hệ")]
