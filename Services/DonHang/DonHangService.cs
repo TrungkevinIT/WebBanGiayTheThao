@@ -30,13 +30,49 @@ namespace WebBanGiayTheThao.Services.DonHang
             }
             return await query.OrderByDescending(x => x.NgayDat).ToListAsync();
         }
-        public async Task<bool> CapNhatTrangThaiAsync(int id, int trangThai)
+        public async Task<bool> CapNhatTrangThaiAsync(int id, int trangThaiMoi)
         {
-            var hoaDon = await _context.HoaDons.FindAsync(id);
+            var hoaDon = await _context.HoaDons
+                .Include(h => h.CthoaDons)
+                .FirstOrDefaultAsync(h => h.Id == id);
             if (hoaDon == null) return false;
-            hoaDon.TrangThai = trangThai;
+
+            int trangThaiCu = (int)hoaDon.TrangThai;
+
+            if (trangThaiCu == trangThaiMoi) return true;
+            if (trangThaiCu == 0 && trangThaiMoi == 1)
+            {
+                foreach (var item in hoaDon.CthoaDons)
+                {
+                    if (item.SizeId != null)
+                    {
+                        var sanPhamKho = await _context.Ctsizes.FindAsync(item.SizeId);
+                        if (sanPhamKho != null)
+                        {
+                            sanPhamKho.SoLuongTon -= item.SoLuong;
+                        }
+                    }
+                }
+            }
+            else if (trangThaiCu == 1 && trangThaiMoi == 2)
+            {
+                foreach (var item in hoaDon.CthoaDons)
+                {
+                    if (item.SizeId != null)
+                    {
+                        var sanPhamKho = await _context.Ctsizes.FindAsync(item.SizeId);
+                        if (sanPhamKho != null)
+                        {
+                            sanPhamKho.SoLuongTon += item.SoLuong;
+                        }
+                    }
+                }
+            }
+            hoaDon.TrangThai = trangThaiMoi;
             _context.HoaDons.Update(hoaDon);
+
             await _context.SaveChangesAsync();
+
             return true;
         }
         public async Task<HoaDon?> GetHoaDonByIdAsync(int id)

@@ -185,7 +185,8 @@
                 <div class="mb-3">
                     <label class="form-label">Nhập tên mới:</label>
                     <input type="text" id="modalInputName" class="form-control" placeholder="Nhập tên..." />
-                    <span id="errorName" class="text-danger small d-none">Vui lòng nhập tên!</span>
+
+                    <span id="errorName" class="text-danger small d-none fw-bold"></span>
                 </div>
 
                 <div class="mb-3 d-none" id="divXuatXu">
@@ -264,7 +265,6 @@
             $('#tableBodySize').append(html);
             sizeIndex++;
         }
-        // Dán đoạn này vào trong thẻ <script>, bên dưới các hàm khác
         $('#formSanPham').on('submit', function (e) {
             var coLoi = false;
 
@@ -321,34 +321,54 @@
             myModal.show();
         }
 
-        function luuNhanh() {
+               function luuNhanh() {
             var type = $('#modalType').val();
             var name = $('#modalInputName').val().trim();
-            var origin = $('#modalInputOrigin').val().trim(); // Lấy giá trị xuất xứ
+            var origin = $('#modalInputOrigin').val().trim();
 
+            // 1. Reset trạng thái lỗi cũ (Xóa đỏ, xóa chữ)
+            $('#errorName').addClass('d-none').text('');
+            $('#modalInputName').removeClass('is-invalid');
+
+            // 2. Kiểm tra rỗng (Validation phía Client)
             if (!name) {
-                $('#errorName').removeClass('d-none');
-                return;
+                $('#errorName').text('Vui lòng nhập tên!').removeClass('d-none');
+                $('#modalInputName').addClass('is-invalid');
+                return; 
             }
 
-            // Gọi AJAX
+            // 3. Gửi AJAX
             $.ajax({
                 url: '/Admin/QuanLySanPham/ThemNhanhDuLieu',
                 type: 'POST',
-                data: { loai: type, ten: name, xuatXu: origin }, // Gửi kèm xuất xứ
+                data: { loai: type, ten: name, xuatXu: origin },
                 success: function (res) {
                     if (res.success) {
                         var newOption = new Option(res.ten, res.id, true, true);
-                        if (type == 'Loai') $('#ddlLoai').append(newOption).trigger('change');
-                        else $('#ddlThuongHieu').append(newOption).trigger('change');
+
+                        if (type == 'Loai') {
+                            $('#ddlLoai').append(newOption).trigger('change');
+                        } else {
+                            $('#ddlThuongHieu').append(newOption).trigger('change');
+                        }
 
                         myModal.hide();
+                       
                     } else {
-                        alert('Lỗi: ' + res.message);
+                        
+                        $('#errorName').text(res.message).removeClass('d-none');
+                        $('#modalInputName').addClass('is-invalid');
                     }
                 },
-                error: function() { alert('Lỗi kết nối server!'); }
+                error: function () {
+                    alert('Lỗi kết nối server!');
+                }
             });
         }
+
+        $('#modalInputName').on('input', function() {
+            $('#errorName').addClass('d-none');
+            $(this).removeClass('is-invalid');
+        });
     </script>
 }

@@ -12,7 +12,7 @@
                     <h3 class="text-2xl text-white font-bold">@item.TenSanPham</h3>
                     <h3 class="text-2xl text-white font-bold">@item.LoaiSanPham.TenLoai</h3>
                     <p class="text-xl text-white font-bold">@item.DonGia?.ToString("#,##0") đ</p>
-                    <a href="#" class="inline-block w-max text-white border-b border-white pb-1">Xem chi tiết &rarr;</a>
+                    <a asp-controller="SanPham" asp-action="TrangchiTietSanPham" asp-route-id="@item.Id" class="inline-block w-max text-white border-b border-white pb-1">Xem chi tiết &rarr;</a>
                 </div>
             </div>
         }

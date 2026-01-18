@@ -158,23 +158,41 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         {
             if (string.IsNullOrWhiteSpace(ten))
             {
-                return Json(new { success = false, message = "Tên không được rỗng" });
+                return Json(new { success = false, message = "Tên không được để trống!" });
             }
 
             ten = ten.Trim();
             if (loai == "Loai")
             {
+                var dsLoai = await _lsp.GetAllLoaiSanPhamAsync(null, null);
+                bool daTonTai = dsLoai.Any(x => x.TenLoai == ten);
+
+                if (daTonTai)
+                {
+                    return Json(new { success = false, message = $"Loại sản phẩm '{ten}' đã tồn tại!" });
+                }
+
                 var loaiMoi = new LoaiSanPham
                 {
                     TenLoai = ten,
                     TrangThai = 1
                 };
-                 await _lsp.ThemLoaiSanPhamAsync(loaiMoi);
-               
+                await _lsp.ThemLoaiSanPhamAsync(loaiMoi);
+
                 return Json(new { success = true, id = loaiMoi.Id, ten = loaiMoi.TenLoai });
             }
+
             else if (loai == "ThuongHieu")
             {
+                var dsThuongHieu = await _thuonghieu.GetAllAsync(null);
+
+                bool daTonTai = dsThuongHieu.Any(x => x.TenThuongHieu == ten);
+
+                if (daTonTai)
+                {
+                    return Json(new { success = false, message = $"Thương hiệu '{ten}' đã tồn tại!" });
+                }
+
                 var thMoi = new ThuongHieu
                 {
                     TenThuongHieu = ten,
@@ -184,7 +202,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 await _thuonghieu.CreateAsync(thMoi);
                 return Json(new { success = true, id = thMoi.Id, ten = thMoi.TenThuongHieu });
             }
-            return Json(new { success = false, message = "Tên đã tồn tại" });
+
+            return Json(new { success = false, message = "Loại dữ liệu không hợp lệ" });
         }
 
         // --- TRANG CẬP NHẬT SẢN PHẨM ---
