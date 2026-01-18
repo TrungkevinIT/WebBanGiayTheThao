@@ -44,6 +44,9 @@ namespace WebBanGiayTheThao.Migrations
                     b.Property<int?>("Sao")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TrangThai")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -223,6 +226,44 @@ namespace WebBanGiayTheThao.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("HoaDon");
+                });
+
+            modelBuilder.Entity("WebBanGiayTheThao.Models.LienHe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("HoTen")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("NgayTao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NoiDung")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sdt")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<int>("TrangThai")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LienHe");
                 });
 
             modelBuilder.Entity("WebBanGiayTheThao.Models.LoaiSanPham", b =>
@@ -432,6 +473,19 @@ namespace WebBanGiayTheThao.Migrations
                     b.Property<decimal?>("DonToiThieu")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<decimal?>("GiaTriGiamLuu")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("MaCodeLuu")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("NgayBatDauLuu")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayKetThucLuu")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("NgayNhan")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
@@ -498,6 +552,10 @@ namespace WebBanGiayTheThao.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("DiaChi")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("EmailLienHe")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -506,9 +564,17 @@ namespace WebBanGiayTheThao.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Linkfacebook")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Logo")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Mota")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id")
                         .HasName("PK__WebSetti__3214EC079FCF25EB");

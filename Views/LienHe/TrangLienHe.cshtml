@@ -1,0 +1,81 @@
+﻿@model WebBanGiayTheThao.Models.LienHe
+
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-lg-10">
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="row g-0">
+
+                    <div class="col-md-5 bg-dark text-white p-5 d-flex flex-column justify-content-center position-relative">
+
+                        <div class="position-relative z-2">
+                            <h3 class="fw-bold mb-4 display-6">Liên hệ</h3>
+                            <p class="mb-5 opacity-75 fs-6">
+                                Để lại tin nhắn, chúng tôi sẽ phản hồi ngay khi nhận được thông báo.
+                            </p>
+                        </div>
+
+                        <div class="position-absolute bottom-0 start-0 translate-middle rounded-circle bg-white opacity-10" style="width: 200px; height: 200px;"></div>
+                        <div class="position-absolute top-0 end-0 translate-middle rounded-circle bg-white opacity-10" style="width: 100px; height: 100px;"></div>
+                    </div>
+
+                    <div class="col-md-7 bg-white p-5">
+                        <h4 class="mb-4 fw-bold text-dark">Gửi tin nhắn</h4>
+
+                        <form asp-controller="LienHe" asp-action="GuiLienHe" method="POST">
+
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="HoTen" class="form-control bg-light border-0" placeholder="Họ tên" />
+                                        <label asp-for="HoTen" class="text-secondary">Họ tên</label>
+                                        <span asp-validation-for="HoTen" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="Email" class="form-control bg-light border-0" placeholder="Email" />
+                                        <label asp-for="Email" class="text-secondary">Email</label>
+                                        <span asp-validation-for="Email" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Sdt" class="form-control bg-light border-0" placeholder="Số điện thoại" />
+                                <label asp-for="Sdt" class="text-secondary">Số điện thoại</label>
+                                <span asp-validation-for="Sdt" class="text-danger small"></span>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <textarea asp-for="NoiDung" class="form-control bg-light border-0" placeholder="Nội dung" style="height: 150px"></textarea>
+                                <label asp-for="NoiDung" class="text-secondary">Nội dung</label>
+                                <span asp-validation-for="NoiDung" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-dark btn-lg rounded-pill fw-bold py-3 shadow-sm">
+                                    Gửi ngay <i class="bi bi-send-fill ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

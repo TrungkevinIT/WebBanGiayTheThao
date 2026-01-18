@@ -35,6 +35,10 @@
 
                 <div class="navbar-nav w-100">
 
+                    <a asp-area="Admin" asp-controller="TrangTongQuanAdmin" asp-action="TongQuanDoiTuong"
+                       class="nav-item nav-link">
+                        <i class="fa fa-laptop me-2"></i>Tổng Quan
+                    </a>
                     <a asp-area="Admin" asp-controller="QuanLySanPham" asp-action="TrangQLSanPham"
                        class="nav-item nav-link">
                         <i class="fa fa-laptop me-2"></i>QL Sản Phẩm
@@ -72,6 +76,18 @@
                     <a asp-area="Admin" asp-controller="BaoCao" asp-action="DoanhThu"
                        class="nav-item nav-link">
                         <i class="fa fa-images me-2"></i>QL Báo cáo
+                    </a>
+                    <a asp-area="Admin" asp-controller="QuanLyWebSetting" asp-action="TrangQLWebSetting"
+                       class="nav-item nav-link">
+                        <i class="fa fa-images me-2"></i>QL WebSetting
+                    </a>
+                    <a asp-area="Admin" asp-controller="QuanLyBinhLuan" asp-action="TrangQuanLyBinhLuan"
+                       class="nav-item nav-link">
+                        <i class="fa fa-images me-2"></i>QL Bình luận
+                     </a>
+                    <a asp-area="Admin" asp-controller="QuanLyLienHe" asp-action="TrangQLLienHe"
+                       class="nav-item nav-link">
+                        <i class="fa fa-images me-2"></i>QL Liên Hệ
                     </a>
                 </div>
             </nav>

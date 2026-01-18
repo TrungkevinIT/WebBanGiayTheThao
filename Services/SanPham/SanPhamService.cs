@@ -13,10 +13,14 @@ namespace WebBanGiayTheThao.Services
         }
 
         public async Task<(List<WebBanGiayTheThao.Models.SanPham> products, int totalCount)> LoadDSSanPham(
-         string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize
+         string? search,int? loaispid,int? thuonghieuid,string? gia,int? trangthai,int page,int pagesize, bool isAdmin = false
          )
         {
-            var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).Where(sp=>sp.LoaiSanPham.TrangThai==1 && sp.ThuongHieu.TrangThai==1).AsQueryable();
+            var query= _context.SanPhams.Include(sp=>sp.ThuongHieu).Include(sp=>sp.LoaiSanPham).AsQueryable();
+            if (!isAdmin)
+            {
+                query = query.Where(sp => sp.LoaiSanPham.TrangThai == 1 && sp.ThuongHieu.TrangThai == 1);
+            }
             if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(sp=>sp.TenSanPham != null && sp.TenSanPham.Contains(search)
@@ -104,6 +108,7 @@ namespace WebBanGiayTheThao.Services
                 .Include(x => x.ThuongHieu)
                 .FirstOrDefaultAsync(x=>x.Id==id);
         }
+
         public async Task<List<SanPham>> GetKieuDangAsync(string maKieuDang)
         {
             //tạo ra một truy vấn để lấy danh sách sản phẩm theo mã kiểu dáng
@@ -114,6 +119,29 @@ namespace WebBanGiayTheThao.Services
             }).ToListAsync();
         }
         
+
+
+        public async Task<List<SanPham>> SanPhamBanChay()
+        {
+            return await _context.SanPhams
+            .Include(sp => sp.LoaiSanPham)
+            .Where(sp => sp.TrangThai == 1)
+            .OrderByDescending(sp => sp.CthoaDons.Sum(ct => ct.SoLuong))
+            .Take(4)
+
+        .ToListAsync();
+        }
+
+        public async Task<List<SanPham>> SanPhamMoi()
+        {
+            return await _context.SanPhams
+                .Include(sp => sp.LoaiSanPham)
+                .Include(sp => sp.ThuongHieu)
+                .Where(sp => sp.TrangThai == 1 && sp.LoaiSanPham.TrangThai == 1 && sp.ThuongHieu.TrangThai == 1)
+                .OrderByDescending(sp => sp.Id)
+                .Take(2)
+                .ToListAsync();
+        }
 
     }
 

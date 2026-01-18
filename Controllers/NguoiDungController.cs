@@ -13,13 +13,20 @@ namespace WebBanGiayTheThao.Controllers
         {
             _authService = authService;
         }
-
-        // ================== ĐĂNG NHẬP ==================
-        [HttpGet] 
-        public IActionResult DangNhap()
+        [HttpGet]
+        public ActionResult DangNhap()
         {
             return View();
         }
+        [HttpGet]
+        public ActionResult DangKy()
+        {
+            return View()
+;        }
+        // ================== ĐĂNG NHẬP ==================
+        [HttpGet] 
+       
+        
         [HttpPost]
         public async Task<IActionResult> DangNhap(DangNhapVM model)
         {

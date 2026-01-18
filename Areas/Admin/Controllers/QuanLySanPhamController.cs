@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WebBanGiayTheThao.Filters; // Đảm bảo namespace đúng
+using WebBanGiayTheThao.Filters;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
+namespace WebBanGiayTheThao.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [AdminAuthorize]
@@ -33,12 +33,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
             base.OnActionExecuting(context);
         }
 
-        public async Task<IActionResult> TrangQLSanPham(string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1)
+        public async Task<IActionResult> TrangQLSanPham(string? search, int? thuongHieuId, int? loaiId, string? sortOrder, int? trangThai, int page = 1, bool isAdmin = false)
         {
-            if (!trangThai.HasValue) trangThai = 1;
             int pagesize = 10;
 
-            var sp = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pagesize);
+            var sp = await _sp.LoadDSSanPham(search, loaiId, thuongHieuId, sortOrder, trangThai, page, pagesize,isAdmin: true);
             int totalPages = (int)Math.Ceiling((double)sp.totalCount / pagesize);
 
             ViewBag.TotalPages = totalPages;
@@ -50,7 +49,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
 
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", thuongHieuId);
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", loaiId);
 
             return View(sp.products);
@@ -76,9 +75,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
         public async Task<IActionResult> TrangThemSanPham()
         {
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            var thuongHieuActive = dsthuonghieu.Where(x => x.TrangThai == 1).ToList();
-            ViewBag.DanhSachThuongHieu = new SelectList(thuongHieuActive, "Id", "TenThuongHieu");
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
+            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu");
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai");
             return View();
         }
@@ -86,11 +84,6 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
         [HttpPost]
         public async Task<IActionResult> TrangThemSanPham(SanPham sp)
         {
-            // 2. Kiểm tra ảnh bắt buộc (Thủ công)
-            if (sp.ImageFile == null)
-            {
-                ModelState.AddModelError("ImageFile", "Vui lòng chọn ảnh đại diện (Bắt buộc)");
-            }
 
             if (ModelState.IsValid)
             {
@@ -153,9 +146,8 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
 
 
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
-            var thuongHieuActive = dsthuonghieu.Where(x => x.TrangThai == 1).ToList();
-            ViewBag.DanhSachThuongHieu = new SelectList(thuongHieuActive, "Id", "TenThuongHieu");
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, 1);
+            ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu");
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null, null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai");
             return View(sp);
         }
@@ -205,7 +197,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", sp.ThuongHieuId);
 
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
 
             return View(sp);
@@ -320,7 +312,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers // Thêm namespace chuẩn
    
             var dsthuonghieu = await _thuonghieu.GetAllAsync(null);
             ViewBag.DanhSachThuongHieu = new SelectList(dsthuonghieu, "Id", "TenThuongHieu", sp.ThuongHieuId);
-            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,1);
+            var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
            
             var sanPhamCu = await _sp.GetSanPhamById(sp.Id);

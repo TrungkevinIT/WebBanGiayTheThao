@@ -20,15 +20,18 @@ public partial class HoaDon
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? TongTien { get; set; }
 
+    [Required(ErrorMessage ="Vui Lòng nhập họ và tên người nhận.")]
     [StringLength(255)]
     public string? HoTenNguoiNhan { get; set; }
 
+    [Required(ErrorMessage = "Vui Lòng nhập địa chỉ người nhận.")]
     [StringLength(500)]
     public string? DiaChiNhan { get; set; }
 
     [Column("SDTNhan")]
     [StringLength(20)]
     [Unicode(false)]
+    [Required(ErrorMessage = "Vui Lòng nhập số điện thoại người nhận.")]
     public string? Sdtnhan { get; set; }
 
     public string? GhiChu { get; set; }

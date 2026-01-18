@@ -17,6 +17,7 @@ public partial class BinhLuan
     public int SanPhamId { get; set; }
 
     public string? NoiDung { get; set; }
+    public int? TrangThai { get; set; }
 
     public int? Sao { get; set; }
 

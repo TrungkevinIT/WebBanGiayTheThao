@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebBanGiayTheThao.Data;
+using WebBanGiayTheThao.Service;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Services.DonHang;
+
 using WebBanGiayTheThao.Services.GioHang;
-using WebBanGiayTheThao.Services.SlideShow;
+using WebBanGiayTheThao.Services.GioHang.WebBanGiayTheThao.Services.GioHang;
 using WebBanGiayTheThao.Services.User;
+
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -13,14 +16,24 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBanGiayTheThao.Services.ThuongHieuService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
+builder.Services.AddScoped<WebBanGiayTheThao.Services.IThanhToanService, WebBanGiayTheThao.Services.ThanhToan.ThanhToanService>();
+builder.Services.AddScoped<WebBanGiayTheThao.Services.ILienHeService, WebBanGiayTheThao.Services.LienHeService>();
 // Đăng ký Service Loại Sản Phẩm
 builder.Services.AddScoped<WebBanGiayTheThao.Services.ILoaiSanPhamService, WebBanGiayTheThao.Services.LoaiSanPhamService>();
+//dang ly Websetting
+// Đăng ký Service vào hệ thống
+builder.Services.AddScoped<IWebSettingService, WebSettingService>();
 // Ðãng kí service cho Auth
 builder.Services.AddScoped<AuthService>();
+//trung 8:51 16/1
+//dang ky tạo ra một công cụ giúp  móc nối vào dữ liệu của người dùng hiện tại.
+builder.Services.AddHttpContextAccessor();
 // Ðãng kí session
 builder.Services.AddSession();
 // DuyKhang edit 20:14 11/01/2026 
 builder.Services.AddScoped<BaoCaoService>();
+// Duy Khang edit 14:19 14/01/2026 Dki service BinhLuan
+builder.Services.AddScoped<BinhLuanService>();
 builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
   => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
   );
