@@ -88,7 +88,7 @@
                         {
                             <div class="flex gap-4 items-center py-2 border-b border-gray-50 last:border-0">
                                 <div class="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shrink-0">
-                                    <img src="@(item.SanPham?.AnhDaiDien ?? "")" class="w-full h-full object-cover">
+                                    <img src="~/img/sanpham/@(item.SanPham?.AnhDaiDien ?? "")" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h4 class="font-bold text-sm text-gray-900 line-clamp-1">@(item.SanPham?.TenSanPham ?? "Sản phẩm")</h4>
@@ -114,7 +114,7 @@
                                     {
                                         <option value="@v.MaCodeLuu"
                                                 data-giam="@(v.GiaTriGiamLuu ?? 0)"
-                                                data-min="@(v.DonToiThieuLuu ?? 0)">
+                                                data-min="@(v.DonToiThieu ?? 0)">
                                             @v.MaCodeLuu (Giảm @(v.GiaTriGiamLuu?.ToString("#,##0") ?? "0")₫)
                                         </option>
                                     }
@@ -123,19 +123,6 @@
                             <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500">
                                 <i class="ph-bold ph-caret-down"></i>
                             </div>
-                        </div>
-
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="ph ph-tag text-gray-400"></i>
-                            </div>
-                            <input type="text"
-                                   name="MaVoucher"
-                                   id="voucher-input"
-                                   value="@TempData["VoucherOld"]"
-                                   placeholder="Hoặc nhập mã..."
-                                   class="w-full pl-9 pr-4 py-3 rounded-xl text-sm bg-gray-50 transition focus:ring-2 focus:ring-black focus:bg-white border border-gray-200 uppercase placeholder:normal-case font-bold text-black outline-none"
-                                   readonly>
                         </div>
                     </div>
 

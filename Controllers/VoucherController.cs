@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebBanGiayTheThao.Controllers
 {
-    [SessionAuthorize]
+    
     public class VoucherController : Controller
     {
         private readonly IVoucherServices _services;
@@ -13,6 +13,7 @@ namespace WebBanGiayTheThao.Controllers
         {
             _services = services;
         }
+        [SessionAuthorize]
         public async Task<IActionResult> TrangVoucher()
         {
             int userId = HttpContext.Session.GetInt32("UserId").GetValueOrDefault();

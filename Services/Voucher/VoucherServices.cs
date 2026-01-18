@@ -73,7 +73,7 @@ namespace WebBanGiayTheThao.Services
                 NgayNhan = DateTime.Now,
                 DaSuDung = false,
                 MaCodeLuu = voucher.MaCode,
-                DonToiThieuLuu = voucher.GiaTriDonToiThieu,
+                DonToiThieu = voucher.GiaTriDonToiThieu,
                 GiaTriGiamLuu = voucher.GiaTriGiam,
                 NgayBatDauLuu = voucher.NgayBatDau,
                 NgayKetThucLuu = voucher.NgayKetThuc

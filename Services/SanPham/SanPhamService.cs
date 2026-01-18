@@ -97,9 +97,30 @@ namespace WebBanGiayTheThao.Services
             await _context.SaveChangesAsync();
         }
         public async Task<SanPham?> GetSanPhamById(int id)
+
         {
-            return await _context.SanPhams.Include(x=>x.Ctanhs).Include(x=>x.Ctsizes).FirstOrDefaultAsync(x=>x.Id==id);
+
+            return await _context.SanPhams
+                .Include(x=>x.Ctanhs)
+                .Include(x=>x.Ctsizes)
+                .Include(x=>x.BinhLuans)
+                .Include(x=>x.LoaiSanPham)
+                .Include(x => x.ThuongHieu)
+                .FirstOrDefaultAsync(x=>x.Id==id);
         }
+
+        public async Task<List<SanPham>> GetKieuDangAsync(string maKieuDang)
+        {
+            //tạo ra một truy vấn để lấy danh sách sản phẩm theo mã kiểu dáng
+            return await _context.SanPhams.Where(x => x.MaKieuDang == maKieuDang && x.TrangThai == 1) .Select(x => new SanPham{       
+                Id = x.Id,
+                AnhDaiDien = x.AnhDaiDien,
+                TenSanPham = x.TenSanPham,
+            }).ToListAsync();
+        }
+        
+
+
         public async Task<List<SanPham>> SanPhamBanChay()
         {
             return await _context.SanPhams
@@ -121,6 +142,7 @@ namespace WebBanGiayTheThao.Services
                 .Take(2)
                 .ToListAsync();
         }
+
     }
 
 }

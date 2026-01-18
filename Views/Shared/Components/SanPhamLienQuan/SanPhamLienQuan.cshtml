@@ -1,0 +1,48 @@
+﻿@model IEnumerable<WebBanGiayTheThao.Models.SanPham>
+
+@if (Model != null && Model.Any())
+{
+    <div class="mt-16 border-t border-gray-100 pt-10">
+        <div class="flex justify-between items-end mb-8 px-2">
+            <h2 class="text-2xl font-bold text-gray-900">Sản phẩm liên quan</h2>
+        </div>
+
+        <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            @foreach (var item in Model)
+            {
+                <div class="bg-white group cursor-pointer">
+                    <div class="aspect-square bg-gray-100 rounded-xl mb-3 overflow-hidden relative">
+                        <a asp-controller="SanPham" asp-action="TrangChiTietSanPham" asp-route-id="@item.Id" asp-route-sizeId="">
+                            <img src="~/img/sanpham/@item.AnhDaiDien"
+                                 alt="@item.TenSanPham"
+                                 class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                                 onerror="this.src='/img/no-image.jpg'" />
+                        </a>
+
+                        <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="bg-white p-2 rounded-full shadow-lg hover:bg-black hover:text-white transition-colors">
+                                <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a asp-controller="SanPham" asp-action="TrangChiTietSanPham" asp-route-id="@item.Id" class="block">
+                            <h3 class="font-bold text-gray-900 truncate hover:text-gray-600 transition-colors" title="@item.TenSanPham">
+                                @item.TenSanPham
+                            </h3>
+                        </a>
+
+                        <p class="text-sm text-gray-500 mt-1">@item.LoaiSanPham?.TenLoai</p>
+
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-bold text-black">
+                                @((item.DonGia ?? 0).ToString("N0")) ₫
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

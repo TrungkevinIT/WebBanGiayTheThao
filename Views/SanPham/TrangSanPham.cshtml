@@ -1,4 +1,4 @@
-﻿@model (List<WebBanGiayTheThao.Models.SanPham> ListSanPham, int TongSoLuong)
+@model (List<WebBanGiayTheThao.Models.SanPham> ListSanPham, int TongSoLuong)
 <header class="mt-20 py-10 bg-gray-100/50">
     <div class="container mx-auto px-6 text-center">
         <h1 class="text-3xl font-bold uppercase tracking-wide">Cửa Hàng</h1>
@@ -8,7 +8,7 @@
 
 <main class="container mx-auto px-6 py-8">
     <partial name="_BoLocSanPham" />
-    
+
     <div>
         <div class="flex justify-between items-center mb-6 px-2">
             <h2 class="text-xl font-bold">Danh sách sản phẩm</h2>
@@ -36,12 +36,11 @@
                     </div>
                 </div>
                 </a>
-                
             }
         </div>
 
         <div class="mt-16 flex justify-center">
-         <partial name="_Pager" />
+            <partial name="_Pager" />
         </div>
     </div>
 </main>

@@ -4,6 +4,9 @@ using WebBanGiayTheThao.Data;
 using WebBanGiayTheThao.Service;
 using WebBanGiayTheThao.Services;
 using WebBanGiayTheThao.Services.DonHang;
+
+using WebBanGiayTheThao.Services.GioHang;
+using WebBanGiayTheThao.Services.GioHang.WebBanGiayTheThao.Services.GioHang;
 using WebBanGiayTheThao.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +16,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThuongHieuService, WebBanGiayTheThao.Services.ThuongHieuService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IVoucherServices, WebBanGiayTheThao.Services.VoucherServices>();
-builder.Services.AddScoped<WebBanGiayTheThao.Services.IGioHangService, WebBanGiayTheThao.Services.GioHang.GioHangService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.IThanhToanService, WebBanGiayTheThao.Services.ThanhToan.ThanhToanService>();
 builder.Services.AddScoped<WebBanGiayTheThao.Services.ILienHeService, WebBanGiayTheThao.Services.LienHeService>();
 // Đăng ký Service Loại Sản Phẩm
@@ -38,10 +40,10 @@ builder.Services.AddDbContext<QuanLyWebBanGiayContext>(options
 builder.Services.AddScoped<ISanPhamService,SanPhamService>();
 builder.Services.AddScoped<ISlideShowService,SlideShowService>();
 
-builder.Services.AddScoped<ILoaiSanPhamService, LoaiSanPhamService>();
 //khoi nguyen
+builder.Services.AddScoped<ILoaiSanPhamService, LoaiSanPhamService>();
 builder.Services.AddScoped<IDonHangService, DonHangService>();
-
+builder.Services.AddScoped<IGioHangService, GioHangService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
