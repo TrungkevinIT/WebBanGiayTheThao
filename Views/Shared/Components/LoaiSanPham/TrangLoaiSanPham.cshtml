@@ -9,9 +9,9 @@
             {
                 var linkAnh = $"/img/sanpham/{item.AnhHienThi}";
 
-                <a href="/SanPham/TrangSanPham?maloai=@item.Id" class="group relative h-64 rounded-3xl overflow-hidden cursor-pointer block shadow-lg">
+                <a asp-controller="SanPham" asp-action="TrangSanPham" asp-route-loaiId="@item.Id"  class="group relative h-64 rounded-3xl overflow-hidden cursor-pointer block shadow-lg">
 
-                    <img src="@linkAnh"
+                    <img src="/img/sanpham/@item.AnhHienThi"
                          class="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                          alt="@item.TenLoai">
 
