@@ -65,7 +65,7 @@ namespace WebBanGiayTheThao.Services.ThanhToan
                     return (false, "Mã đã hết hạn!", tongGoc, 0, tongGoc);
                 }
                 
-                decimal donToiThieu = userVoucher.DonToiThieuLuu ?? 0;
+                decimal donToiThieu = userVoucher.DonToiThieu ?? 0;
                 if (tongGoc < donToiThieu) 
                 {
                     return (false, $"Đơn chưa đủ {donToiThieu:N0}đ!", tongGoc, 0, tongGoc);
@@ -94,7 +94,7 @@ namespace WebBanGiayTheThao.Services.ThanhToan
             hoaDon.TongTien = ketQua.TongThanhToan;
             hoaDon.UserId = userId;
             hoaDon.NgayDat = DateTime.Now;
-            hoaDon.TrangThai = 1;
+            hoaDon.TrangThai = 0;
 
             if (ketQua.GiamGia > 0)
             {
