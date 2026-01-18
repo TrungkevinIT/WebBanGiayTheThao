@@ -35,8 +35,8 @@ namespace WebBanGiayTheThao.Controllers
                     OrderCode = "HD" + h.Id,
                     OrderDate = h.NgayDat ?? DateTime.Now,
                     TotalAmount = h.TongTien ?? 0,
-                    Status = h.TrangThai == 1 ? "Approved"
-                           : h.TrangThai == 2 ? "Completed"
+                    Status = h.TrangThai == 0 ? "Approved"
+                           : h.TrangThai == 1 ? "Completed"
                            : "Canceled"
                 })
                 .ToList();
@@ -75,8 +75,8 @@ namespace WebBanGiayTheThao.Controllers
                 Discount = 0,
                 Total = order.TongTien ?? 0,
 
-                Status = order.TrangThai == 1 ? "Approved"
-                       : order.TrangThai == 2 ? "Completed"
+                Status = order.TrangThai == 0 ? "Approved"
+                       : order.TrangThai == 1 ? "Completed"
                        : "Canceled",
 
                 Products = order.CthoaDons.Select(ct => new OrderProductVM
@@ -109,11 +109,10 @@ namespace WebBanGiayTheThao.Controllers
             if (donHang == null)
                 return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
 
-            // ❗ CHỈ CHO HỦY KHI TRẠNG THÁI = 1 (ĐÃ DUYỆT)
-            if (donHang.TrangThai != 1)
+            if (donHang.TrangThai != 0)
                 return Json(new { success = false, message = "Không thể hủy đơn ở trạng thái này" });
 
-            donHang.TrangThai = 3; // Đã hủy
+            donHang.TrangThai = 2;
             _context.SaveChanges();
 
             return Json(new { success = true, message = "Hủy đơn hàng thành công" });

@@ -17,7 +17,7 @@ public partial class WebSetting
 
     [NotMapped]
     public IFormFile? LogoUpload { get; set; }
-    [StringLength(50)]
+    [StringLength(10)]
     [Required(ErrorMessage ="Hotline không được rỗng")]
     public string? Hotline { get; set; }
     [StringLength(50)]
