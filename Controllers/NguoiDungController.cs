@@ -13,10 +13,12 @@ namespace WebBanGiayTheThao.Controllers
         {
             _authService = authService;
         }
+        [HttpGet]
         public ActionResult DangNhap()
         {
             return View();
         }
+        [HttpGet]
         public ActionResult DangKy()
         {
             return View()
