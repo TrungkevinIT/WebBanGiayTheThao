@@ -26,7 +26,6 @@ namespace WebBanGiayTheThao.Services.DonHang
             }
             if (ngayDat.HasValue)
             {
-
                 query = query.Where(x => x.NgayDat.HasValue && x.NgayDat.Value.Date == ngayDat.Value.Date);
             }
             return await query.OrderByDescending(x => x.NgayDat).ToListAsync();

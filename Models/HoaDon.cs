@@ -29,7 +29,7 @@ public partial class HoaDon
     public string? DiaChiNhan { get; set; }
 
     [Column("SDTNhan")]
-    [StringLength(20)]
+    [StringLength(10)]
     [Unicode(false)]
     [Required(ErrorMessage = "Vui Lòng nhập số điện thoại người nhận.")]
     public string? Sdtnhan { get; set; }
