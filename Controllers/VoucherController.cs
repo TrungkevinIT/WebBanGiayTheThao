@@ -10,7 +10,7 @@ namespace WebBanGiayTheThao.Controllers
     {
         private readonly IVoucherServices _services;
         public VoucherController(IVoucherServices services)
-        {
+        {   
             _services = services;
         }
         [SessionAuthorize]

@@ -24,7 +24,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             ViewData["CurrentPage"] = page;
             ViewData["TotalPages"] = totalPages;
             ViewData["ActionName"] = "TrangQLVoucher";
-            ViewData["Filters"] = new Dictionary<string, string>(); 
+            ViewData["Filters"] = new Dictionary<string, string>();
 
             return View(danhsach);
         }
@@ -38,11 +38,14 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> TrangThemVoucher(Voucher voucher)
         {
+            if (await _services.CheckTonTaiAsync(voucher.MaCode, 0))
+            {
+                ModelState.AddModelError("MaCode", "Mã code này đã tồn tại trong hệ thống.");
+            }
             if (!ModelState.IsValid)
             {
                 return View(voucher);
             }
-
             var errors = await _services.CreateAsync(voucher);
 
             if (errors != null && errors.Count > 0)
@@ -72,12 +75,20 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TrangCapNhatVoucher(int id, [Bind("Id,MaCode,GiaTriDonToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc,SoLuong,TrangThai")] Voucher voucher)
         {
-            if(id != voucher.Id) return NotFound();
-            if(await _services.CheckTonTaiAsync(voucher.MaCode,id))
+            if (id != voucher.Id) return NotFound();
+            if (await _services.CheckTonTaiAsync(voucher.MaCode, id))
             {
                 ModelState.AddModelError("MaCode", "Mã code đã tồn tại.");
-            }    
-            if(ModelState.IsValid)
+            }
+            var errors = await _services.UpdateAsync(voucher);
+            if (errors != null && errors.Count > 0)
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+            }
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -86,11 +97,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                     TempData["LoaiThongBao"] = "alert-success";
                     return RedirectToAction(nameof(TrangQLVoucher));
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     ModelState.AddModelError("", "Đã có lỗi xảy ra khi cập nhật voucher. Vui lòng thử lại.");
                 }
-            }   
+            }
             return View(voucher);
         }
 

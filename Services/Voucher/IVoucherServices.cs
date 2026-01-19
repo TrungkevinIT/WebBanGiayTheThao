@@ -12,7 +12,7 @@ namespace WebBanGiayTheThao.Services
         Task<bool> LuuVoucherAsync(int userId, int voucherId);
         Task<Dictionary<string, string>?> CreateAsync(Voucher voucher);
         Task<Voucher?> GetByIdAsync(int id);
-        Task UpdateAsync (Voucher voucher);
+        Task<Dictionary<string, string>?> UpdateAsync(Voucher voucher);
         Task<bool> UpdateTrangThaiAsync(int id, int trangThai);
         Task<bool> CheckTonTaiAsync(string maCode, int? idExclude = null);
         Task<(List<Voucher> List, int TotalCount)> GetAllPagingAsync(int page, int pageSize);
