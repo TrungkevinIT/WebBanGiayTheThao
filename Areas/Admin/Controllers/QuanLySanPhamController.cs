@@ -156,54 +156,52 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ThemNhanhDuLieu(string loai, string ten, string xuatxu)
         {
-            if (string.IsNullOrWhiteSpace(ten))
+            try
             {
-                return Json(new { success = false, message = "Tên không được để trống!" });
-            }
-
-            ten = ten.Trim();
-            if (loai == "Loai")
-            {
-                var dsLoai = await _lsp.GetAllLoaiSanPhamAsync(null, null);
-                bool daTonTai = dsLoai.Any(x => x.TenLoai == ten);
-
-                if (daTonTai)
+                if (string.IsNullOrWhiteSpace(ten))
                 {
-                    return Json(new { success = false, message = $"Loại sản phẩm '{ten}' đã tồn tại!" });
+                    return Json(new { success = false, message = "Tên không được để trống!" });
+                }
+                ten = ten.Trim();
+                if (loai == "Loai")
+                {
+                    var loaiMoi = new LoaiSanPham
+                    {
+                        TenLoai = ten,
+                        TrangThai = 1
+                    };
+                    await _lsp.ThemLoaiSanPhamAsync(loaiMoi);
+
+                    return Json(new { success = true, id = loaiMoi.Id, ten = loaiMoi.TenLoai });
+                }
+                else if (loai == "ThuongHieu")
+                {
+                    var dsThuongHieu = await _thuonghieu.GetAllAsync(null);
+                    bool daTonTai = dsThuongHieu.Any(x => x.TenThuongHieu.ToLower() == ten.ToLower());
+
+                    if (daTonTai)
+                    {
+                        return Json(new { success = false, message = $"Thương hiệu '{ten}' đã tồn tại!" });
+                    }
+
+                    var thMoi = new ThuongHieu
+                    {
+                        TenThuongHieu = ten,
+                        XuatXu = xuatxu ?? "",
+                        TrangThai = 1
+                    };
+
+                    await _thuonghieu.CreateAsync(thMoi);
+
+                    return Json(new { success = true, id = thMoi.Id, ten = thMoi.TenThuongHieu });
                 }
 
-                var loaiMoi = new LoaiSanPham
-                {
-                    TenLoai = ten,
-                    TrangThai = 1
-                };
-                await _lsp.ThemLoaiSanPhamAsync(loaiMoi);
-
-                return Json(new { success = true, id = loaiMoi.Id, ten = loaiMoi.TenLoai });
+                return Json(new { success = false, message = "Loại dữ liệu không hợp lệ" });
             }
-
-            else if (loai == "ThuongHieu")
+            catch (Exception ex)
             {
-                var dsThuongHieu = await _thuonghieu.GetAllAsync(null);
-
-                bool daTonTai = dsThuongHieu.Any(x => x.TenThuongHieu == ten);
-
-                if (daTonTai)
-                {
-                    return Json(new { success = false, message = $"Thương hiệu '{ten}' đã tồn tại!" });
-                }
-
-                var thMoi = new ThuongHieu
-                {
-                    TenThuongHieu = ten,
-                    XuatXu = xuatxu,
-                    TrangThai = 1
-                };
-                await _thuonghieu.CreateAsync(thMoi);
-                return Json(new { success = true, id = thMoi.Id, ten = thMoi.TenThuongHieu });
+                return Json(new { success = false, message = ex.Message });
             }
-
-            return Json(new { success = false, message = "Loại dữ liệu không hợp lệ" });
         }
 
         // --- TRANG CẬP NHẬT SẢN PHẨM ---

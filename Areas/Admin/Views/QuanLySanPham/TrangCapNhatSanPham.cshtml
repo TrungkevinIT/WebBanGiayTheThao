@@ -3,52 +3,6 @@
 @{
     Layout = "_LayoutAdmin";
 }
-<style>
-    .img-preview-box {
-        width: 100%;
-        height: 180px;
-        border: 2px dashed #ccc;
-        border-radius: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        background-color: #f8f9fa;
-        position: relative;
-        cursor: pointer;
-    }
-
-        .img-preview-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .img-preview-box i {
-            font-size: 40px;
-            color: #ccc;
-        }
-
-    .gallery-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .gallery-item {
-        width: 80px;
-        height: 80px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        object-fit: cover;
-    }
-
-    .table-size input {
-        text-align: center;
-    }
-</style>
-
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded h-100 p-4">
         <h4 class="mb-4 text-primary"><i class="fa fa-edit me-2"></i>CẬP NHẬT SẢN PHẨM</h4>
@@ -234,24 +188,46 @@
     }
 
     <script>
-        // --- A. HÀM XÁC NHẬN CẬP NHẬT (MẶC ĐỊNH BROWSER) ---
+        var sizeIndex = @(Model.Ctsizes != null ? Model.Ctsizes.Count : 0);
+
         function xacNhanCapNhat() {
             var form = $('#formSanPham');
 
-            // Bước 1: Kiểm tra Validate Form
+            $('#tableBodySize input').removeClass('is-invalid');
+
             if (!form.valid()) {
-                return; // Nếu chưa nhập đủ thông tin thì dừng lại
+                return; 
             }
 
-            // Bước 2: Dùng lệnh confirm() mặc định của trình duyệt
-            // Nó sẽ hiện hộp thoại đơn giản: OK / Cancel
-            if (confirm("Bạn có chắc chắn muốn cập nhật thông tin sản phẩm này không?")) {
-                // Bước 3: Nếu chọn OK -> Gửi form
+            var coLoiSize = false;
+
+            $('#tableBodySize input').each(function () {
+                var input = $(this);
+                var giaTri = input.val();
+                var minVal = input.attr('min'); 
+
+                if (!giaTri) {
+                    coLoiSize = true;
+                    input.addClass('is-invalid'); 
+                }
+                else if (minVal && parseFloat(giaTri) < parseFloat(minVal)) {
+                    coLoiSize = true;
+                    input.addClass('is-invalid');
+                }
+            });
+
+            if (coLoiSize) {
+                $('html, body').animate({
+                    scrollTop: $("#tableBodySize").offset().top - 200
+                }, 500);
+                return; 
+            }
+
+            if (confirm("Bạn có chắc chắn muốn lưu thay đổi không?")) {
                 form.submit();
             }
         }
 
-        // --- CÁC HÀM XỬ LÝ KHÁC (GIỮ NGUYÊN) ---
         function previewSingle(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -278,25 +254,24 @@
             }
         }
 
-        var sizeIndex = 0;
-               function themDongSize() {
+        // --- HÀM THÊM DÒNG SIZE MỚI ---
+        function themDongSize() {
             var html = `
                 <tr>
+                    <input type="hidden" name="Ctsizes[${sizeIndex}].Id" value="0" />
                     <td>
-                        <input name="ChiTietSizeNhap[${sizeIndex}].Size"
-                               type="number" step="0.5"
-                               class="form-control form-control-sm"
-                               min="34" required
+                        <input name="Ctsizes[${sizeIndex}].Size" 
+                               type="number" step="0.5" 
+                               class="form-control form-control-sm" 
+                               min="34" required 
                                placeholder="Nhập size..." />
                     </td>
-
                     <td>
-                        <input name="ChiTietSizeNhap[${sizeIndex}].SoLuongTon"
-                               type="number"
-                               class="form-control form-control-sm"
+                        <input name="Ctsizes[${sizeIndex}].SoLuongTon" 
+                               type="number" 
+                               class="form-control form-control-sm" 
                                min="1" value="1" required />
                     </td>
-
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm" onclick="xoaDong(this)">
                             <i class="fa fa-trash"></i>
@@ -307,41 +282,12 @@
             $('#tableBodySize').append(html);
             sizeIndex++;
         }
-        // Dán đoạn này vào trong thẻ <script>, bên dưới các hàm khác
-        $('#formSanPham').on('submit', function (e) {
-            var coLoi = false;
-
-            // 1. Quét qua TẤT CẢ ô input trong bảng Size (dòng cũ lẫn mới)
-            $('#tableBodySize input').each(function () {
-                var input = $(this);
-                var giaTri = input.val();      // Giá trị người dùng nhập
-                var minVal = input.attr('min'); // Lấy cái min="34" hoặc min="1" từ HTML
-
-                // Xóa viền đỏ cũ (nếu có)
-                input.removeClass('is-invalid');
-
-                // KIỂM TRA 1: Có nhập chưa? (Thay cho required)
-                if (!giaTri) {
-                    coLoi = true;
-                    input.addClass('is-invalid'); // Tô viền đỏ
-                }
-                // KIỂM TRA 2: Có nhỏ hơn min không? (Thay cho min="...")
-                else if (minVal && parseFloat(giaTri) < parseFloat(minVal)) {
-                    coLoi = true;
-                    input.addClass('is-invalid'); // Tô viền đỏ
-                }
-            });
-
-            // 2. Nếu phát hiện lỗi ở bảng Size
-            if (coLoi) {
-                e.preventDefault(); // CHẶN ĐỨNG việc gửi form
-            }
-        });
 
         function xoaDong(btn) {
             $(btn).closest('tr').remove();
         }
 
+        // --- XỬ LÝ MODAL THÊM NHANH  ---
         var myModal = new bootstrap.Modal(document.getElementById('quickAddModal'));
 
         function openModal(title, type) {
@@ -349,7 +295,10 @@
             $('#modalType').val(type);
             $('#modalInputName').val('');
             $('#modalInputOrigin').val('');
-            $('#errorName').addClass('d-none');
+            
+            // Reset lỗi modal
+            $('#errorName').addClass('d-none').text('');
+            $('#modalInputName').removeClass('is-invalid');
 
             if (type === 'ThuongHieu') {
                 $('#divXuatXu').removeClass('d-none');
@@ -364,8 +313,14 @@
             var name = $('#modalInputName').val().trim();
             var origin = $('#modalInputOrigin').val().trim();
 
+            // Reset lỗi
+            $('#errorName').addClass('d-none');
+            $('#modalInputName').removeClass('is-invalid');
+
+            // Validate Client
             if (!name) {
-                $('#errorName').removeClass('d-none');
+                $('#errorName').text('Vui lòng nhập tên!').removeClass('d-none');
+                $('#modalInputName').addClass('is-invalid');
                 return;
             }
 
@@ -376,15 +331,29 @@
                 success: function (res) {
                     if (res.success) {
                         var newOption = new Option(res.ten, res.id, true, true);
-                        if (type == 'Loai') $('#ddlLoai').append(newOption).trigger('change');
-                        else $('#ddlThuongHieu').append(newOption).trigger('change');
+                        if (type == 'Loai') {
+                            $('#ddlLoai').append(newOption).trigger('change');
+                        } else {
+                            $('#ddlThuongHieu').append(newOption).trigger('change');
+                        }
                         myModal.hide();
                     } else {
-                        alert('Lỗi: ' + res.message);
+                        // Hiện lỗi đỏ giống trang thêm
+                        $('#errorName').text(res.message).removeClass('d-none');
+                        $('#modalInputName').addClass('is-invalid');
                     }
                 },
-                error: function() { alert('Lỗi kết nối server!'); }
+                error: function () {
+                    alert('Lỗi kết nối server!');
+                }
             });
         }
+
+        // Xóa lỗi khi gõ lại trong modal
+        $('#modalInputName').on('input', function() {
+            $('#errorName').addClass('d-none');
+            $(this).removeClass('is-invalid');
+        });
     </script>
+}
 }
