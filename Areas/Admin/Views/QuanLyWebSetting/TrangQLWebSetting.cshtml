@@ -7,17 +7,16 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
         <h4 class="mb-4 text-primary">Cấu hình thông tin Website</h4>
+
         @if (TempData["ThongBao"] != null)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-
                 @TempData["ThongBao"]
-
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
 
-        <form asp-action="TrangQLWebSetting" method="post" enctype="multipart/form-data">
+        <form id="formWebSetting" asp-action="TrangQLWebSetting" method="post" enctype="multipart/form-data">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Logo" />
 
@@ -38,10 +37,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">LogoUpload</label>
+                        <label class="form-label fw-bold">Cập nhật Logo</label>
                         <input asp-for="LogoUpload" class="form-control" type="file" accept="image/*" />
                         <span asp-validation-for="LogoUpload" class="text-danger"></span>
-
                     </div>
                 </div>
 
@@ -51,13 +49,11 @@
                             <label class="form-label fw-bold">Hotline</label>
                             <input asp-for="Hotline" class="form-control" />
                             <span asp-validation-for="Hotline" class="text-danger"></span>
-
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">EmailLienHe</label>
+                            <label class="form-label fw-bold">Email Liên Hệ</label>
                             <input asp-for="EmailLienHe" class="form-control" type="email" />
                             <span asp-validation-for="EmailLienHe" class="text-danger"></span>
-
                         </div>
                     </div>
 
@@ -65,24 +61,21 @@
                         <label class="form-label fw-bold">Địa chỉ</label>
                         <input asp-for="DiaChi" class="form-control" />
                         <span asp-validation-for="DiaChi" class="text-danger"></span>
-
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Linkfacebook</label>
+                        <label class="form-label fw-bold">Link Facebook</label>
                         <input asp-for="Linkfacebook" class="form-control" />
                         <span asp-validation-for="Linkfacebook" class="text-danger"></span>
-
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Mô tả</label>
                         <textarea asp-for="Mota" class="form-control" rows="4"></textarea>
                         <span asp-validation-for="Mota" class="text-danger"></span>
-
                     </div>
 
-                    <button type="submit" class="btn btn-primary px-4">
+                    <button type="button" class="btn btn-primary px-4" onclick="xacNhanLuu()">
                         <i class="fa fa-save me-2"></i> Lưu Cấu Hình
                     </button>
                 </div>
@@ -90,3 +83,22 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function xacNhanLuu() {
+            var form = $('#formWebSetting');
+
+            if (!form.valid()) {
+                return; 
+            }
+            if (confirm("Bạn có chắc chắn muốn lưu thay đổi cấu hình website không?")) {
+                form.submit();
+            }
+        }
+    </script>
+}
