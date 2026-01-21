@@ -146,6 +146,7 @@
                 <div class="mb-3 d-none" id="divXuatXu">
                     <label class="form-label">Xuất xứ:</label>
                     <input type="text" id="modalInputOrigin" class="form-control" placeholder="Ví dụ: Việt Nam, Mỹ..." />
+                    <span id="errorOrigin" class="text-danger small d-none fw-bold"></span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -256,14 +257,19 @@
         // --- 3. XỬ LÝ THÊM NHANH (AJAX Đã cập nhật) ---
         var myModal = new bootstrap.Modal(document.getElementById('quickAddModal'));
 
-        function openModal(title, type) {
+                function openModal(title, type) {
             $('#modalTitle').text('Thêm mới ' + title);
             $('#modalType').val(type);
 
             // Reset form
             $('#modalInputName').val('');
             $('#modalInputOrigin').val('');
-            $('#errorName').addClass('d-none');
+
+            // Xóa hết lỗi cũ (Quan trọng: Xóa trạng thái đỏ của lần mở trước)
+            $('#errorName').addClass('d-none').text('');
+            $('#modalInputName').removeClass('is-invalid');
+            $('#errorOrigin').addClass('d-none').text('');
+            $('#modalInputOrigin').removeClass('is-invalid');
 
             // Logic ẩn hiện ô Xuất xứ
             if (type === 'ThuongHieu') {
@@ -275,27 +281,45 @@
             myModal.show();
         }
 
-               function luuNhanh() {
+        function luuNhanh() {
             var type = $('#modalType').val();
             var name = $('#modalInputName').val().trim();
             var origin = $('#modalInputOrigin').val().trim();
 
-            // 1. Reset trạng thái lỗi cũ (Xóa đỏ, xóa chữ)
+            // --- SỬA ĐỔI: Dùng biến cờ để kiểm tra ---
+            var isValid = true;
+
+            // 1. Reset trạng thái lỗi cũ
             $('#errorName').addClass('d-none').text('');
             $('#modalInputName').removeClass('is-invalid');
+            $('#errorOrigin').addClass('d-none').text('');
+            $('#modalInputOrigin').removeClass('is-invalid');
 
-            // 2. Kiểm tra rỗng (Validation phía Client)
+            // 2. Kiểm tra Tên (Nếu sai -> Đánh dấu isValid = false)
             if (!name) {
                 $('#errorName').text('Vui lòng nhập tên!').removeClass('d-none');
                 $('#modalInputName').addClass('is-invalid');
-                return; 
+                isValid = false; // Không return ở đây nữa
             }
 
-            // 3. Gửi AJAX
+            // 3. Kiểm tra Xuất xứ (Vẫn chạy tiếp để kiểm tra cái này)
+            if (type === 'ThuongHieu' && !origin) {
+                $('#errorOrigin').text('Vui lòng nhập xuất xứ!').removeClass('d-none');
+                $('#modalInputOrigin').addClass('is-invalid');
+                isValid = false; // Đánh dấu lỗi
+            }
+
+            // 4. Kiểm tra tổng kết: Nếu có bất kỳ lỗi nào thì dừng lại
+            if (!isValid) {
+                return;
+            }
+
+            // 5. Gửi AJAX (Chỉ chạy khi không có lỗi)
             $.ajax({
                 url: '/Admin/QuanLySanPham/ThemNhanhDuLieu',
                 type: 'POST',
-                data: { loai: type, ten: name, xuatXu: origin },
+                // Lưu ý: data key nên để chữ thường 'xuatxu' cho khớp với Controller
+                data: { loai: type, ten: name, xuatxu: origin },
                 success: function (res) {
                     if (res.success) {
                         var newOption = new Option(res.ten, res.id, true, true);
@@ -307,9 +331,9 @@
                         }
 
                         myModal.hide();
-                       
+
                     } else {
-                        
+                        // Lỗi từ Server trả về (VD: Tên trùng)
                         $('#errorName').text(res.message).removeClass('d-none');
                         $('#modalInputName').addClass('is-invalid');
                     }
@@ -321,8 +345,16 @@
         }
 
         $('#modalInputName').on('input', function() {
-            $('#errorName').addClass('d-none');
-            $(this).removeClass('is-invalid');
+            if($(this).val().trim() !== "") {
+                $('#errorName').addClass('d-none');
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#modalInputOrigin').on('input', function() {
+            if($(this).val().trim() !== "") {
+                $('#errorOrigin').addClass('d-none');
+                $(this).removeClass('is-invalid');
+            }
         });
     </script>
 }

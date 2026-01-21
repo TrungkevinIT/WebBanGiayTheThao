@@ -16,27 +16,46 @@
         </div>
 
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            @foreach (var item in Model.ListSanPham)
+            @if (Model.ListSanPham != null && Model.ListSanPham.Count > 0)
             {
-                <a asp-controller="SanPham" asp-action="TrangChiTietSanPham" asp-route-id="@item.Id" class="block">
-                <div class="group flex flex-col fade-in">
-                    <div class="w-full aspect-[4/5] bg-gray-100 rounded-2xl overflow-hidden relative liquid-glass">
-                    <img src="/img/sanpham/@item.AnhDaiDien" alt="New Balance 550" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    <div class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider z-10">@item.ThuongHieu.TenThuongHieu</div>
-                    <div class="absolute bottom-4 right-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
-                        <button class="bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-black hover:text-white transition cursor-pointer"><i class="ph ph-shopping-bag text-lg"></i></button>
-                    </div>
-                </div>
-                <div class="mt-4 px-1">
-                   <h3 class="text-base font-bold text-gray-900 group-hover:text-gray-600 transition cursor-pointer line-clamp-1">@item.TenSanPham</h3>
-                    <p class="text-xs text-gray-500 uppercase tracking-wide mt-1">@item.LoaiSanPham.TenLoai</p>
-                    <div class="flex items-center gap-2 mt-2">
-                            <span class="font-bold text-lg text-black">@item.DonGia.Value.ToString("#,##0")</span>  
-                    </div>
-                    </div>
-                </div>
-                </a>
+                @foreach (var item in Model.ListSanPham)
+                {
+                    <a asp-controller="SanPham" asp-action="TrangChiTietSanPham" asp-route-id="@item.Id" class="block">
+                        <div class="group flex flex-col fade-in">
+                            <div class="w-full aspect-[4/5] bg-gray-100 rounded-2xl overflow-hidden relative liquid-glass">
+                                <img src="/img/sanpham/@item.AnhDaiDien" alt="New Balance 550" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider z-10">@item.ThuongHieu.TenThuongHieu</div>
+                                <div class="absolute bottom-4 right-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
+                                    <button class="bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-black hover:text-white transition cursor-pointer"><i class="ph ph-shopping-bag text-lg"></i></button>
+                                </div>
+                            </div>
+                            <div class="mt-4 px-1">
+                                <h3 class="text-base font-bold text-gray-900 group-hover:text-gray-600 transition cursor-pointer line-clamp-1">@item.TenSanPham</h3>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide mt-1">@item.LoaiSanPham.TenLoai</p>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <span class="font-bold text-lg text-black">@item.DonGia.Value.ToString("#,##0")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
             }
+            else
+            {
+                <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                    <div class="bg-gray-50 p-6 rounded-full mb-4">
+                        <i class="ph ph-magnifying-glass text-4xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Không tìm thấy sản phẩm nào!</h3>
+                    <p class="text-gray-500 max-w-md mx-auto">
+                        Rất tiếc, chúng tôi không tìm thấy sản phẩm phù hợp với lựa chọn của bạn. Hãy thử tìm kiếm từ khóa khác hoặc bỏ bớt bộ lọc.
+                    </p>
+                    <a asp-controller="SanPham" asp-action="TrangSanPham" class="mt-6 px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition">
+                        Xem tất cả sản phẩm
+                    </a>
+                </div>
+            }
+            
         </div>
 
         <div class="mt-16 flex justify-center">

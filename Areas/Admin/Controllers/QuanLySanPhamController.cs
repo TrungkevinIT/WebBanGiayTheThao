@@ -178,7 +178,11 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                 {
                     var dsThuongHieu = await _thuonghieu.GetAllAsync(null);
                     bool daTonTai = dsThuongHieu.Any(x => x.TenThuongHieu.ToLower() == ten.ToLower());
-
+                    if (string.IsNullOrWhiteSpace(xuatxu))
+                    {
+                        return Json(new { success = false, message = "Xuất xứ không được để trống!" });
+                    }
+                    xuatxu = xuatxu.Trim();
                     if (daTonTai)
                     {
                         return Json(new { success = false, message = $"Thương hiệu '{ten}' đã tồn tại!" });
@@ -187,7 +191,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                     var thMoi = new ThuongHieu
                     {
                         TenThuongHieu = ten,
-                        XuatXu = xuatxu ?? "",
+                        XuatXu = xuatxu,
                         TrangThai = 1
                     };
 
