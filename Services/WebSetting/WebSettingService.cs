@@ -17,12 +17,6 @@ namespace WebBanGiayTheThao.Services {
         public async Task<WebSetting> LayThongTinWeb()
         {
             var setting = await _context.WebSettings.FirstOrDefaultAsync();
-            if (setting == null)
-            {
-                setting = new WebSetting();
-                _context.Add(setting);
-                await _context.SaveChangesAsync();
-            }
             return setting;
         }
     }

@@ -3,20 +3,21 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Cryptography;
 using WebBanGiayTheThao.Data;
+using WebBanGiayTheThao.Service;
 using WebBanGiayTheThao.Services;
 
 namespace WebBanGiayTheThao.ViewComponents
 {
     public class SlideShowViewComponent : ViewComponent
     {
-        private readonly QuanLyWebBanGiayContext _context;
-        public SlideShowViewComponent(QuanLyWebBanGiayContext context)
+        private readonly ISlideShowService _slide;
+        public SlideShowViewComponent(ISlideShowService slide)
         {
-            _context = context;
+            _slide = slide;
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var dsslideshow= await _context.SlideShows.OrderByDescending(x=>x.NgayCapNhat).ToListAsync();
+            var dsslideshow= await _slide.LoadDSSlideShow();
             return View("TrangChuSlideShow", dsslideshow);
         }
     }

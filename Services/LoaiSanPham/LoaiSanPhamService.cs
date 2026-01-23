@@ -45,7 +45,6 @@ namespace WebBanGiayTheThao.Services
                 if (existingItem != null)
                 {
                     existingItem.TenLoai = loaiSanPham.TenLoai;
-                    existingItem.TrangThai = loaiSanPham.TrangThai;
                     _context.LoaiSanPhams.Update(existingItem);
                     await _context.SaveChangesAsync();
                 }

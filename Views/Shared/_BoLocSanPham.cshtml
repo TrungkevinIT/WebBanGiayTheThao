@@ -29,8 +29,8 @@
             <label class="form-label text-muted small">Sắp xếp giá</label>
             <select name="sortOrder" class="form-select">
                 <option value="">Mặc định</option>
-                <option value="gia_tang">Thấp đến cao</option>
-                <option value="gia_giam">Cao xuống thấp</option>
+                <option value="gia_tang" selected="@(ViewBag.SortOrder == "gia_tang")">Thấp đến cao</option>
+                <option value="gia_giam" selected="@(ViewBag.SortOrder == "gia_giam")">Cao xuống thấp</option>
             </select>
         </div>
         @if (isAdmin)

@@ -125,8 +125,9 @@ namespace WebBanGiayTheThao.Services
         {
             return await _context.SanPhams
             .Include(sp => sp.LoaiSanPham)
-            .Where(sp => sp.TrangThai == 1)
-            .OrderByDescending(sp => sp.CthoaDons.Sum(ct => ct.SoLuong))
+            .Include(sp => sp.ThuongHieu)
+            .Where(sp => sp.TrangThai == 1 && sp.LoaiSanPham.TrangThai==1&& sp.ThuongHieu.TrangThai==1)
+            .OrderByDescending(sp => sp.CthoaDons.Where(hd=>hd.HoaDon.TrangThai==1).Sum(ct => ct.SoLuong))
             .Take(4)
 
         .ToListAsync();
