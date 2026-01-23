@@ -25,9 +25,9 @@
             </thead>
 
             <tbody>
-                @if(Model != null && Model.Any())
+                @if (Model != null && Model.Any())
                 {
-                    @foreach(var item in Model)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <td class="fw-bold text-secondary">@item.Id</td>
@@ -51,32 +51,32 @@
                             <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
 
                             <td>
-                               <form asp-action="CapNhatTrangThai" method="post">
-                                   <input type="hidden" name="id" value="@item.Id" />
-    
-                                    <select name="trangThai" onchange="this.form.submit()" 
-                                            class="form-select form-select-sm border-0 text-center fw-bold rounded-pill mx-auto 
-                                                   @(item.TrangThai switch { 
-                                                       0 => "bg-danger text-white", 
-                                                       1 => "bg-warning text-dark", 
-                                                       2 => "bg-secondary text-white", 
-                                                       _ => "bg-light text-dark" 
+                                <form asp-action="CapNhatTrangThai" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <select name="trangThai"
+                                            data-original="@item.TrangThai"
+                                            onchange="xacNhanDoiTrangThai(this)"
+                                            class="form-select form-select-sm border-0 text-center fw-bold rounded-pill mx-auto
+                                                   @(item.TrangThai switch {
+                                                       0 => "bg-danger text-white",
+                                                       1 => "bg-warning text-dark",
+                                                       2 => "bg-secondary text-white",
+                                                       _ => "bg-light text-dark"
                                                    })"
                                             style="width: 140px; cursor: pointer;">
-        
                                         <option value="0" selected="@(item.TrangThai == 0 ? "selected" : null)">Mới gửi</option>
                                         <option value="1" selected="@(item.TrangThai == 1 ? "selected" : null)">Đang xử lý</option>
                                         <option value="2" selected="@(item.TrangThai == 2 ? "selected" : null)">Đã xong</option>
-        
+
                                     </select>
                                 </form>
                             </td>
                             <td>
                                 <form asp-action="Xoa" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa liên hệ này không?');">
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="btn btn-outline-danger rounded-circle p-2 lh-1 ms-1">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-outline-danger rounded-circle p-2 lh-1 ms-1">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -93,3 +93,14 @@
         </table>
     </div>
 </div>
+<script>
+    function xacNhanDoiTrangThai(selectElement) {
+        var selectedText = selectElement.options[selectElement.selectedIndex].text;
+        if (confirm('Bạn có chắc chắn muốn chuyển sang trạng thái "' + selectedText + '" không?')) {
+            selectElement.form.submit();
+        } else {
+            var originalValue = selectElement.getAttribute('data-original');
+            selectElement.value = originalValue;
+        }
+    }
+</script>
