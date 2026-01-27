@@ -83,7 +83,7 @@ namespace WebBanGiayTheThao.Controllers
                 {
                     SanPhamId = ct.SanPhamId,
                     TenSanPham = ct.SanPham.TenSanPham ?? "",
-                    Size = ct.SizeId,
+                    Size = ct.Size != null ? ct.Size.Size ?? 0 : 0,
                     SoLuong = ct.SoLuong,
                     DonGia = ct.DonGia ?? 0,
                     Anh = ct.SanPham.AnhDaiDien ?? ""

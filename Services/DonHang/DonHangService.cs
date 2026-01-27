@@ -40,7 +40,7 @@ namespace WebBanGiayTheThao.Services.DonHang
             int trangThaiCu = (int)hoaDon.TrangThai;
 
             if (trangThaiCu == trangThaiMoi) return true;
-            if (trangThaiCu == 0 && trangThaiMoi == 1)
+            if (trangThaiCu == 0 && trangThaiMoi == 1 && trangThaiMoi==0 )
             {
                 foreach (var item in hoaDon.CthoaDons)
                 {

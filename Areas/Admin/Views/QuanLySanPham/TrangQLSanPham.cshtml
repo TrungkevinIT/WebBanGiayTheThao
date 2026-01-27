@@ -4,10 +4,9 @@
 @{
     Layout = "_LayoutAdmin";
 
-    // Lấy thông tin phân trang cơ bản
-    int currentPage = (ViewData["CurrentPage"] as int?) ?? 1;
-    int totalPages = (ViewData["TotalPages"] as int?) ?? 1;
-    int pageSize = (ViewData["PageSize"] as int?) ?? 10;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
 }
 
 <div class="container-fluid pt-4 px-4">

@@ -190,7 +190,7 @@
             }
         }
 
-        // --- 2. XỬ LÝ SIZE ĐỘNG (Đã sửa tên biến cho đúng Model) ---
+        // --- 2. XỬ LÝ SIZE ĐỘNG---
         var sizeIndex = 1;
                 function themDongSize() {
             var html = `
@@ -199,7 +199,7 @@
                         <input name="ChiTietSizeNhap[${sizeIndex}].Size"
                                type="number" step="0.5"
                                class="form-control form-control-sm"
-                               min="34" required
+                               min="0" required
                                placeholder="Nhập size..." />
                     </td>
 
@@ -222,29 +222,21 @@
         }
         $('#formSanPham').on('submit', function (e) {
             var coLoi = false;
-
-            // 1. Quét qua TẤT CẢ ô input trong bảng Size (dòng cũ lẫn mới)
             $('#tableBodySize input').each(function () {
                 var input = $(this);
-                var giaTri = input.val();      // Giá trị người dùng nhập
-                var minVal = input.attr('min'); // Lấy cái min="34" hoặc min="1" từ HTML
-
-                // Xóa viền đỏ cũ (nếu có)
+                var giaTri = input.val();
+                var minVal = input.attr('min');
                 input.removeClass('is-invalid');
-
-                // KIỂM TRA 1: Có nhập chưa? (Thay cho required)
                 if (!giaTri) {
                     coLoi = true;
-                    input.addClass('is-invalid'); // Tô viền đỏ
+                    input.addClass('is-invalid');
                 }
-                // KIỂM TRA 2: Có nhỏ hơn min không? (Thay cho min="...")
                 else if (minVal && parseFloat(giaTri) < parseFloat(minVal)) {
                     coLoi = true;
-                    input.addClass('is-invalid'); // Tô viền đỏ
+                    input.addClass('is-invalid');
                 }
             });
 
-            // 2. Nếu phát hiện lỗi ở bảng Size
             if (coLoi) {
                 e.preventDefault(); // CHẶN ĐỨNG việc gửi form
             }
@@ -254,7 +246,7 @@
             $(btn).closest('tr').remove();
         }
 
-        // --- 3. XỬ LÝ THÊM NHANH (AJAX Đã cập nhật) ---
+        // --- 3. XỬ LÝ THÊM NHANH (AJAX) ---
         var myModal = new bootstrap.Modal(document.getElementById('quickAddModal'));
 
                 function openModal(title, type) {
@@ -265,13 +257,12 @@
             $('#modalInputName').val('');
             $('#modalInputOrigin').val('');
 
-            // Xóa hết lỗi cũ (Quan trọng: Xóa trạng thái đỏ của lần mở trước)
+            // xóa hết lỗi from trước đó
             $('#errorName').addClass('d-none').text('');
             $('#modalInputName').removeClass('is-invalid');
             $('#errorOrigin').addClass('d-none').text('');
             $('#modalInputOrigin').removeClass('is-invalid');
 
-            // Logic ẩn hiện ô Xuất xứ
             if (type === 'ThuongHieu') {
                 $('#divXuatXu').removeClass('d-none');
             } else {
@@ -285,40 +276,33 @@
             var type = $('#modalType').val();
             var name = $('#modalInputName').val().trim();
             var origin = $('#modalInputOrigin').val().trim();
-
-            // --- SỬA ĐỔI: Dùng biến cờ để kiểm tra ---
             var isValid = true;
 
-            // 1. Reset trạng thái lỗi cũ
+            //Reset trạng thái lỗi cũ
             $('#errorName').addClass('d-none').text('');
             $('#modalInputName').removeClass('is-invalid');
             $('#errorOrigin').addClass('d-none').text('');
             $('#modalInputOrigin').removeClass('is-invalid');
 
-            // 2. Kiểm tra Tên (Nếu sai -> Đánh dấu isValid = false)
             if (!name) {
                 $('#errorName').text('Vui lòng nhập tên!').removeClass('d-none');
                 $('#modalInputName').addClass('is-invalid');
-                isValid = false; // Không return ở đây nữa
+                isValid = false;
             }
-
-            // 3. Kiểm tra Xuất xứ (Vẫn chạy tiếp để kiểm tra cái này)
             if (type === 'ThuongHieu' && !origin) {
                 $('#errorOrigin').text('Vui lòng nhập xuất xứ!').removeClass('d-none');
                 $('#modalInputOrigin').addClass('is-invalid');
-                isValid = false; // Đánh dấu lỗi
+                isValid = false;
             }
 
-            // 4. Kiểm tra tổng kết: Nếu có bất kỳ lỗi nào thì dừng lại
+            //Nếu có bất kỳ lỗi nào thì dừng lại
             if (!isValid) {
                 return;
             }
 
-            // 5. Gửi AJAX (Chỉ chạy khi không có lỗi)
             $.ajax({
                 url: '/Admin/QuanLySanPham/ThemNhanhDuLieu',
                 type: 'POST',
-                // Lưu ý: data key nên để chữ thường 'xuatxu' cho khớp với Controller
                 data: { loai: type, ten: name, xuatxu: origin },
                 success: function (res) {
                     if (res.success) {

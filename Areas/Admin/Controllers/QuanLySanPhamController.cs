@@ -248,7 +248,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                         spGoc.LoaiSanPhamId = sp.LoaiSanPhamId;
                         spGoc.TrangThai = 1;
 
-                        // A. Cập nhật Ảnh đại diện
+                        // Cập nhật Ảnh đại diện
                         if (sp.ImageFile != null)
                         {
                             string filename = DateTime.Now.Ticks + "_" + Path.GetFileName(sp.ImageFile.FileName);
@@ -260,7 +260,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                             spGoc.AnhDaiDien = filename;
                         }
 
-                        // B. Cập nhật Ảnh phụ
+                        // Cập nhật Ảnh phụ
                         if (sp.ListAnhPhu != null && sp.ListAnhPhu.Count > 0)
                         {
                             // Xóa ảnh cũ
@@ -294,7 +294,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                             }
                         }
 
-                        // C. Cập nhật Size cũ (Sửa cả số Size và Số lượng)
+                        //Cập nhật Size cũ (Sửa cả số Size và Số lượng)
                         if (sp.Ctsizes != null)
                         {
                             foreach (var item in sp.Ctsizes)
@@ -308,7 +308,7 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
                             }
                         }
 
-                        // D. Thêm Size mới
+                        // Thêm Size mới
                         if (sp.ChiTietSizeNhap != null)
                         {
                             foreach (var item in sp.ChiTietSizeNhap)
@@ -336,17 +336,17 @@ namespace WebBanGiayTheThao.Areas.Admin.Controllers
             var dsloaisanpham = await _lsp.GetAllLoaiSanPhamAsync(null,null);
             ViewBag.DanhSachLoaiSanPham = new SelectList(dsloaisanpham, "Id", "TenLoai", sp.LoaiSanPhamId);
            
-            var sanPhamCu = await _sp.GetSanPhamById(sp.Id);
+            //var sanPhamCu = await _sp.GetSanPhamById(sp.Id);
 
-            if (sanPhamCu != null)
-            {
-                sp.AnhDaiDien = sanPhamCu.AnhDaiDien; 
-                sp.Ctanhs = sanPhamCu.Ctanhs;
+            //if (sanPhamCu != null)
+            //{
+            //    sp.AnhDaiDien = sanPhamCu.AnhDaiDien; 
+            //    sp.Ctanhs = sanPhamCu.Ctanhs;
 
-                if (sp.Ctsizes == null) {
-                    sp.Ctsizes = sanPhamCu.Ctsizes;
-                }
-            }
+            //    if (sp.Ctsizes == null) {
+            //        sp.Ctsizes = sanPhamCu.Ctsizes;
+            //    }
+            //}
 
             return View(sp);
         }
